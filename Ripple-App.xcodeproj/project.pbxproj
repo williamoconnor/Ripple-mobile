@@ -32,6 +32,8 @@
 		FE28281C1AE873A0005B83A3 /* JSONConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2828171AE873A0005B83A3 /* JSONConverter.m */; };
 		FE28281D1AE873A0005B83A3 /* REST_API.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2828191AE873A0005B83A3 /* REST_API.m */; };
 		FE28282D1AE8A7B7005B83A3 /* songCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE28282C1AE8A7B7005B83A3 /* songCell.m */; };
+		FE28282F1AE96010005B83A3 /* PoiretOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FE28282E1AE95CFE005B83A3 /* PoiretOne-Regular.ttf */; };
+		FED837991AE97724009630C3 /* NowPlaying.png in Resources */ = {isa = PBXBuildFile; fileRef = FED837981AE97724009630C3 /* NowPlaying.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -176,7 +178,7 @@
 		FE2828071AE870B7005B83A3 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		FE2828081AE870B7005B83A3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		FE2828091AE870B7005B83A3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		FE2828121AE87114005B83A3 /* SoundCloud.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = SoundCloud.bundle; path = ../CocoaSoundCloudUI/SoundCloud.bundle; sourceTree = "<group>"; };
+		FE2828121AE87114005B83A3 /* SoundCloud.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = SoundCloud.bundle; path = CocoaSoundCloudUI/SoundCloud.bundle; sourceTree = "<group>"; };
 		FE2828141AE873A0005B83A3 /* DataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataManager.h; sourceTree = "<group>"; };
 		FE2828151AE873A0005B83A3 /* DataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataManager.m; sourceTree = "<group>"; };
 		FE2828161AE873A0005B83A3 /* JSONConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONConverter.h; sourceTree = "<group>"; };
@@ -186,6 +188,8 @@
 		FE28281A1AE873A0005B83A3 /* Strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Strings.h; sourceTree = "<group>"; };
 		FE28282B1AE8A7B7005B83A3 /* songCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = songCell.h; sourceTree = "<group>"; };
 		FE28282C1AE8A7B7005B83A3 /* songCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = songCell.m; sourceTree = "<group>"; };
+		FE28282E1AE95CFE005B83A3 /* PoiretOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "PoiretOne-Regular.ttf"; path = "../PoiretOne-Regular.ttf"; sourceTree = "<group>"; };
+		FED837981AE97724009630C3 /* NowPlaying.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = NowPlaying.png; path = ../NowPlaying.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -222,6 +226,7 @@
 		FE28278F1AE8690D005B83A3 = {
 			isa = PBXGroup;
 			children = (
+				FE2828121AE87114005B83A3 /* SoundCloud.bundle */,
 				FE2828021AE870B7005B83A3 /* AddressBook.framework */,
 				FE2828031AE870B7005B83A3 /* AddressBookUI.framework */,
 				FE2828041AE870B7005B83A3 /* AVFoundation.framework */,
@@ -255,7 +260,6 @@
 			children = (
 				FE28282B1AE8A7B7005B83A3 /* songCell.h */,
 				FE28282C1AE8A7B7005B83A3 /* songCell.m */,
-				FE2828121AE87114005B83A3 /* SoundCloud.bundle */,
 				FE28279F1AE8690D005B83A3 /* AppDelegate.h */,
 				FE2827A01AE8690D005B83A3 /* AppDelegate.m */,
 				FE2827A21AE8690D005B83A3 /* ViewController.h */,
@@ -271,6 +275,8 @@
 		FE28279B1AE8690D005B83A3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				FED837981AE97724009630C3 /* NowPlaying.png */,
+				FE28282E1AE95CFE005B83A3 /* PoiretOne-Regular.ttf */,
 				FE2828141AE873A0005B83A3 /* DataManager.h */,
 				FE2828151AE873A0005B83A3 /* DataManager.m */,
 				FE2828161AE873A0005B83A3 /* JSONConverter.h */,
@@ -528,7 +534,9 @@
 			files = (
 				FE2827A71AE8690D005B83A3 /* Main.storyboard in Resources */,
 				FE2828131AE87114005B83A3 /* SoundCloud.bundle in Resources */,
+				FED837991AE97724009630C3 /* NowPlaying.png in Resources */,
 				FE2827AC1AE8690D005B83A3 /* LaunchScreen.xib in Resources */,
+				FE28282F1AE96010005B83A3 /* PoiretOne-Regular.ttf in Resources */,
 				FE2827A91AE8690D005B83A3 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

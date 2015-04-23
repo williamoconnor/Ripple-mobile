@@ -7,7 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
-@interface songCell: NSObject
+@interface songCell: UITableViewCell
+
+@property (strong, nonatomic) NSDictionary* track;
+@property (strong, nonatomic) UILabel *titleLabel;
+@property (strong, nonatomic) UILabel *artistLabel;
+@property (strong, nonatomic) UIImageView *albumCover;
+
+-(void) setData: (NSDictionary*)track;
 
 @end

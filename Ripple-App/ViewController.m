@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "SCUI.h"
 #import "DataManager.h"
+#import "songCell.h"
 
 @interface ViewController ()
 
@@ -16,6 +17,8 @@
 @property (strong, nonatomic) NSMutableArray *tracks;
 @property (nonatomic, strong) AVAudioPlayer *player;
 @property(nonatomic, strong) CLLocationManager *locationManager;
+@property (nonatomic, strong) NSDictionary *nowPlayingTrack;
+@property (strong, nonatomic) IBOutlet UIImageView *playerBackgroundImageView;
 
 @end
 
@@ -34,6 +37,9 @@
     // Do any additional setup after loading the view, typically from a nib.
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
+    self.tableView.backgroundColor = [UIColor colorWithRed:0x19/255.0 green:0x66/255.0 blue:0xA8/255.0 alpha:1.0];
+    [self.tableView registerClass:[songCell class] forCellReuseIdentifier:@"cell"];
+    self.playerBackgroundImageView.image = [UIImage imageNamed:@"NowPlaying.png"];
     
     [self setUpLocation];
 }
@@ -100,26 +106,37 @@
 
 - (void) loadSongs {
     NSMutableDictionary *location = [[NSMutableDictionary alloc] init];
-    location[@"latitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"latitude"];
-    location[@"longitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"longitude"];
+//    location[@"latitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"latitude"];
+//    location[@"longitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"longitude"];
+    
+    // HARDCODE LOCATION
+    NSNumber *tempNumber = [[NSNumber alloc] initWithDouble:32.8];
+    location[@"latitude"] = tempNumber;
+    NSNumber *tempNumber2 = [[NSNumber alloc] initWithDouble:-96.7];
+    location[@"longitude"] = tempNumber2;
     
     NSDictionary* songs = [DataManager getSongList:location];
-    NSLog(@"songs: %@", songs);
+//    NSLog(@"songs: %@", songs);
     
     for (NSDictionary* song_id in songs) {
-        NSLog(@"song id: %@", song_id[@"song_id"]);
+//        NSLog(@"song id: %@", song_id[@"song_id"]);
         NSDictionary* track = [DataManager getTrackInfo:song_id[@"song_id"]];
-        NSLog(@"track: %@", track);
         
         [self.tracks addObject: track];
     }
     
-    NSLog(@"tracks: %@", self.tracks);
+//    NSLog(@"tracks: %@", self.tracks);
     [self.tableView reloadData];
 }
 
 - (void) locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    NSLog(@"here");
+    NSLog(@"error: %@", error);
+    UIAlertView* noLocationAlert = [[UIAlertView alloc] initWithTitle:@"Could not get your location" message:@"Unfortunately, Ripple was not able to detect your location. This is a location-based app, so it will not work without that information. Please try again later." delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
+    [noLocationAlert show];
+    
+    [self.locationManager stopUpdatingLocation];
+    
+    [self loadSongs];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -139,23 +156,28 @@
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc]
-                initWithStyle:UITableViewCellStyleDefault
-                reuseIdentifier:@"cell"];
-    }
+    
+    songCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
-    cell.textLabel.text = track[@"title"];
+    NSLog(@"Track: %@", track);
+    [cell setData:track];
     
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // STYLE
+    songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.contentView.backgroundColor = [UIColor colorWithRed:0xBB/255.0 green:0xDF/255.0 blue:0xF0/255.0 alpha:1.0];
+    cell.titleLabel.textColor = [UIColor colorWithRed:0x19/255.0 green:0x66/255.0 blue:0xA8/255.0 alpha:1.0];
+    cell.artistLabel.textColor = [UIColor colorWithRed:0x48/255.0 green:0x98/255.0 blue:0xBD/255.0 alpha:1.0];
     
+    // PLAY SONG
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
+    self.nowPlayingTrack = track;
+    [self updatePlayerBackground];
     NSString *streamURL = track[@"stream_url"];
     
 //    SCAccount *account = [SCSoundCloud account];
@@ -191,6 +213,18 @@
     }];
     
     [task resume];
+}
+
+-(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // STYLE
+    songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.contentView.backgroundColor = [UIColor colorWithRed:0x19/255.0 green:0x66/255.0 blue:0xA8/255.0 alpha:1.0];
+    cell.titleLabel.textColor = [UIColor colorWithRed:0xE0/255.0 green:0xF5/255.0 blue:0xFF/255.0 alpha:1.0];
+    cell.artistLabel.textColor = [UIColor colorWithRed:0xBB/255.0 green:0xDF/255.0 blue:0xF0/255.0 alpha:1.0];
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 100;
 }
 
 - (IBAction)getTracksButtonPressed:(UIButton *)sender {
@@ -257,6 +291,16 @@
     }];
 }
 
+- (void) updatePlayerBackground
+{
+    NSString* url = [self.nowPlayingTrack[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"
+                                                        withString:@"crop"];
+    UIImage* albumCoverImage = [UIImage imageWithData:
+                                [NSData dataWithContentsOfURL:
+                                 [NSURL URLWithString: url]]];
+    
+    self.playerBackgroundImageView.image = albumCoverImage;
+}
 
 
 @end

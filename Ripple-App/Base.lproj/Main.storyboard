@@ -29,51 +29,32 @@
                                     </tableViewCell>
                                 </prototypes>
                                 <variation key="widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="0.0" y="97" width="400" height="483"/>
+                                    <rect key="frame" x="0.0" y="198" width="400" height="477"/>
                                 </variation>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wi3-8v-Hil">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" title="Sign In">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="RLH-eg-h3X">
+                                <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                 <variation key="widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="99" y="28" width="48" height="30"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="400" height="200"/>
                                 </variation>
-                                <connections>
-                                    <action selector="signInButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="2XW-kV-1aH"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oie-ic-k6r">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" title="Get Tracks">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <variation key="widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="244" y="28" width="74" height="30"/>
-                                </variation>
-                                <connections>
-                                    <action selector="getTracksButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Hvw-7w-53y"/>
-                                </connections>
-                            </button>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="lDf-Sg-Z6d"/>
-                                <exclude reference="Wi3-8v-Hil"/>
-                                <exclude reference="oie-ic-k6r"/>
+                                <exclude reference="RLH-eg-h3X"/>
                             </mask>
                         </variation>
                         <variation key="widthClass=compact">
                             <mask key="subviews">
                                 <include reference="lDf-Sg-Z6d"/>
-                                <include reference="Wi3-8v-Hil"/>
-                                <include reference="oie-ic-k6r"/>
+                                <include reference="RLH-eg-h3X"/>
                             </mask>
                         </variation>
                     </view>
                     <connections>
+                        <outlet property="playerBackgroundImageView" destination="RLH-eg-h3X" id="YDR-wi-ayi"/>
                         <outlet property="tableView" destination="lDf-Sg-Z6d" id="WfO-l9-yXI"/>
                     </connections>
                 </viewController>

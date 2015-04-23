@@ -34,6 +34,8 @@
 		FE28282D1AE8A7B7005B83A3 /* songCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE28282C1AE8A7B7005B83A3 /* songCell.m */; };
 		FE28282F1AE96010005B83A3 /* PoiretOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FE28282E1AE95CFE005B83A3 /* PoiretOne-Regular.ttf */; };
 		FED837991AE97724009630C3 /* NowPlaying.png in Resources */ = {isa = PBXBuildFile; fileRef = FED837981AE97724009630C3 /* NowPlaying.png */; };
+		FED837A01AE98BDB009630C3 /* Cookie-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FED8379F1AE98AF8009630C3 /* Cookie-Regular.ttf */; };
+		FED837A21AE99718009630C3 /* launch.png in Resources */ = {isa = PBXBuildFile; fileRef = FED837A11AE99718009630C3 /* launch.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -190,6 +192,8 @@
 		FE28282C1AE8A7B7005B83A3 /* songCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = songCell.m; sourceTree = "<group>"; };
 		FE28282E1AE95CFE005B83A3 /* PoiretOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "PoiretOne-Regular.ttf"; path = "../PoiretOne-Regular.ttf"; sourceTree = "<group>"; };
 		FED837981AE97724009630C3 /* NowPlaying.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = NowPlaying.png; path = ../NowPlaying.png; sourceTree = "<group>"; };
+		FED8379F1AE98AF8009630C3 /* Cookie-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cookie-Regular.ttf"; sourceTree = "<group>"; };
+		FED837A11AE99718009630C3 /* launch.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = launch.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -275,6 +279,8 @@
 		FE28279B1AE8690D005B83A3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				FED837A11AE99718009630C3 /* launch.png */,
+				FED8379F1AE98AF8009630C3 /* Cookie-Regular.ttf */,
 				FED837981AE97724009630C3 /* NowPlaying.png */,
 				FE28282E1AE95CFE005B83A3 /* PoiretOne-Regular.ttf */,
 				FE2828141AE873A0005B83A3 /* DataManager.h */,
@@ -534,8 +540,10 @@
 			files = (
 				FE2827A71AE8690D005B83A3 /* Main.storyboard in Resources */,
 				FE2828131AE87114005B83A3 /* SoundCloud.bundle in Resources */,
+				FED837A01AE98BDB009630C3 /* Cookie-Regular.ttf in Resources */,
 				FED837991AE97724009630C3 /* NowPlaying.png in Resources */,
 				FE2827AC1AE8690D005B83A3 /* LaunchScreen.xib in Resources */,
+				FED837A21AE99718009630C3 /* launch.png in Resources */,
 				FE28282F1AE96010005B83A3 /* PoiretOne-Regular.ttf in Resources */,
 				FE2827A91AE8690D005B83A3 /* Images.xcassets in Resources */,
 			);

@@ -5,6 +5,7 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>PoiretOne-Regular.ttf</string>
+		<string>Cookie-Regular.ttf</string>
 	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>What is this for??</string>

@@ -21,6 +21,8 @@
     if (self) {
         // Initialization code
         
+    
+        
         //set the height of the selected cell in the tableview
         
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(120.0, 10.0, 220.0, 60.0)];
@@ -37,7 +39,7 @@
         [self.contentView addSubview:self.artistLabel];
         [self.contentView addSubview:self.albumCover];
         
-        self.backgroundColor = [UIColor colorWithRed:0x19/255.0 green:0x66/255.0 blue:0xA8/255.0 alpha:1.0];
+        self.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     }
     
     return self;

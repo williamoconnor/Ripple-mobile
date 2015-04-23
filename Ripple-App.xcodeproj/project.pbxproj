@@ -31,6 +31,7 @@
 		FE28281B1AE873A0005B83A3 /* DataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2828151AE873A0005B83A3 /* DataManager.m */; };
 		FE28281C1AE873A0005B83A3 /* JSONConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2828171AE873A0005B83A3 /* JSONConverter.m */; };
 		FE28281D1AE873A0005B83A3 /* REST_API.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2828191AE873A0005B83A3 /* REST_API.m */; };
+		FE28282D1AE8A7B7005B83A3 /* songCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE28282C1AE8A7B7005B83A3 /* songCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -175,7 +176,7 @@
 		FE2828071AE870B7005B83A3 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		FE2828081AE870B7005B83A3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		FE2828091AE870B7005B83A3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		FE2828121AE87114005B83A3 /* SoundCloud.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = SoundCloud.bundle; path = CocoaSoundCloudUI/SoundCloud.bundle; sourceTree = "<group>"; };
+		FE2828121AE87114005B83A3 /* SoundCloud.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = SoundCloud.bundle; path = ../CocoaSoundCloudUI/SoundCloud.bundle; sourceTree = "<group>"; };
 		FE2828141AE873A0005B83A3 /* DataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataManager.h; sourceTree = "<group>"; };
 		FE2828151AE873A0005B83A3 /* DataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataManager.m; sourceTree = "<group>"; };
 		FE2828161AE873A0005B83A3 /* JSONConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONConverter.h; sourceTree = "<group>"; };
@@ -183,6 +184,8 @@
 		FE2828181AE873A0005B83A3 /* REST_API.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REST_API.h; sourceTree = "<group>"; };
 		FE2828191AE873A0005B83A3 /* REST_API.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REST_API.m; sourceTree = "<group>"; };
 		FE28281A1AE873A0005B83A3 /* Strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Strings.h; sourceTree = "<group>"; };
+		FE28282B1AE8A7B7005B83A3 /* songCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = songCell.h; sourceTree = "<group>"; };
+		FE28282C1AE8A7B7005B83A3 /* songCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = songCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -219,7 +222,6 @@
 		FE28278F1AE8690D005B83A3 = {
 			isa = PBXGroup;
 			children = (
-				FE2828121AE87114005B83A3 /* SoundCloud.bundle */,
 				FE2828021AE870B7005B83A3 /* AddressBook.framework */,
 				FE2828031AE870B7005B83A3 /* AddressBookUI.framework */,
 				FE2828041AE870B7005B83A3 /* AVFoundation.framework */,
@@ -251,6 +253,9 @@
 		FE28279A1AE8690D005B83A3 /* Ripple-App */ = {
 			isa = PBXGroup;
 			children = (
+				FE28282B1AE8A7B7005B83A3 /* songCell.h */,
+				FE28282C1AE8A7B7005B83A3 /* songCell.m */,
+				FE2828121AE87114005B83A3 /* SoundCloud.bundle */,
 				FE28279F1AE8690D005B83A3 /* AppDelegate.h */,
 				FE2827A01AE8690D005B83A3 /* AppDelegate.m */,
 				FE2827A21AE8690D005B83A3 /* ViewController.h */,
@@ -545,6 +550,7 @@
 				FE28281C1AE873A0005B83A3 /* JSONConverter.m in Sources */,
 				FE2827A41AE8690D005B83A3 /* ViewController.m in Sources */,
 				FE28281D1AE873A0005B83A3 /* REST_API.m in Sources */,
+				FE28282D1AE8A7B7005B83A3 /* songCell.m in Sources */,
 				FE28281B1AE873A0005B83A3 /* DataManager.m in Sources */,
 				FE2827A11AE8690D005B83A3 /* AppDelegate.m in Sources */,
 				FE28279E1AE8690D005B83A3 /* main.m in Sources */,
@@ -795,6 +801,7 @@
 				FE2827BD1AE8690D005B83A3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		FE2827BE1AE8690D005B83A3 /* Build configuration list for PBXNativeTarget "Ripple-AppTests" */ = {
 			isa = XCConfigurationList;
@@ -803,6 +810,7 @@
 				FE2827C01AE8690D005B83A3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -18,6 +18,9 @@
 @property (nonatomic, strong) AVAudioPlayer *player;
 @property(nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, strong) NSDictionary *nowPlayingTrack;
+@property (strong, nonatomic) NSMutableDictionary* screenSize;
+@property (strong, nonatomic) UIImageView *albumCover;
+@property (strong, nonatomic) NSMutableArray *albumCovers;
 
 @end
 
@@ -31,9 +34,30 @@
     return _tracks;
 }
 
+-(NSMutableArray*)albumCovers
+{
+    if (!_albumCovers) {
+        _albumCovers = [[NSMutableArray alloc] init];
+    }
+    return _albumCovers;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib
+    
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
+    NSNumber *height = [[NSNumber alloc] initWithDouble:screenHeight];
+    NSNumber *width = [[NSNumber alloc] initWithDouble:screenWidth];
+    
+    self.screenSize[@"height"] = height;
+    self.screenSize[@"width"] = width;
+    
+    self.albumCover = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 64.0, 400.0, 200.0)];
+    self.albumCover.hidden = YES;
+    [self.view addSubview:self.albumCover];
 
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -119,7 +143,6 @@
     location[@"longitude"] = tempNumber2;
     
     NSDictionary* songs = [DataManager getSongList:location];
-    NSLog(@"songs: %@", songs);
     
     for (NSDictionary* song_id in songs) {
 //        NSLog(@"song id: %@", song_id[@"song_id"]);
@@ -164,25 +187,37 @@
     songCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
-    NSLog(@"Track: %@", track);
+//    NSLog(@"Track: %@", track);
     [cell setData:track];
+    NSString* url = [track[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
+    UIImage* albumCoverImage = [UIImage imageWithData:
+                                [NSData dataWithContentsOfURL:
+                                 [NSURL URLWithString: url]]];
+
+    [self.albumCovers addObject:albumCoverImage];
+    NSLog(@"%@", self.albumCovers[indexPath.row]);
     
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // PLAY SONG
+    
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
-    NSString* url = [track[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large" withString:@"crop"];
-
-    UIImage* albumCover = [UIImage imageWithData: [NSData dataWithContentsOfURL:[NSURL URLWithString: url]]];
     
+    float tableViewHeight = [self.screenSize[@"height"] floatValue];
+    tableViewHeight = 600.0;
+    self.tableView.frame = CGRectMake(0, 264.0, 400.0, tableViewHeight);
     
-    self.tableView.frame = CGRectMake(0, 200.0, self.tableView.frame.size.width, self.tableView.frame.size.height);
-    UIImageView* playerBackground = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 400.0, 200.0)];
+    if (self.tableView.frame.origin.y == 264.0) {
+        self.albumCover.hidden = NO;
+        NSLog(@"not hidden anymore");
+        NSLog(@"%@", self.albumCover.image = self.albumCovers[indexPath.row]);
+    }
+    else {
+        NSLog(@"%f", self.tableView.frame.origin.y);
+    }
     
-    playerBackground.image = albumCover;
-    // STYLE
+    // PLAY SONG
     songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
 
@@ -223,6 +258,19 @@
 
 - (void) slideTableView
 {
+}
+
+- (void) setAlbumCovers
+{
+    // do asyncronously
+//    for (NSDictionary* track in self.tracks) {
+//        NSString* url = [track[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
+//        UIImage* albumCoverImage = [UIImage imageWithData:
+//                                    [NSData dataWithContentsOfURL:
+//                                     [NSURL URLWithString: url]]];
+//        
+//        [self.albumCovers addObject:albumCoverImage];
+//    }
 }
 
 @end

@@ -11,9 +11,9 @@
 @implementation DataManager
 
 + (NSDictionary *)getSongList:(NSMutableDictionary*)data
-{    
-//    return [REST_API getPath:[kRootURL stringByAppendingString:[@"assface" stringByAppendingString:[@"/" stringByAppendingString: data]]]];
-    return [REST_API postPath:[kRootURL stringByAppendingString:@"/php/loadDrops.php"] data:[JSONConverter convertNSMutableDictionaryToJSON:data]];
+{
+    NSDictionary* result = [REST_API postPath:[kRootURL stringByAppendingString:@"/php/loadDrops.php"] data:[JSONConverter convertNSMutableDictionaryToJSON:data]];
+    return result;
 }
 
 + (NSDictionary *) streamSong:(NSString*)song_id

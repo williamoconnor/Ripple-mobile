@@ -86,7 +86,7 @@
         [self.locationManager requestWhenInUseAuthorization];
         [self.locationManager startUpdatingLocation];
     }
-    [self.locationManager stopUpdatingLocation];
+//    [self.locationManager stopUpdatingLocation];
 }
 
 -(void) locationManager: (CLLocationManager *)manager didUpdateToLocation: (CLLocation *) newLocation
@@ -137,18 +137,31 @@
 //    location[@"longitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"longitude"];
     
     // HARDCODE LOCATION
-    NSNumber *tempNumber = [[NSNumber alloc] initWithDouble:32.8];
+    NSNumber *tempNumber = [[NSNumber alloc] initWithDouble:32.846];
     location[@"latitude"] = tempNumber;
-    NSNumber *tempNumber2 = [[NSNumber alloc] initWithDouble:-96.7];
+    NSNumber *tempNumber2 = [[NSNumber alloc] initWithDouble:-96.7837];
     location[@"longitude"] = tempNumber2;
     
     NSDictionary* songs = [DataManager getSongList:location];
+//    NSLog(@"Songs: %@", songs);
     
     for (NSDictionary* song_id in songs) {
 //        NSLog(@"song id: %@", song_id[@"song_id"]);
         NSDictionary* track = [DataManager getTrackInfo:song_id[@"song_id"]];
         
         [self.tracks addObject: track];
+        
+        
+        // YOOO
+        UIImage* albumCoverImage = [UIImage imageNamed:@"NowPlaying.png"];
+        if (![track[@"artwork_url"] isEqual:[NSNull null]] && [track[@"artwork_url"] length] > 0){
+            NSString* url = [track[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
+            albumCoverImage = [UIImage imageWithData:
+                                        [NSData dataWithContentsOfURL:
+                                         [NSURL URLWithString: url]]];
+        }
+        
+        [self.albumCovers addObject:albumCoverImage];
     }
     
 //    NSLog(@"tracks: %@", self.tracks);
@@ -174,6 +187,7 @@
 //     TABLEVIEW
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    NSLog(@"%lu", (unsigned long)[self.tracks count]);
     return [self.tracks count];
 }
 
@@ -189,13 +203,11 @@
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
 //    NSLog(@"Track: %@", track);
     [cell setData:track];
-    NSString* url = [track[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
-    UIImage* albumCoverImage = [UIImage imageWithData:
-                                [NSData dataWithContentsOfURL:
-                                 [NSURL URLWithString: url]]];
-
-    [self.albumCovers addObject:albumCoverImage];
-    NSLog(@"%@", self.albumCovers[indexPath.row]);
+    
+    //to change background color of selected cell
+    UIView *backgroundView          = [[UIView alloc] init];
+    backgroundView.backgroundColor  = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
+    cell.selectedBackgroundView     = backgroundView;
     
     return cell;
 }
@@ -205,12 +217,11 @@
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
     
     float tableViewHeight = [self.screenSize[@"height"] floatValue];
-    tableViewHeight = 600.0;
+    tableViewHeight = 400.0;
     self.tableView.frame = CGRectMake(0, 264.0, 400.0, tableViewHeight);
     
     if (self.tableView.frame.origin.y == 264.0) {
         self.albumCover.hidden = NO;
-        NSLog(@"not hidden anymore");
         NSLog(@"%@", self.albumCover.image = self.albumCovers[indexPath.row]);
     }
     else {
@@ -229,6 +240,18 @@
     }];
     
     [task resume];
+}
+
+-(void)tableView:(UITableView *)tableView didHighlightRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
+}
+
+-(void)tableView:(UITableView *)tableView didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
 }
 
 -(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath

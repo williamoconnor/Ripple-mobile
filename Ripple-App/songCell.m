@@ -48,23 +48,32 @@
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:NO];
+//    self.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
 }
 
 -(void) setData:(NSDictionary *)track
-{
-    self.titleLabel.text = track[@"title"];
-    if ([track[@"label_name"] length] > 0){
-        self.artistLabel.text = track[@"label_name"];
+{    
+    if (track) {
+        UIImage* albumCoverImage;
+        self.titleLabel.text = track[@"title"];
+        if (![track[@"label_name"] isEqual:[NSNull null]] && [track[@"label_name"] length] > 0){
+            self.artistLabel.text = track[@"label_name"];
+        }
+        else {
+            self.artistLabel.text = track[@"user"][@"permalink"];
+        }
+        
+        if (![track[@"artwork_url"] isEqual:[NSNull null]] && [track[@"artwork_url"] length] > 0){
+            albumCoverImage = [UIImage imageWithData:
+                            [NSData dataWithContentsOfURL:
+                             [NSURL URLWithString: track[@"artwork_url"]]]];
+        }
+        else {
+            albumCoverImage = [UIImage imageNamed:@"NowPlaying.jpg"];
+        }
+        
+        self.albumCover.image = albumCoverImage;
     }
-    else {
-        self.artistLabel.text = track[@"user"][@"permalink"];
-    }
-    
-    UIImage* albumCoverImage = [UIImage imageWithData:
-                        [NSData dataWithContentsOfURL:
-                         [NSURL URLWithString: track[@"artwork_url"]]]];
-    
-    self.albumCover.image = albumCoverImage;
 }
 
 

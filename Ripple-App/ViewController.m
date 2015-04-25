@@ -21,6 +21,7 @@
 @property (strong, nonatomic) NSMutableDictionary* screenSize;
 @property (strong, nonatomic) UIImageView *albumCover;
 @property (strong, nonatomic) NSMutableArray *albumCovers;
+@property (strong, nonatomic) UILabel* nowPlayingSongNameLabel;
 
 @end
 
@@ -58,6 +59,14 @@
     self.albumCover = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 64.0, 400.0, 200.0)];
     self.albumCover.hidden = YES;
     [self.view addSubview:self.albumCover];
+    
+    self.nowPlayingSongNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 224.0, 375.0, 40.0)];
+    self.nowPlayingSongNameLabel.hidden = YES;
+    self.nowPlayingSongNameLabel.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.4];
+    self.nowPlayingSongNameLabel.textColor = [UIColor whiteColor];
+    self.nowPlayingSongNameLabel.font = [UIFont fontWithName:@"Poiret One" size:18];
+    self.nowPlayingSongNameLabel.textAlignment = NSTextAlignmentCenter;
+    [self.view addSubview: self.nowPlayingSongNameLabel];
 
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -222,7 +231,9 @@
     
     if (self.tableView.frame.origin.y == 264.0) {
         self.albumCover.hidden = NO;
-        NSLog(@"%@", self.albumCover.image = self.albumCovers[indexPath.row]);
+        self.nowPlayingSongNameLabel.hidden = NO;
+        self.albumCover.image = self.albumCovers[indexPath.row];
+        self.nowPlayingSongNameLabel.text = self.tracks[indexPath.row][@"title"];
     }
     else {
         NSLog(@"%f", self.tableView.frame.origin.y);

@@ -9,9 +9,12 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import "wboPlayerView.h"
 
-@interface ViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, CLLocationManagerDelegate>
+@interface ViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, CLLocationManagerDelegate, wboPlayerDelegate>
 
+- (void) pauseButtonPressed;
+- (void) playButtonPressed;
 
 @end
 

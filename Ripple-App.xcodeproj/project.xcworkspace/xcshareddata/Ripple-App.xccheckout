@@ -7,7 +7,7 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>B0301A4C-24C8-4AF8-A206-454726344455</string>
 	<key>IDESourceControlProjectName</key>
-	<string>Ripple-App</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>2F16ABB5253C8A53BD834DD2135B7E534A667AC1</key>
@@ -24,21 +24,21 @@
 		<string>git://github.com/nxtbgthng/JSONKit.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Ripple-App.xcodeproj</string>
+	<string>Ripple-App.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>2F16ABB5253C8A53BD834DD2135B7E534A667AC1</key>
-		<string>../..CocoaSoundCloudUI</string>
+		<string>../..CocoaSoundCloudUI/</string>
 		<key>3F352B067C0DFA70BDAE43020BAFF0492DAEDEA9</key>
 		<string>../..</string>
 		<key>48734AC5978E47BCAB24F1E9699B65204C5FF04A</key>
-		<string>../..OHAttributedLabel</string>
+		<string>../..OHAttributedLabel/</string>
 		<key>4DFCCBAAFC97C65D80F81B0E4894DA70B64A77E3</key>
-		<string>../..CocoaSoundCloudAPI</string>
+		<string>../..CocoaSoundCloudAPI/</string>
 		<key>EB5674475998A0DD33CD59076628ED3B93CBE9CA</key>
-		<string>../..OAuth2Client</string>
+		<string>../..OAuth2Client/</string>
 		<key>EF51387A5AF28E4351AFB0302884600583A438B5</key>
-		<string>../..JSONKit</string>
+		<string>../..JSONKit/</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/Gooey-Dee-Bee/Ripple-app.git</string>
@@ -52,17 +52,9 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>3F352B067C0DFA70BDAE43020BAFF0492DAEDEA9</string>
-			<key>IDESourceControlWCCName</key>
-			<string>Ripple-App</string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>4DFCCBAAFC97C65D80F81B0E4894DA70B64A77E3</string>
 			<key>IDESourceControlWCCName</key>
-			<string>Ripple-AppCocoaSoundCloudAPI</string>
+			<string>CocoaSoundCloudAPI</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
@@ -70,7 +62,7 @@
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>2F16ABB5253C8A53BD834DD2135B7E534A667AC1</string>
 			<key>IDESourceControlWCCName</key>
-			<string>Ripple-AppCocoaSoundCloudUI</string>
+			<string>CocoaSoundCloudUI</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
@@ -78,7 +70,7 @@
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>EF51387A5AF28E4351AFB0302884600583A438B5</string>
 			<key>IDESourceControlWCCName</key>
-			<string>Ripple-AppJSONKit</string>
+			<string>JSONKit</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
@@ -86,7 +78,7 @@
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>EB5674475998A0DD33CD59076628ED3B93CBE9CA</string>
 			<key>IDESourceControlWCCName</key>
-			<string>Ripple-AppOAuth2Client</string>
+			<string>OAuth2Client</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
@@ -94,7 +86,15 @@
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>48734AC5978E47BCAB24F1E9699B65204C5FF04A</string>
 			<key>IDESourceControlWCCName</key>
-			<string>Ripple-AppOHAttributedLabel</string>
+			<string>OHAttributedLabel</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3F352B067C0DFA70BDAE43020BAFF0492DAEDEA9</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Ripple-App</string>
 		</dict>
 	</array>
 </dict>

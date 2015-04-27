@@ -21,7 +21,16 @@
 @property (strong, nonatomic) NSMutableDictionary* screenSize;
 @property (strong, nonatomic) UIImageView *albumCover;
 @property (strong, nonatomic) NSMutableArray *albumCovers;
-@property (strong, nonatomic) UILabel* nowPlayingSongNameLabel;
+@property (strong, nonatomic) wboPlayerView* playerGui;
+@property (strong, nonatomic) NSDate* trackStart;
+
+// TIMER
+@property NSTimer *timer;
+@property int time;
+- (void) clock;
+- (void) startTimer;
+- (void) countup;
+- (void) updateSlider;
 
 @end
 
@@ -59,15 +68,13 @@
     self.albumCover = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 64.0, 400.0, 200.0)];
     self.albumCover.hidden = YES;
     [self.view addSubview:self.albumCover];
-    
-    self.nowPlayingSongNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 224.0, 375.0, 40.0)];
-    self.nowPlayingSongNameLabel.hidden = YES;
-    self.nowPlayingSongNameLabel.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.4];
-    self.nowPlayingSongNameLabel.textColor = [UIColor whiteColor];
-    self.nowPlayingSongNameLabel.font = [UIFont fontWithName:@"Poiret One" size:18];
-    self.nowPlayingSongNameLabel.textAlignment = NSTextAlignmentCenter;
-    [self.view addSubview: self.nowPlayingSongNameLabel];
 
+//      PLAYER
+    self.playerGui = [[wboPlayerView alloc] initWithFrame:CGRectMake(0.0, 184.0, 375.0, 80.0)];
+    self.playerGui.hidden = YES;
+    self.playerGui.delegate = self;
+    [self.view addSubview:self.playerGui];
+    
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
@@ -157,8 +164,8 @@
     for (NSDictionary* song_id in songs) {
 //        NSLog(@"song id: %@", song_id[@"song_id"]);
         NSDictionary* track = [DataManager getTrackInfo:song_id[@"song_id"]];
-        
         [self.tracks addObject: track];
+        
         
         
         // YOOO
@@ -172,7 +179,7 @@
         
         [self.albumCovers addObject:albumCoverImage];
     }
-    
+    self.tracks = [[[[self.tracks copy] reverseObjectEnumerator] allObjects] mutableCopy];
 //    NSLog(@"tracks: %@", self.tracks);
     [self.tableView reloadData];
 }
@@ -231,13 +238,14 @@
     
     if (self.tableView.frame.origin.y == 264.0) {
         self.albumCover.hidden = NO;
-        self.nowPlayingSongNameLabel.hidden = NO;
         self.albumCover.image = self.albumCovers[indexPath.row];
-        self.nowPlayingSongNameLabel.text = self.tracks[indexPath.row][@"title"];
+        self.playerGui.nowPlayingSongNameLabel.text = self.tracks[indexPath.row][@"title"];
+        self.playerGui.hidden = NO;
     }
     else {
         NSLog(@"%f", self.tableView.frame.origin.y);
     }
+    
     
     // PLAY SONG
     songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
@@ -248,6 +256,13 @@
         // self.player is strong property
         self.player = [[AVAudioPlayer alloc] initWithData:data error:nil];
         [self.player play];
+        self.trackStart = [NSDate date];
+        
+        
+        // TRACK PROGRESS
+        [self startTimer];
+        self.playerGui.trackProgressSlider.maximumValue = self.player.duration;
+        self.playerGui.trackProgressSlider.minimumValue = 0;
     }];
     
     [task resume];
@@ -275,36 +290,59 @@
     return 100;
 }
 
-- (void) updatePlayerBackground
-{
-//    NSString* url = [self.nowPlayingTrack[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"
-//                                                        withString:@"crop"];
-//    UIImage* albumCoverImage = [UIImage imageWithData:
-//                                [NSData dataWithContentsOfURL:
-//                                 [NSURL URLWithString: url]]];
+// Timer
 
-    
-    // SLIDE THE TABLE VIEW DOWN
-//    [self slideTableView];
-    
-    
+- (void) updateSlider
+{
+    [self.playerGui.trackProgressSlider setValue: self.player.currentTime animated:YES];
 }
 
-- (void) slideTableView
+- (void) startTimer
+{
+//    NSLog(@"start timer");
+    self.timer = [NSTimer timerWithTimeInterval:1.0 target:self selector:@selector(countup) userInfo:nil repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSDefaultRunLoopMode];
+}
+
+- (void) clock
 {
 }
 
-- (void) setAlbumCovers
+- (void) countup
 {
-    // do asyncronously
-//    for (NSDictionary* track in self.tracks) {
-//        NSString* url = [track[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
-//        UIImage* albumCoverImage = [UIImage imageWithData:
-//                                    [NSData dataWithContentsOfURL:
-//                                     [NSURL URLWithString: url]]];
-//        
-//        [self.albumCovers addObject:albumCoverImage];
-//    }
+//    NSLog(@"countup");
+    [self.playerGui.trackProgressSlider setValue:self.player.currentTime animated:YES];
+//    NSLog(@"player: %f", self.player.currentTime);
+//    NSLog(@"slider: %f", self.playerGui.trackProgressSlider.value);
+    
+    if (self.player.currentTime == self.player.duration) {
+        [self.timer invalidate];
+    }
+}
+
+// DELEGATE METHODS
+
+- (void) playButtonPressed
+{
+    NSLog(@"Play");
+    [self.player play];
+}
+
+-(void) pauseButtonPressed
+{
+    NSLog(@"Pause");
+    [self.player pause];
+}
+
+- (void) navigateInSong:(float)newTime
+{
+//    NSLog(@"before player: %f", self.player.currentTime);
+//    NSLog(@"before slider: %f", self.playerGui.trackProgressSlider.value);
+    [self.player setCurrentTime:newTime];
+    NSLog(@"player: %f", self.player.currentTime);
+    NSLog(@"newTime: %f", newTime);
+//    NSLog(@"after player: %f", self.player.currentTime);
+//    NSLog(@"after slider: %f", self.playerGui.trackProgressSlider.value);
 }
 
 @end

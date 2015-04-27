@@ -23,6 +23,7 @@
 @property (strong, nonatomic) NSMutableArray *albumCovers;
 @property (strong, nonatomic) wboPlayerView* playerGui;
 @property (strong, nonatomic) NSDate* trackStart;
+@property (strong, nonatomic) UIActivityIndicatorView* loading;
 
 // TIMER
 @property NSTimer *timer;
@@ -74,6 +75,15 @@
     self.playerGui.hidden = YES;
     self.playerGui.delegate = self;
     [self.view addSubview:self.playerGui];
+    
+//      ACTIVITY INDICATOR
+    self.loading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    self.loading.center = CGPointMake(195.0, 160.0);
+    self.loading.hidesWhenStopped = YES;
+    [self.tableView addSubview:self.loading];
+    [self.tableView bringSubviewToFront:self.loading];
+    
+    [self.loading startAnimating];
     
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -180,7 +190,9 @@
         [self.albumCovers addObject:albumCoverImage];
     }
     self.tracks = [[[[self.tracks copy] reverseObjectEnumerator] allObjects] mutableCopy];
+    self.albumCovers = [[[[self.albumCovers copy] reverseObjectEnumerator] allObjects] mutableCopy];
 //    NSLog(@"tracks: %@", self.tracks);
+    [self.loading stopAnimating];
     [self.tableView reloadData];
 }
 
@@ -231,16 +243,25 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
+    [self.timer invalidate];
     
     float tableViewHeight = [self.screenSize[@"height"] floatValue];
     tableViewHeight = 400.0;
     self.tableView.frame = CGRectMake(0, 264.0, 400.0, tableViewHeight);
+    
+    //loader
+    self.loading.center = CGPointMake(195.0, 100.0);
+    [self.albumCover addSubview:self.loading];
+    [self.albumCover bringSubviewToFront:self.loading];
+    [self.loading startAnimating];
     
     if (self.tableView.frame.origin.y == 264.0) {
         self.albumCover.hidden = NO;
         self.albumCover.image = self.albumCovers[indexPath.row];
         self.playerGui.nowPlayingSongNameLabel.text = self.tracks[indexPath.row][@"title"];
         self.playerGui.hidden = NO;
+        self.playerGui.playButton.hidden = YES;
+        self.playerGui.pauseButton.hidden = NO;
     }
     else {
         NSLog(@"%f", self.tableView.frame.origin.y);
@@ -264,6 +285,8 @@
         self.playerGui.trackProgressSlider.maximumValue = self.player.duration;
         self.playerGui.trackProgressSlider.minimumValue = 0;
     }];
+    
+    
     
     [task resume];
 }
@@ -290,7 +313,7 @@
     return 100;
 }
 
-// Timer
+// TIMER
 
 - (void) updateSlider
 {
@@ -299,7 +322,6 @@
 
 - (void) startTimer
 {
-//    NSLog(@"start timer");
     self.timer = [NSTimer timerWithTimeInterval:1.0 target:self selector:@selector(countup) userInfo:nil repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSDefaultRunLoopMode];
 }
@@ -310,10 +332,9 @@
 
 - (void) countup
 {
-//    NSLog(@"countup");
     [self.playerGui.trackProgressSlider setValue:self.player.currentTime animated:YES];
-//    NSLog(@"player: %f", self.player.currentTime);
-//    NSLog(@"slider: %f", self.playerGui.trackProgressSlider.value);
+    [self.playerGui setSongDuration:self.playerGui.trackProgressSlider.value];
+    [self.loading stopAnimating];
     
     if (self.player.currentTime == self.player.duration) {
         [self.timer invalidate];

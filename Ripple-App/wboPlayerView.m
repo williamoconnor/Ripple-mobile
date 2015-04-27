@@ -10,10 +10,10 @@
 
 @interface wboPlayerView()
 
-@property (strong, nonatomic) UIButton *playButton;
-@property (strong, nonatomic) UIButton *pauseButton;
-
 - (void) togglePlayButton;
+@property int hours;
+@property int minutes;
+@property int seconds;
 
 @end
 
@@ -48,14 +48,22 @@
         [self addSubview:self.pauseButton];
         
         // PROGRESS SLIDER
-        self.trackProgressSlider = [[UISlider alloc] initWithFrame:CGRectMake(40.0, 40.0, 315.0, 20.0)];
+        self.trackProgressSlider = [[UISlider alloc] initWithFrame:CGRectMake(75.0, 40.0, 290.0, 20.0)];
         self.trackProgressSlider.minimumTrackTintColor = [UIColor colorWithRed:0x48/255.0 green:0x98/255.0 blue:0xBD/255.0 alpha:1.0];
         self.trackProgressSlider.maximumTrackTintColor = [UIColor colorWithRed:0xCC/255.0 green:0xCC/255.0 blue:0xCC/255.0 alpha:1.0];
         self.trackProgressSlider.continuous = YES;
         
-        [self.trackProgressSlider setThumbImage:[UIImage imageNamed:@"circle.png"] forState:UIControlStateNormal];
+        [self.trackProgressSlider setThumbImage:[UIImage imageNamed:@"rectangle.png"] forState:UIControlStateNormal];
         [self.trackProgressSlider addTarget:self action:@selector(sliderValueChanged) forControlEvents:UIControlEventValueChanged];
         [self addSubview:self.trackProgressSlider];
+        
+        // TIME INDICATOR
+        self.timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(37.5, 40.0, 35.0, 20.0)];
+        self.timeLabel.font = [UIFont fontWithName:@"Poiret One" size:8];
+        self.timeLabel.textColor = [UIColor whiteColor];
+        self.timeLabel.text = @"00:00";
+        [self addSubview:self.timeLabel];
+        [self bringSubviewToFront:self.timeLabel];
         
     }
     return self;
@@ -90,6 +98,45 @@
         self.playButton.hidden = YES;
         self.pauseButton.hidden = NO;
     }
+}
+
+- (NSString*) convertSecondsToTimeString:(float)duration
+{
+    NSString* timeString;
+    
+    int hours = duration/(3600);
+    int minutes = (duration - (3600)*hours)/60;
+    int seconds = duration - ((3600)*hours) - (60*minutes);
+    
+    if (hours > 0) {
+        timeString = [NSString stringWithFormat:@"%@:%@:%@", [self intToTimeString:hours], [self intToTimeString:minutes], [self intToTimeString:seconds]];
+    }
+    else {
+        timeString = [NSString stringWithFormat:@"%@ : %@", [self intToTimeString:minutes], [self intToTimeString:seconds]];
+    }
+    
+    return timeString;
+}
+
+- (void) setSongDuration:(float)duration
+{
+    NSString* time = [self convertSecondsToTimeString:duration];
+    
+    [self.timeLabel setText:time];
+}
+
+- (NSString*) intToTimeString:(int)timeInt
+{
+    NSString* timeString;
+    
+    if (timeInt < 10) {
+        timeString = [NSString stringWithFormat:@"0%i", timeInt];
+    }
+    else {
+        timeString = [NSString stringWithFormat:@"%i", timeInt];
+    }
+    
+    return timeString;
 }
 
 @end

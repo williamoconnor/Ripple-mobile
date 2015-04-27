@@ -22,6 +22,10 @@
 @property (strong, nonatomic) UILabel* nowPlayingSongNameLabel;
 @property (weak, nonatomic) id <wboPlayerDelegate> delegate;
 @property (strong, nonatomic) UISlider *trackProgressSlider;
+@property (strong, nonatomic) UIButton *playButton;
+@property (strong, nonatomic) UIButton *pauseButton;
+@property (strong, nonatomic) UILabel *timeLabel;
+- (void) setSongDuration: (float)duration;
 
 
 @end

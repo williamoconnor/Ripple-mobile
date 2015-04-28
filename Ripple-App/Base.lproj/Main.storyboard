@@ -29,7 +29,7 @@
                                     </tableViewCell>
                                 </prototypes>
                                 <variation key="widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="0.0" y="64" width="400" height="580"/>
+                                    <rect key="frame" x="0.0" y="64" width="320" height="480"/>
                                 </variation>
                             </tableView>
                         </subviews>
@@ -47,7 +47,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="iwx-u3-f5b"/>
                     <connections>
-                        <outlet property="tableView" destination="lDf-Sg-Z6d" id="WfO-l9-yXI"/>
+                        <outlet property="tableView" destination="lDf-Sg-Z6d" id="Qx7-El-Vw3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>

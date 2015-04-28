@@ -13,6 +13,8 @@
 
 @interface ViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, CLLocationManagerDelegate, wboPlayerDelegate>
 
+extern NSMutableDictionary* screenSize;
+
 - (void) pauseButtonPressed;
 - (void) playButtonPressed;
 

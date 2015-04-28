@@ -14,6 +14,7 @@
 @property int hours;
 @property int minutes;
 @property int seconds;
+@property NSDictionary* screen;
 
 @end
 
@@ -23,10 +24,12 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.screen = [[NSUserDefaults standardUserDefaults] objectForKey:@"screen"];
+        
         self.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.4];
         
         // TRACK NAME
-        self.nowPlayingSongNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, 375.0, 40.0)];
+        self.nowPlayingSongNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, [self.screen[@"width"] doubleValue], 40.0)];
         self.nowPlayingSongNameLabel.textColor = [UIColor whiteColor];
         self.nowPlayingSongNameLabel.font = [UIFont fontWithName:@"Poiret One" size:18];
         self.nowPlayingSongNameLabel.textAlignment = NSTextAlignmentCenter;
@@ -48,7 +51,7 @@
         [self addSubview:self.pauseButton];
         
         // PROGRESS SLIDER
-        self.trackProgressSlider = [[UISlider alloc] initWithFrame:CGRectMake(75.0, 40.0, 290.0, 20.0)];
+        self.trackProgressSlider = [[UISlider alloc] initWithFrame:CGRectMake(75.0, 40.0, 0.75*[self.screen[@"width"] doubleValue], 20.0)];
         self.trackProgressSlider.minimumTrackTintColor = [UIColor colorWithRed:0x48/255.0 green:0x98/255.0 blue:0xBD/255.0 alpha:1.0];
         self.trackProgressSlider.maximumTrackTintColor = [UIColor colorWithRed:0xCC/255.0 green:0xCC/255.0 blue:0xCC/255.0 alpha:1.0];
         self.trackProgressSlider.continuous = YES;

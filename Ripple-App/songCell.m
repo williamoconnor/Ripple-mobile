@@ -10,6 +10,8 @@
 
 @interface songCell()
 
+@property (strong, nonatomic) NSDictionary* screen;
+
 @end
 
 @implementation songCell
@@ -21,12 +23,12 @@
     if (self) {
         // Initialization code
         
-    
+        self.screen = [[NSUserDefaults standardUserDefaults] objectForKey:@"screen"];
         
         //set the height of the selected cell in the tableview
         
-        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(120.0, 10.0, 220.0, 60.0)];
-        self.artistLabel = [[UILabel alloc] initWithFrame:CGRectMake(120.0, 75.0, 220.0, 15.0)];
+        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(120.0, 10.0, [self.screen[@"width"] doubleValue]*0.58, 60.0)];
+        self.artistLabel = [[UILabel alloc] initWithFrame:CGRectMake(120.0, 75.0, [self.screen[@"width"] doubleValue]*0.58, 15.0)];
         self.albumCover = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 0.0, 100.0, 100.0)];
         self.titleLabel.numberOfLines = 0;
         self.artistLabel.numberOfLines = 0;

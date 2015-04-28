@@ -54,6 +54,14 @@
     return _albumCovers;
 }
 
+-(NSMutableDictionary*)screenSize
+{
+    if (!_screenSize) {
+        _screenSize = [[NSMutableDictionary alloc] init];
+    }
+    return _screenSize;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib
@@ -63,23 +71,30 @@
     CGFloat screenHeight = screenRect.size.height;
     NSNumber *height = [[NSNumber alloc] initWithDouble:screenHeight];
     NSNumber *width = [[NSNumber alloc] initWithDouble:screenWidth];
+    NSLog(@"width: %@", width);
     
     self.screenSize[@"height"] = height;
     self.screenSize[@"width"] = width;
     
-    self.albumCover = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 64.0, 400.0, 200.0)];
+    [[NSUserDefaults standardUserDefaults] setObject:self.screenSize forKey:@"screen"];
+    
+
+    
+    self.albumCover = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 64.0, [self.screenSize[@"width"] doubleValue], 200.0)];
     self.albumCover.hidden = YES;
     [self.view addSubview:self.albumCover];
 
 //      PLAYER
-    self.playerGui = [[wboPlayerView alloc] initWithFrame:CGRectMake(0.0, 184.0, 375.0, 80.0)];
+    self.playerGui = [[wboPlayerView alloc] initWithFrame:CGRectMake(0.0, 184.0, [self.screenSize[@"width"] doubleValue], 80.0)];
     self.playerGui.hidden = YES;
     self.playerGui.delegate = self;
     [self.view addSubview:self.playerGui];
     
 //      ACTIVITY INDICATOR
     self.loading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    self.loading.center = CGPointMake(195.0, 160.0);
+    double x = [self.screenSize[@"width"] doubleValue]/2;
+    self.loading.center = CGPointMake(x, 160.0);
+    NSLog(@"center: %f", self.loading.center.x);
     self.loading.hidesWhenStopped = YES;
     [self.tableView addSubview:self.loading];
     [self.tableView bringSubviewToFront:self.loading];
@@ -253,12 +268,12 @@
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
     [self.timer invalidate];
     
-    float tableViewHeight = [self.screenSize[@"height"] floatValue];
-    tableViewHeight = 400.0;
-    self.tableView.frame = CGRectMake(0, 264.0, 400.0, tableViewHeight);
+    float tableViewHeight = [self.screenSize[@"height"] floatValue] - 264.0;
+    self.tableView.frame = CGRectMake(0, 264.0, [self.screenSize[@"width"] doubleValue], tableViewHeight);
     
     //loader
-    self.loading.center = CGPointMake(195.0, 100.0);
+    double x = [self.screenSize[@"width"] doubleValue]/2;
+    self.loading.center = CGPointMake(x, 100.0);
     [self.albumCover addSubview:self.loading];
     [self.albumCover bringSubviewToFront:self.loading];
     [self.loading startAnimating];
@@ -335,6 +350,7 @@
     if (self.player.currentTime > self.player.duration-1) {
         [self.timer invalidate];
         if (self.nowPlayingTrackIndex < self.tracks.count - 1) {
+            [self.loading startAnimating];
             [self playNextSong];
         }
     }
@@ -365,6 +381,35 @@
     NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:trackURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         // self.player is strong property
         self.player = [[AVAudioPlayer alloc] initWithData:data error:nil];
+        
+        
+        //get your app's audioSession singleton object
+        AVAudioSession* session = [AVAudioSession sharedInstance];
+        
+        //error handling
+        BOOL success;
+        NSError* session_error;
+        
+        //set the audioSession category.
+        //Needs to be Record or PlayAndRecord to use audioRouteOverride:
+        
+        success = [session setCategory:AVAudioSessionCategoryPlayback
+                                 error:&session_error];
+        
+        if (!success)  NSLog(@"AVAudioSession error setting category:%@",session_error);
+        
+        //set the audioSession override
+//        success = [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker
+//                                             error:&error];
+        if (!success)  NSLog(@"AVAudioSession error overrideOutputAudioPort:%@",session_error);
+        
+        //activate the audio session
+        success = [session setActive:YES error:&session_error];
+        if (!success) NSLog(@"AVAudioSession error activating: %@",session_error);
+        else NSLog(@"audioSession active");
+        [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+        
+        
         [self.player play];
         self.trackStart = [NSDate date];
         

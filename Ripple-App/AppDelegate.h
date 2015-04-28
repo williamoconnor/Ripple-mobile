@@ -11,7 +11,8 @@
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-
+//@property (strong, nonatomic) NSNumber *screenHeight;
+//@property (strong, nonatomic) NSNumber *screenWidth;
 
 @end
 

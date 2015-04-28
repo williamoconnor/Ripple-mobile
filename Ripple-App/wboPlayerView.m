@@ -58,10 +58,12 @@
         [self addSubview:self.trackProgressSlider];
         
         // TIME INDICATOR
-        self.timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(37.5, 40.0, 35.0, 20.0)];
+        self.timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(35.0, 40.0, 37.5, 20.0)];
         self.timeLabel.font = [UIFont fontWithName:@"Poiret One" size:8];
+        self.timeLabel.textAlignment = NSTextAlignmentCenter;
         self.timeLabel.textColor = [UIColor whiteColor];
-        self.timeLabel.text = @"00:00";
+        self.timeLabel.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.4];
+        self.timeLabel.text = @"00 : 00";
         [self addSubview:self.timeLabel];
         [self bringSubviewToFront:self.timeLabel];
         
@@ -83,7 +85,6 @@
 
 - (void) sliderValueChanged
 {
-    NSLog(@"%f", self.trackProgressSlider.value);  // it registers
     [self.trackProgressSlider setValue:self.trackProgressSlider.value animated:YES];
     [self.delegate navigateInSong:self.trackProgressSlider.value];
 }

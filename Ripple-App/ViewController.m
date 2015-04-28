@@ -24,6 +24,7 @@
 @property (strong, nonatomic) wboPlayerView* playerGui;
 @property (strong, nonatomic) NSDate* trackStart;
 @property (strong, nonatomic) UIActivityIndicatorView* loading;
+@property NSInteger nowPlayingTrackIndex;
 
 // TIMER
 @property NSTimer *timer;
@@ -257,8 +258,6 @@
     
     if (self.tableView.frame.origin.y == 264.0) {
         self.albumCover.hidden = NO;
-        self.albumCover.image = self.albumCovers[indexPath.row];
-        self.playerGui.nowPlayingSongNameLabel.text = self.tracks[indexPath.row][@"title"];
         self.playerGui.hidden = NO;
         self.playerGui.playButton.hidden = YES;
         self.playerGui.pauseButton.hidden = NO;
@@ -271,24 +270,9 @@
     // PLAY SONG
     songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
-
-    NSURL *trackURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://api.soundcloud.com/tracks/%@/stream?client_id=%@", track[@"id"], kClientId]];
-    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:trackURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        // self.player is strong property
-        self.player = [[AVAudioPlayer alloc] initWithData:data error:nil];
-        [self.player play];
-        self.trackStart = [NSDate date];
-        
-        
-        // TRACK PROGRESS
-        [self startTimer];
-        self.playerGui.trackProgressSlider.maximumValue = self.player.duration;
-        self.playerGui.trackProgressSlider.minimumValue = 0;
-    }];
-    
-    
-    
-    [task resume];
+    self.nowPlayingTrackIndex = indexPath.row;
+    NSLog(@"index path: %ld", self.nowPlayingTrackIndex);
+    [self playSong:track];
 }
 
 -(void)tableView:(UITableView *)tableView didHighlightRowAtIndexPath:(NSIndexPath *)indexPath
@@ -336,8 +320,11 @@
     [self.playerGui setSongDuration:self.playerGui.trackProgressSlider.value];
     [self.loading stopAnimating];
     
-    if (self.player.currentTime == self.player.duration) {
+    if (self.player.currentTime > self.player.duration-1) {
         [self.timer invalidate];
+        if (self.nowPlayingTrackIndex < self.tracks.count - 1) {
+            [self playNextSong];
+        }
     }
 }
 
@@ -357,13 +344,45 @@
 
 - (void) navigateInSong:(float)newTime
 {
-//    NSLog(@"before player: %f", self.player.currentTime);
-//    NSLog(@"before slider: %f", self.playerGui.trackProgressSlider.value);
     [self.player setCurrentTime:newTime];
-    NSLog(@"player: %f", self.player.currentTime);
-    NSLog(@"newTime: %f", newTime);
-//    NSLog(@"after player: %f", self.player.currentTime);
-//    NSLog(@"after slider: %f", self.playerGui.trackProgressSlider.value);
+}
+
+- (void) playSong: (NSDictionary*)track
+{
+    NSURL *trackURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://api.soundcloud.com/tracks/%@/stream?client_id=%@", track[@"id"], kClientId]];
+    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:trackURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        // self.player is strong property
+        self.player = [[AVAudioPlayer alloc] initWithData:data error:nil];
+        [self.player play];
+        self.trackStart = [NSDate date];
+        
+        // TRACK PROGRESS
+        [self startTimer];
+        self.playerGui.trackProgressSlider.maximumValue = self.player.duration;
+        self.playerGui.trackProgressSlider.minimumValue = 0;
+    }];
+    
+    [task resume];
+    
+    self.playerGui.nowPlayingSongNameLabel.text = track[@"title"];
+    self.albumCover.image = self.albumCovers[self.nowPlayingTrackIndex];
+}
+
+- (void) playNextSong
+{
+    self.nowPlayingTrackIndex += 1;
+    
+    //adjust cell selected
+    NSIndexPath *lastSongCellPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex-1) inSection:0];
+    NSIndexPath *thisSongCellPath = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
+    UITableViewCell* thisSongCell = [self.tableView cellForRowAtIndexPath:thisSongCellPath];
+    UITableViewCell* lastSongCell = [self.tableView cellForRowAtIndexPath:lastSongCellPath];
+    thisSongCell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
+    lastSongCell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
+    
+    // play the song
+    [self playSong:self.tracks[self.nowPlayingTrackIndex]];
+    
 }
 
 @end

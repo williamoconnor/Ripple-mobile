@@ -86,11 +86,17 @@
     
     [self.loading startAnimating];
     
+    // TABLEVIEW
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     self.view.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     [self.tableView registerClass:[songCell class] forCellReuseIdentifier:@"cell"];
+    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+    [refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
+    [self.tableView addSubview:refreshControl];
+    
+    // NAV BAR
     self.navigationItem.title = @"Ripple";
     [self.navigationController.navigationBar setTitleTextAttributes:
      [NSDictionary dictionaryWithObjectsAndKeys:
@@ -98,6 +104,7 @@
       [UIFont fontWithName:@"Cookie" size:44],
        NSFontAttributeName, nil]];
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0x48/255.0 green:0x98/255.0 blue:0xBD/255.0 alpha:1.0];
+    
     [self setUpLocation];
 }
 
@@ -295,6 +302,11 @@
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 100;
+}
+
+- (void)refresh:(UIRefreshControl *)refreshControl {
+    [self.tableView reloadData];
+    [refreshControl endRefreshing];
 }
 
 // TIMER

@@ -568,10 +568,21 @@
             [self pauseButtonPressed];
             [self.playerGui togglePlayButton];
         }
-//        else if (event.subtype == UIEventSubtypeRemoteControlTogglePlayPause)
-//        {
-//            [self togglePlayPause]; //This method will handle the toggling.
-//        }
+        else if (event.subtype == UIEventSubtypeRemoteControlNextTrack)
+        {
+            [self playNextSong];
+//            if (self.nowPlayingTrackIndex < [self.tracks count]) {
+//                NSIndexPath* nextSongPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex+1) inSection:0];
+//                [self selectRow:self.tableView didSelectRowAtIndexPath:nextSongPath];
+//            }
+        }
+        else if (event.subtype == UIEventSubtypeRemoteControlPreviousTrack)
+        {
+            if (self.nowPlayingTrackIndex > 0) {
+                NSIndexPath* prevSongPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex-1) inSection:0];
+                [self selectRow:self.tableView didSelectRowAtIndexPath:prevSongPath];
+            }
+        }
     }
 }
 

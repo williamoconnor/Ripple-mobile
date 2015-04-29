@@ -22,7 +22,6 @@
 @property (strong, nonatomic) UIImageView *albumCover;
 @property (strong, nonatomic) NSMutableArray *albumCovers;
 @property (strong, nonatomic) wboPlayerView* playerGui;
-@property (strong, nonatomic) NSDate* trackStart;
 @property (strong, nonatomic) UIActivityIndicatorView* loading;
 @property NSInteger nowPlayingTrackIndex;
 
@@ -66,6 +65,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib
     
+    self.nowPlayingTrackIndex = -1;
+    
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width;
     CGFloat screenHeight = screenRect.size.height;
@@ -104,6 +105,7 @@
     // TABLEVIEW
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
+//    self.tableView.frame = CGRectMake(0.0, 0.0, [self.screenSize[@"width"] doubleValue], [self.screenSize[@"height"] doubleValue]);
     self.tableView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     self.view.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     [self.tableView registerClass:[songCell class] forCellReuseIdentifier:@"cell"];
@@ -131,7 +133,6 @@
     self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
     
     if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
-        NSLog(@"Hey bitch");
         [self.locationManager requestWhenInUseAuthorization];
         [self.locationManager startUpdatingLocation];
     }
@@ -140,7 +141,6 @@
 
 -(void) locationManager: (CLLocationManager *)manager didUpdateToLocation: (CLLocation *) newLocation
            fromLocation: (CLLocation *) oldLocation {
-    NSLog(@"HERE");
     CLLocation *location = newLocation;
     // Configure the new event with information from the location
     CLLocationCoordinate2D coordinate = [location coordinate];
@@ -164,7 +164,6 @@
 
 -(void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    NSLog(@"What the fukc");
     switch (status) {
         case kCLAuthorizationStatusNotDetermined:
         case kCLAuthorizationStatusRestricted:
@@ -192,10 +191,8 @@
     location[@"longitude"] = tempNumber2;
     
     NSDictionary* songs = [DataManager getSongList:location];
-//    NSLog(@"Songs: %@", songs);
     
     for (NSDictionary* song_id in songs) {
-//        NSLog(@"song id: %@", song_id[@"song_id"]);
         NSDictionary* track = [DataManager getTrackInfo:song_id[@"song_id"]];
         [self.tracks addObject: track];
         
@@ -214,7 +211,6 @@
     }
     self.tracks = [[[[self.tracks copy] reverseObjectEnumerator] allObjects] mutableCopy];
     self.albumCovers = [[[[self.albumCovers copy] reverseObjectEnumerator] allObjects] mutableCopy];
-//    NSLog(@"tracks: %@", self.tracks);
     [self.loading stopAnimating];
     [self.tableView reloadData];
 }
@@ -238,7 +234,6 @@
 //     TABLEVIEW
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSLog(@"%lu", (unsigned long)[self.tracks count]);
     return [self.tracks count];
 }
 
@@ -256,9 +251,12 @@
     [cell setData:track];
     
     //to change background color of selected cell
-    UIView *backgroundView          = [[UIView alloc] init];
-    backgroundView.backgroundColor  = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
-    cell.selectedBackgroundView     = backgroundView;
+    if (indexPath.row == self.nowPlayingTrackIndex) {
+        cell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
+    }
+    else {
+        cell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
+    }
     
     return cell;
 }
@@ -266,6 +264,42 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
+    NSLog(@"track: %@", track[@"title"]);
+    [self.timer invalidate];
+    
+    float tableViewHeight = [self.screenSize[@"height"] floatValue] - 264.0;
+    self.tableView.frame = CGRectMake(0, 264.0, [self.screenSize[@"width"] doubleValue], tableViewHeight);
+    
+    //loader
+    double x = [self.screenSize[@"width"] doubleValue]/2;
+    self.loading.center = CGPointMake(x, 100.0);
+    [self.albumCover addSubview:self.loading];
+    [self.albumCover bringSubviewToFront:self.loading];
+    [self.loading startAnimating];
+    
+    if (self.tableView.frame.origin.y == 264.0) {
+        self.albumCover.hidden = NO;
+        self.playerGui.hidden = NO;
+        self.playerGui.playButton.hidden = YES;
+        self.playerGui.pauseButton.hidden = NO;
+    }
+    else {
+        NSLog(@"%f", self.tableView.frame.origin.y);
+    }
+    
+    
+    // PLAY SONG
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
+    self.nowPlayingTrackIndex = indexPath.row;
+    NSLog(@"index path: %ld", self.nowPlayingTrackIndex);
+    [self playSong:track];
+}
+
+-(void)selectRow:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    self.nowPlayingTrack = [self.tracks objectAtIndex:indexPath.row];
+    NSLog(@"track: %@", self.nowPlayingTrack[@"title"]);
     [self.timer invalidate];
     
     float tableViewHeight = [self.screenSize[@"height"] floatValue] - 264.0;
@@ -293,33 +327,50 @@
     songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
     self.nowPlayingTrackIndex = indexPath.row;
-    NSLog(@"index path: %ld", self.nowPlayingTrackIndex);
-    [self playSong:track];
+    NSLog(@"index path track: %@", self.tracks[self.nowPlayingTrackIndex][@"title"]);
+    [self playSong:self.nowPlayingTrack];
 }
+
 
 -(void)tableView:(UITableView *)tableView didHighlightRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
+    cell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
 }
 
 -(void)tableView:(UITableView *)tableView didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
+    cell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
 }
 
 -(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // STYLE
     songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.selected = NO;
+//    cell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
+}
+
+-(void)deselectRow:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // STYLE
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
 }
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 100;
 }
 
 - (void)refresh:(UIRefreshControl *)refreshControl {
+    NSInteger oldNumSongs = [self.tracks count];
+    [self loadSongs];
+    NSInteger offset = 0;
+    if (self.nowPlayingTrackIndex > -1) { // a song is playing
+        offset = [self.tracks count] - oldNumSongs;
+    }
+    self.nowPlayingTrackIndex += offset;
     [self.tableView reloadData];
     [refreshControl endRefreshing];
 }
@@ -350,8 +401,13 @@
     if (self.player.currentTime > self.player.duration-1) {
         [self.timer invalidate];
         if (self.nowPlayingTrackIndex < self.tracks.count - 1) {
-            [self.loading startAnimating];
             [self playNextSong];
+        }
+        else {
+            NSIndexPath *thisSongCellPath = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex+1 inSection:0];
+            [self.tableView deselectRowAtIndexPath:thisSongCellPath animated:YES];
+//            UITableViewCell* thisSongCell = [self.tableView cellForRowAtIndexPath:thisSongCellPath];
+//            thisSongCell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
         }
     }
 }
@@ -411,7 +467,29 @@
         
         
         [self.player play];
-        self.trackStart = [NSDate date];
+        // MEDIA PLAYER
+        
+        // solution 2
+        UIImage *albumArtImg = self.albumCovers[self.nowPlayingTrackIndex];
+        MPMediaItemArtwork* albumArt = [[MPMediaItemArtwork alloc] initWithImage:albumArtImg];
+        
+        NSString* artist = @"";
+        if (![track[@"label_name"] isEqual:[NSNull null]] && [track[@"label_name"] length] > 0){
+            artist = track[@"label_name"];
+        }
+        else {
+            artist = track[@"user"][@"permalink"];
+        }
+        NSNumber* duration = [NSNumber numberWithFloat:self.player.duration];
+        
+        NSDictionary *info = @{ MPMediaItemPropertyArtist: artist,
+                                MPMediaItemPropertyAlbumTitle: @"",
+                                MPMediaItemPropertyTitle: track[@"title"],
+                                MPMediaItemPropertyPlaybackDuration: duration,
+                                MPMediaItemPropertyArtwork: albumArt
+                                };
+        
+        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = info;
         
         // TRACK PROGRESS
         [self startTimer];
@@ -427,19 +505,55 @@
 
 - (void) playNextSong
 {
-    self.nowPlayingTrackIndex += 1;
+    // deselect the last one
+    NSIndexPath *lastSongCellPath = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
+    [self deselectRow:self.tableView didDeselectRowAtIndexPath:lastSongCellPath];
     
-    //adjust cell selected
-    NSIndexPath *lastSongCellPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex-1) inSection:0];
-    NSIndexPath *thisSongCellPath = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
-    UITableViewCell* thisSongCell = [self.tableView cellForRowAtIndexPath:thisSongCellPath];
-    UITableViewCell* lastSongCell = [self.tableView cellForRowAtIndexPath:lastSongCellPath];
-    thisSongCell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
-    lastSongCell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
+    // select next cell
+    NSLog(@"nextTrack: %@", self.tracks[self.nowPlayingTrackIndex+1][@"title"]);
+    NSIndexPath *thisSongCellPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex+1) inSection:0];
+    [self selectRow:self.tableView didSelectRowAtIndexPath:thisSongCellPath];
     
-    // play the song
-    [self playSong:self.tracks[self.nowPlayingTrackIndex]];
+
     
+    
+    // old stuff
+//    self.nowPlayingTrackIndex += 1;
+//    
+//    // adjust cell selected -- THIS AINT WORKIN
+//    
+//    // set last song to regular background
+//    NSIndexPath *lastSongCellPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex-1) inSection:0];
+//    UITableViewCell* lastSongCell = [self.tableView cellForRowAtIndexPath:lastSongCellPath];
+//    lastSongCell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
+//    
+//    // set next song to selected background
+////    NSIndexPath *thisSongCellPath = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
+////    UITableViewCell* thisSongCell = [self.tableView cellForRowAtIndexPath:thisSongCellPath];
+////    thisSongCell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
+//    
+//    // play the song
+//    [self playSong:self.tracks[self.nowPlayingTrackIndex]];
+    
+}
+
+- (void)remoteControlReceivedWithEvent:(UIEvent *)event {
+    //if it is a remote control event handle it correctly
+    if (event.type == UIEventTypeRemoteControl)
+    {
+        if (event.subtype == UIEventSubtypeRemoteControlPlay)
+        {
+            [self playButtonPressed];
+        }
+        else if (event.subtype == UIEventSubtypeRemoteControlPause)
+        {
+            [self pauseButtonPressed];
+        }
+//        else if (event.subtype == UIEventSubtypeRemoteControlTogglePlayPause)
+//        {
+//            [self togglePlayPause]; //This method will handle the toggling.
+//        }
+    }
 }
 
 @end

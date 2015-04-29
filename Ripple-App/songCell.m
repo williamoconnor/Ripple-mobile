@@ -41,7 +41,8 @@
         [self.contentView addSubview:self.artistLabel];
         [self.contentView addSubview:self.albumCover];
         
-        self.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
+//        self.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
+        
     }
     
     return self;
@@ -50,7 +51,7 @@
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:NO];
-//    self.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
+    self.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
 }
 
 -(void) setData:(NSDictionary *)track
@@ -71,7 +72,7 @@
                              [NSURL URLWithString: track[@"artwork_url"]]]];
         }
         else {
-            albumCoverImage = [UIImage imageNamed:@"NowPlaying.jpg"];
+            albumCoverImage = [UIImage imageNamed:@"NowPlaying.png"];
         }
         
         self.albumCover.image = albumCoverImage;

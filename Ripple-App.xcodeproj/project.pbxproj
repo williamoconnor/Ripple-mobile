@@ -35,6 +35,12 @@
 		FE28282F1AE96010005B83A3 /* PoiretOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FE28282E1AE95CFE005B83A3 /* PoiretOne-Regular.ttf */; };
 		FE6A98451AEEB076009D37F1 /* progressMarker.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A98441AEEB076009D37F1 /* progressMarker.png */; };
 		FE6A984A1AEEB4CE009D37F1 /* rectangle.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A98491AEEB4CE009D37F1 /* rectangle.png */; };
+		FE6A984D1AF10B82009D37F1 /* Icon-40@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A984B1AF10B82009D37F1 /* Icon-40@3x.png */; };
+		FE6A984E1AF10B82009D37F1 /* Icon-60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A984C1AF10B82009D37F1 /* Icon-60@2x.png */; };
+		FE6A98501AF10BBE009D37F1 /* Icon-60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A984F1AF10BBE009D37F1 /* Icon-60@3x.png */; };
+		FE6A98521AF10CE2009D37F1 /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A98511AF10CE2009D37F1 /* Icon-Small@2x.png */; };
+		FE6A98541AF10D44009D37F1 /* NowPlaying.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A98531AF10D44009D37F1 /* NowPlaying.png */; };
+		FE6A98601AF15C2B009D37F1 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE6A985F1AF15C2B009D37F1 /* MediaPlayer.framework */; };
 		FEA77A1A1AED53E7000CBFD3 /* player_pause.png in Resources */ = {isa = PBXBuildFile; fileRef = FEA77A161AED53E7000CBFD3 /* player_pause.png */; };
 		FEA77A1B1AED53E7000CBFD3 /* player_pause@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FEA77A171AED53E7000CBFD3 /* player_pause@2x.png */; };
 		FEA77A1C1AED53E7000CBFD3 /* player_play.png in Resources */ = {isa = PBXBuildFile; fileRef = FEA77A181AED53E7000CBFD3 /* player_play.png */; };
@@ -51,7 +57,6 @@
 		FEA77A4C1AEDFE1D000CBFD3 /* whitePlay.png in Resources */ = {isa = PBXBuildFile; fileRef = FEA77A491AEDFE1D000CBFD3 /* whitePlay.png */; };
 		FEA77A501AEDFF17000CBFD3 /* whiteCircle.png in Resources */ = {isa = PBXBuildFile; fileRef = FEA77A4F1AEDFF17000CBFD3 /* whiteCircle.png */; };
 		FEA77A521AEE00BB000CBFD3 /* circle.png in Resources */ = {isa = PBXBuildFile; fileRef = FEA77A511AEE00BB000CBFD3 /* circle.png */; };
-		FED837991AE97724009630C3 /* NowPlaying.png in Resources */ = {isa = PBXBuildFile; fileRef = FED837981AE97724009630C3 /* NowPlaying.png */; };
 		FED837A01AE98BDB009630C3 /* Cookie-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FED8379F1AE98AF8009630C3 /* Cookie-Regular.ttf */; };
 		FED837A21AE99718009630C3 /* launch.png in Resources */ = {isa = PBXBuildFile; fileRef = FED837A11AE99718009630C3 /* launch.png */; };
 /* End PBXBuildFile section */
@@ -211,6 +216,12 @@
 		FE28282E1AE95CFE005B83A3 /* PoiretOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "PoiretOne-Regular.ttf"; path = "../PoiretOne-Regular.ttf"; sourceTree = "<group>"; };
 		FE6A98441AEEB076009D37F1 /* progressMarker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressMarker.png; sourceTree = "<group>"; };
 		FE6A98491AEEB4CE009D37F1 /* rectangle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rectangle.png; sourceTree = "<group>"; };
+		FE6A984B1AF10B82009D37F1 /* Icon-40@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40@3x.png"; sourceTree = "<group>"; };
+		FE6A984C1AF10B82009D37F1 /* Icon-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60@2x.png"; sourceTree = "<group>"; };
+		FE6A984F1AF10BBE009D37F1 /* Icon-60@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60@3x.png"; sourceTree = "<group>"; };
+		FE6A98511AF10CE2009D37F1 /* Icon-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small@2x.png"; sourceTree = "<group>"; };
+		FE6A98531AF10D44009D37F1 /* NowPlaying.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NowPlaying.png; sourceTree = "<group>"; };
+		FE6A985F1AF15C2B009D37F1 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		FEA77A161AED53E7000CBFD3 /* player_pause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = player_pause.png; sourceTree = "<group>"; };
 		FEA77A171AED53E7000CBFD3 /* player_pause@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "player_pause@2x.png"; sourceTree = "<group>"; };
 		FEA77A181AED53E7000CBFD3 /* player_play.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = player_play.png; sourceTree = "<group>"; };
@@ -228,7 +239,6 @@
 		FEA77A491AEDFE1D000CBFD3 /* whitePlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whitePlay.png; sourceTree = "<group>"; };
 		FEA77A4F1AEDFF17000CBFD3 /* whiteCircle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whiteCircle.png; sourceTree = "<group>"; };
 		FEA77A511AEE00BB000CBFD3 /* circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = circle.png; sourceTree = "<group>"; };
-		FED837981AE97724009630C3 /* NowPlaying.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = NowPlaying.png; path = ../NowPlaying.png; sourceTree = "<group>"; };
 		FED8379F1AE98AF8009630C3 /* Cookie-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cookie-Regular.ttf"; sourceTree = "<group>"; };
 		FED837A11AE99718009630C3 /* launch.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = launch.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -238,6 +248,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE6A98601AF15C2B009D37F1 /* MediaPlayer.framework in Frameworks */,
 				FE28280A1AE870B7005B83A3 /* AddressBook.framework in Frameworks */,
 				FE28280B1AE870B7005B83A3 /* AddressBookUI.framework in Frameworks */,
 				FE28280C1AE870B7005B83A3 /* AVFoundation.framework in Frameworks */,
@@ -267,6 +278,7 @@
 		FE28278F1AE8690D005B83A3 = {
 			isa = PBXGroup;
 			children = (
+				FE6A985F1AF15C2B009D37F1 /* MediaPlayer.framework */,
 				FE2828121AE87114005B83A3 /* SoundCloud.bundle */,
 				FE2828021AE870B7005B83A3 /* AddressBook.framework */,
 				FE2828031AE870B7005B83A3 /* AddressBookUI.framework */,
@@ -318,6 +330,11 @@
 		FE28279B1AE8690D005B83A3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				FE6A98531AF10D44009D37F1 /* NowPlaying.png */,
+				FE6A98511AF10CE2009D37F1 /* Icon-Small@2x.png */,
+				FE6A984F1AF10BBE009D37F1 /* Icon-60@3x.png */,
+				FE6A984B1AF10B82009D37F1 /* Icon-40@3x.png */,
+				FE6A984C1AF10B82009D37F1 /* Icon-60@2x.png */,
 				FE6A98491AEEB4CE009D37F1 /* rectangle.png */,
 				FE6A98441AEEB076009D37F1 /* progressMarker.png */,
 				FEA77A511AEE00BB000CBFD3 /* circle.png */,
@@ -337,7 +354,6 @@
 				FEA77A191AED53E7000CBFD3 /* player_play@2x.png */,
 				FED837A11AE99718009630C3 /* launch.png */,
 				FED8379F1AE98AF8009630C3 /* Cookie-Regular.ttf */,
-				FED837981AE97724009630C3 /* NowPlaying.png */,
 				FE28282E1AE95CFE005B83A3 /* PoiretOne-Regular.ttf */,
 				FE2828141AE873A0005B83A3 /* DataManager.h */,
 				FE2828151AE873A0005B83A3 /* DataManager.m */,
@@ -603,22 +619,26 @@
 				FEA77A1C1AED53E7000CBFD3 /* player_play.png in Resources */,
 				FEA77A2B1AED938C000CBFD3 /* player_circle.png in Resources */,
 				FEA77A1D1AED53E7000CBFD3 /* player_play@2x.png in Resources */,
+				FE6A98501AF10BBE009D37F1 /* Icon-60@3x.png in Resources */,
 				FEA77A271AED9339000CBFD3 /* player_progress_blue.png in Resources */,
 				FEA77A2C1AED938C000CBFD3 /* player_circle@2x.png in Resources */,
 				FE2827A71AE8690D005B83A3 /* Main.storyboard in Resources */,
 				FE2828131AE87114005B83A3 /* SoundCloud.bundle in Resources */,
 				FEA77A401AEDFBB0000CBFD3 /* progressTrackerBall.png in Resources */,
+				FE6A98541AF10D44009D37F1 /* NowPlaying.png in Resources */,
 				FEA77A251AED9339000CBFD3 /* player_progress_bg.png in Resources */,
 				FED837A01AE98BDB009630C3 /* Cookie-Regular.ttf in Resources */,
-				FED837991AE97724009630C3 /* NowPlaying.png in Resources */,
 				FE2827AC1AE8690D005B83A3 /* LaunchScreen.xib in Resources */,
 				FEA77A4C1AEDFE1D000CBFD3 /* whitePlay.png in Resources */,
+				FE6A984E1AF10B82009D37F1 /* Icon-60@2x.png in Resources */,
 				FEA77A1A1AED53E7000CBFD3 /* player_pause.png in Resources */,
 				FED837A21AE99718009630C3 /* launch.png in Resources */,
+				FE6A984D1AF10B82009D37F1 /* Icon-40@3x.png in Resources */,
 				FEA77A521AEE00BB000CBFD3 /* circle.png in Resources */,
 				FE28282F1AE96010005B83A3 /* PoiretOne-Regular.ttf in Resources */,
 				FEA77A501AEDFF17000CBFD3 /* whiteCircle.png in Resources */,
 				FEA77A4A1AEDFE1D000CBFD3 /* whitePause.png in Resources */,
+				FE6A98521AF10CE2009D37F1 /* Icon-Small@2x.png in Resources */,
 				FE6A98451AEEB076009D37F1 /* progressMarker.png in Resources */,
 				FE6A984A1AEEB4CE009D37F1 /* rectangle.png in Resources */,
 				FEA77A1B1AED53E7000CBFD3 /* player_pause@2x.png in Resources */,

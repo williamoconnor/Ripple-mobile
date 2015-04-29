@@ -26,6 +26,7 @@
 @property (strong, nonatomic) UIButton *pauseButton;
 @property (strong, nonatomic) UILabel *timeLabel;
 - (void) setSongDuration: (float)duration;
+- (void) togglePlayButton;
 
 
 @end

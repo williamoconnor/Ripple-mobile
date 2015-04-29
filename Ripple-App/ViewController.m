@@ -184,6 +184,10 @@
 //    location[@"latitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"latitude"];
 //    location[@"longitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"longitude"];
     
+    // reset arrays
+    [self.tracks removeAllObjects];
+    [self.albumCovers removeAllObjects];
+    
     // HARDCODE LOCATION
     NSNumber *tempNumber = [[NSNumber alloc] initWithDouble:32.846];
     location[@"latitude"] = tempNumber;
@@ -372,6 +376,18 @@
     }
     self.nowPlayingTrackIndex += offset;
     [self.tableView reloadData];
+    
+    // CELL COLORS
+    // paths
+    NSIndexPath *oldCellPath = [NSIndexPath indexPathForRow:oldNumSongs inSection:0];
+    NSIndexPath *newCellPath = [NSIndexPath indexPathForRow:[self.tracks count] inSection:0];
+    // cells
+    UITableViewCell *oldCell = [self.tableView cellForRowAtIndexPath:oldCellPath];
+    UITableViewCell *newCell = [self.tableView cellForRowAtIndexPath:newCellPath];
+    //colors
+    newCell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
+    oldCell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
+    
     [refreshControl endRefreshing];
 }
 
@@ -417,6 +433,7 @@
 - (void) playButtonPressed
 {
     NSLog(@"Play");
+    
     [self.player play];
 }
 
@@ -544,10 +561,12 @@
         if (event.subtype == UIEventSubtypeRemoteControlPlay)
         {
             [self playButtonPressed];
+            [self.playerGui togglePlayButton];
         }
         else if (event.subtype == UIEventSubtypeRemoteControlPause)
         {
             [self pauseButtonPressed];
+            [self.playerGui togglePlayButton];
         }
 //        else if (event.subtype == UIEventSubtypeRemoteControlTogglePlayPause)
 //        {

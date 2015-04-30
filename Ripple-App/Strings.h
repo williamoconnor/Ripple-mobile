@@ -12,3 +12,5 @@
 #define kSCTrackWidgetURL @"https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks"
 #define kSCTrackURL @"https://api.soundcloud.com/tracks" //  /id/stream
 #define kClientId @"dafab2de81f874d25715f0e225e7c71a"
+#define kSecretId @"f633c83f81f8c2ff6b2ad08407a86ecb"
+#define kSCRedirectURL @"sampleproject://oauth"

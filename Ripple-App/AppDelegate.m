@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "SCUI.h"
+#import "Strings.h"
 
 @interface AppDelegate ()
 
@@ -18,9 +19,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [SCSoundCloud setClientID:@"dafab2de81f874d25715f0e225e7c71a"
-                       secret:@"f633c83f81f8c2ff6b2ad08407a86ecb"
-                  redirectURL:[NSURL URLWithString:@"sampleproject://oauth"]];
+    [SCSoundCloud setClientID:kClientId
+                       secret:kSecretId
+                  redirectURL:[NSURL URLWithString:kSCRedirectURL]];
     
 //    CGRect screenRect = [[UIScreen mainScreen] bounds];
 //    CGFloat screenWidth = screenRect.size.width;

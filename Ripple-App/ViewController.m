@@ -122,7 +122,16 @@
        NSFontAttributeName, nil]];
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0x48/255.0 green:0x98/255.0 blue:0xBD/255.0 alpha:1.0];
     
-    [self setUpLocation];
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"latitude"]) {
+        [self setUpLocation];
+    }
+    else {
+        NSLog(@"Location already set");
+        [self loadSongs];
+    }
+    
+    [self.player prepareToPlay];
+    
 }
 
 - (void) setUpLocation {
@@ -181,20 +190,21 @@
 
 - (void) loadSongs {
     NSMutableDictionary *location = [[NSMutableDictionary alloc] init];
-//    location[@"latitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"latitude"];
-//    location[@"longitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"longitude"];
+    location[@"latitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"latitude"];
+    location[@"longitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"longitude"];
     
     // reset arrays
     [self.tracks removeAllObjects];
     [self.albumCovers removeAllObjects];
     
     // HARDCODE LOCATION
-    NSNumber *tempNumber = [[NSNumber alloc] initWithDouble:32.846];
-    location[@"latitude"] = tempNumber;
-    NSNumber *tempNumber2 = [[NSNumber alloc] initWithDouble:-96.7837];
-    location[@"longitude"] = tempNumber2;
+//    NSNumber *tempNumber = [[NSNumber alloc] initWithDouble:32.846];
+//    location[@"latitude"] = tempNumber;
+//    NSNumber *tempNumber2 = [[NSNumber alloc] initWithDouble:-96.7837];
+//    location[@"longitude"] = tempNumber2;
     
     NSDictionary* songs = [DataManager getSongList:location];
+    NSLog(@"Got the song IDs");
     
     for (NSDictionary* song_id in songs) {
         NSDictionary* track = [DataManager getTrackInfo:song_id[@"song_id"]];
@@ -213,6 +223,8 @@
         
         [self.albumCovers addObject:albumCoverImage];
     }
+    NSLog(@"Got the actual songs");
+    
     self.tracks = [[[[self.tracks copy] reverseObjectEnumerator] allObjects] mutableCopy];
     self.albumCovers = [[[[self.albumCovers copy] reverseObjectEnumerator] allObjects] mutableCopy];
     [self.loading stopAnimating];
@@ -297,6 +309,7 @@
     cell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
     self.nowPlayingTrackIndex = indexPath.row;
     NSLog(@"index path: %ld", self.nowPlayingTrackIndex);
+    
     [self playSong:track];
 }
 
@@ -332,6 +345,8 @@
     cell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
     self.nowPlayingTrackIndex = indexPath.row;
     NSLog(@"index path track: %@", self.tracks[self.nowPlayingTrackIndex][@"title"]);
+    
+    
     [self playSong:self.nowPlayingTrack];
 }
 
@@ -368,6 +383,7 @@
 }
 
 - (void)refresh:(UIRefreshControl *)refreshControl {
+    //MAINTAIN PROPER HIGHLIGHTING
     NSInteger oldNumSongs = [self.tracks count];
     [self loadSongs];
     NSInteger offset = 0;
@@ -415,6 +431,7 @@
     [self.loading stopAnimating];
     
     if (self.player.currentTime > self.player.duration-1) {
+        [self.player prepareToPlay];
         [self.timer invalidate];
         if (self.nowPlayingTrackIndex < self.tracks.count - 1) {
             [self playNextSong];
@@ -446,6 +463,12 @@
 - (void) navigateInSong:(float)newTime
 {
     [self.player setCurrentTime:newTime];
+    
+    // MPMediaPlayer Duration update
+     NSMutableDictionary *playInfo = [NSMutableDictionary dictionaryWithDictionary:[MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo];
+    NSNumber *position = [NSNumber numberWithFloat:self.player.currentTime];
+    [playInfo setObject:position forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = playInfo;
 }
 
 - (void) playSong: (NSDictionary*)track
@@ -484,9 +507,8 @@
         
         
         [self.player play];
-        // MEDIA PLAYER
         
-        // solution 2
+        // MEDIA PLAYER
         UIImage *albumArtImg = self.albumCovers[self.nowPlayingTrackIndex];
         MPMediaItemArtwork* albumArt = [[MPMediaItemArtwork alloc] initWithImage:albumArtImg];
         
@@ -515,6 +537,8 @@
     }];
     
     [task resume];
+    
+    // PREPARE NEXT SONG
     
     self.playerGui.nowPlayingSongNameLabel.text = track[@"title"];
     self.albumCover.image = self.albumCovers[self.nowPlayingTrackIndex];
@@ -570,6 +594,7 @@
         }
         else if (event.subtype == UIEventSubtypeRemoteControlNextTrack)
         {
+            [self pauseButtonPressed];
             [self playNextSong];
 //            if (self.nowPlayingTrackIndex < [self.tracks count]) {
 //                NSIndexPath* nextSongPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex+1) inSection:0];
@@ -578,6 +603,7 @@
         }
         else if (event.subtype == UIEventSubtypeRemoteControlPreviousTrack)
         {
+            [self pauseButtonPressed];
             if (self.nowPlayingTrackIndex > 0) {
                 NSIndexPath* prevSongPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex-1) inSection:0];
                 [self selectRow:self.tableView didSelectRowAtIndexPath:prevSongPath];

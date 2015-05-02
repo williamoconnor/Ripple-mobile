@@ -11,8 +11,9 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import <CoreLocation/CoreLocation.h>
 #import "wboPlayerView.h"
+#import "songCell.h"
 
-@interface ViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, CLLocationManagerDelegate, wboPlayerDelegate>
+@interface ViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, CLLocationManagerDelegate, wboPlayerDelegate, rippleSongCellDelegate>
 
 extern NSMutableDictionary* screenSize;
 

@@ -9,7 +9,6 @@
 #import "ViewController.h"
 #import "SCUI.h"
 #import "DataManager.h"
-#import "songCell.h"
 
 @interface ViewController ()
 
@@ -296,6 +295,7 @@
         cell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     }
     
+    cell.delegate = self;
     return cell;
 }
 
@@ -641,6 +641,12 @@
     else {
         [self performSegueWithIdentifier:@"accountSegue" sender:self];
     }
+}
+
+#pragma mark - Ripple Song Cell Delegate
+- (void) drop
+{
+    
 }
 
 @end

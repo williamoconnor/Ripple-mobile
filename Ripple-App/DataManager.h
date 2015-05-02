@@ -12,8 +12,10 @@
 
 @interface DataManager : NSObject
 
-+ (NSDictionary *)getSongList:(NSMutableDictionary*)data;
++ (NSDictionary *) getSongList:(NSMutableDictionary*)data;
 + (NSDictionary *) streamSong:(NSString*)song_id;
 + (NSDictionary *) getTrackInfo:(NSString*)song_id;
++ (NSDictionary *) signIn:(NSMutableDictionary*)data;
++ (NSDictionary *) dropSong:(NSMutableDictionary*)data;
 
 @end

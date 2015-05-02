@@ -45,14 +45,57 @@
                             </mask>
                         </variation>
                     </view>
-                    <navigationItem key="navigationItem" id="iwx-u3-f5b"/>
+                    <navigationItem key="navigationItem" id="iwx-u3-f5b">
+                        <barButtonItem key="rightBarButtonItem" title="Item" id="bpZ-nC-RNz">
+                            <connections>
+                                <action selector="signInButtonPressed:" destination="vXZ-lx-hvc" id="o0I-Cr-Lz1"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="signInButton" destination="bpZ-nC-RNz" id="muF-SU-9np"/>
                         <outlet property="tableView" destination="lDf-Sg-Z6d" id="Qx7-El-Vw3"/>
+                        <segue destination="UdU-MO-GIV" kind="presentation" identifier="signInSegue" id="4HS-i8-jD4"/>
+                        <segue destination="hOt-81-cWV" kind="presentation" identifier="accountSegue" id="Osi-Oy-Y3U"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1257" y="362"/>
+        </scene>
+        <!--Account View Controller-->
+        <scene sceneID="oAZ-R3-FZk">
+            <objects>
+                <viewController id="hOt-81-cWV" customClass="AccountViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="rV4-lB-g7p"/>
+                        <viewControllerLayoutGuide type="bottom" id="t8u-RD-esy"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="DSL-10-dFo">
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uPZ-q0-dqC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2122.5" y="-18"/>
+        </scene>
+        <!--Sign In View Controller-->
+        <scene sceneID="xMs-xR-duL">
+            <objects>
+                <viewController id="UdU-MO-GIV" customClass="SignInViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="JE6-lS-0AZ"/>
+                        <viewControllerLayoutGuide type="bottom" id="8Zs-22-Qna"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="l2P-lj-EEq">
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Nf5-yj-AOr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2139" y="713"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="NQV-dZ-tv7">

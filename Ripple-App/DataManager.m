@@ -28,4 +28,17 @@
     return [REST_API getPath:[[[[kSCTrackURL stringByAppendingString:@"/"] stringByAppendingString:song_id] stringByAppendingString:@".json?client_id="] stringByAppendingString:kClientId] ];
 }
 
++ (NSDictionary *) signIn:(NSMutableDictionary*)data
+{
+    NSDictionary* result = [REST_API postPath:[kRootURL stringByAppendingString:@"/php/mobileLogin.php"] data:[JSONConverter convertNSMutableDictionaryToJSON:data]];
+    NSLog(@"result: %@", result);
+    return result;
+}
+
++ (NSDictionary *) dropSong:(NSMutableDictionary*)data
+{
+    NSDictionary* result = [REST_API postPath:[kRootURL stringByAppendingString:@"/php/loadDrops.php"] data:[JSONConverter convertNSMutableDictionaryToJSON:data]];
+    return result;
+}
+
 @end

@@ -24,6 +24,8 @@
 @property (strong, nonatomic) wboPlayerView* playerGui;
 @property (strong, nonatomic) UIActivityIndicatorView* loading;
 @property NSInteger nowPlayingTrackIndex;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *signInButton;
+@property BOOL signedIn;
 
 // TIMER
 @property NSTimer *timer;
@@ -122,12 +124,32 @@
        NSFontAttributeName, nil]];
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0x48/255.0 green:0x98/255.0 blue:0xBD/255.0 alpha:1.0];
     
+    // NAV BAR BUTTON
+//    [self.signInButton setTintColor:[UIColor whiteColor]];
+    [self.signInButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                        [UIFont fontWithName:@"Poiret One" size:18.0], NSFontAttributeName,
+                                        [UIColor whiteColor], NSForegroundColorAttributeName,
+                                        nil] 
+                              forState:UIControlStateNormal];
+    
+    // check for location
     if (![[NSUserDefaults standardUserDefaults] objectForKey:@"latitude"]) {
         [self setUpLocation];
     }
     else {
         NSLog(@"Location already set");
         [self loadSongs];
+    }
+    
+    // check for signed in
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"email"] length] > 3) {
+        NSLog(@"email: %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"email"]);
+        self.signedIn = YES;
+        self.signInButton.title = @"Account";
+    }
+    else {
+        self.signedIn = NO;
+        self.signInButton.title = @"Sign In";
     }
     
     [self.player prepareToPlay];
@@ -609,6 +631,15 @@
                 [self selectRow:self.tableView didSelectRowAtIndexPath:prevSongPath];
             }
         }
+    }
+}
+
+- (IBAction)signInButtonPressed:(UIBarButtonItem *)sender {
+    if ([self.signInButton.title isEqualToString:@"Sign In"]) {
+        [self performSegueWithIdentifier:@"signInSegue" sender:self];
+    }
+    else {
+        [self performSegueWithIdentifier:@"accountSegue" sender:self];
     }
 }
 

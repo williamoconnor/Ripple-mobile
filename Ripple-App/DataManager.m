@@ -12,6 +12,7 @@
 
 + (NSDictionary *)getSongList:(NSMutableDictionary*)data
 {
+    NSLog(@"%@", data);
     NSDictionary* result = [REST_API postPath:[kRootURL stringByAppendingString:@"/php/loadDrops.php"] data:[JSONConverter convertNSMutableDictionaryToJSON:data]];
     return result;
 }
@@ -43,7 +44,7 @@
 
 + (NSDictionary *) getUserInfo:(NSString*)email
 {
-    NSDictionary* emailDict = [[NSDictionary alloc] initWithObjectsAndKeys:email, @"email", nil];
+    NSMutableDictionary* emailDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:email, @"email", nil];
     NSDictionary* result = [REST_API postPath:[kRootURL stringByAppendingString:@"/php/mobileGetUserInfo.php"] data:[JSONConverter convertNSMutableDictionaryToJSON:emailDict]];
     return result;
 }

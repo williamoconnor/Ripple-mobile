@@ -85,14 +85,14 @@
 
 - (void) createDropButton
 {
-    self.dropButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    self.dropButton = [UIButton buttonWithType:UIButtonTypeCustom];
     self.dropButton.frame = CGRectMake([self.screen[@"width"] floatValue] - 45.0, 30.0, 40.0, 40.0);
     [self.dropButton addTarget:self
                      action:@selector(drop)
            forControlEvents:UIControlEventTouchUpInside];
-    [self.dropButton setTitle:@"Drop" forState:UIControlStateNormal];
-    self.dropButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:14.0];
-    [self.dropButton setTitleColor: [UIColor whiteColor] forState:UIControlStateNormal];
+    [self.dropButton setImage:[UIImage imageNamed:@"dropItIcon.png"] forState:UIControlStateNormal];
+    
+    self.titleLabel.frame = CGRectMake(120.0, 10.0, [self.screen[@"width"] doubleValue]*0.48, 60.0);
     [self.contentView addSubview:self.dropButton];
 }
 
@@ -105,6 +105,7 @@
 -(void) hideDropButton
 {
     self.dropButton.hidden = YES;
+    NSLog(@"Called it");
 }
 
 

@@ -44,6 +44,7 @@
 		FE6A986C1AF29AEE009D37F1 /* ripple_Fotor.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FE6A986B1AF29AEE009D37F1 /* ripple_Fotor.jpg */; };
 		FE6A98791AF2A8B1009D37F1 /* SignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE6A98781AF2A8B1009D37F1 /* SignInViewController.m */; };
 		FE6A98811AF40197009D37F1 /* AccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE6A98801AF40197009D37F1 /* AccountViewController.m */; };
+		FE6A99081AF6F703009D37F1 /* dropItIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A99071AF6F703009D37F1 /* dropItIcon.png */; };
 		FEA77A201AED5CE1000CBFD3 /* wboPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = FEA77A1F1AED5CE1000CBFD3 /* wboPlayerView.m */; };
 		FEA77A4A1AEDFE1D000CBFD3 /* whitePause.png in Resources */ = {isa = PBXBuildFile; fileRef = FEA77A471AEDFE1D000CBFD3 /* whitePause.png */; };
 		FEA77A4C1AEDFE1D000CBFD3 /* whitePlay.png in Resources */ = {isa = PBXBuildFile; fileRef = FEA77A491AEDFE1D000CBFD3 /* whitePlay.png */; };
@@ -216,6 +217,7 @@
 		FE6A98781AF2A8B1009D37F1 /* SignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignInViewController.m; sourceTree = "<group>"; };
 		FE6A987F1AF40197009D37F1 /* AccountViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccountViewController.h; sourceTree = "<group>"; };
 		FE6A98801AF40197009D37F1 /* AccountViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccountViewController.m; sourceTree = "<group>"; };
+		FE6A99071AF6F703009D37F1 /* dropItIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dropItIcon.png; sourceTree = "<group>"; };
 		FEA77A1E1AED5CE1000CBFD3 /* wboPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wboPlayerView.h; sourceTree = "<group>"; };
 		FEA77A1F1AED5CE1000CBFD3 /* wboPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = wboPlayerView.m; sourceTree = "<group>"; };
 		FEA77A471AEDFE1D000CBFD3 /* whitePause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whitePause.png; sourceTree = "<group>"; };
@@ -314,6 +316,7 @@
 		FE28279B1AE8690D005B83A3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				FE6A99071AF6F703009D37F1 /* dropItIcon.png */,
 				FE6A986B1AF29AEE009D37F1 /* ripple_Fotor.jpg */,
 				FE6A98531AF10D44009D37F1 /* NowPlaying.png */,
 				FE6A98511AF10CE2009D37F1 /* Icon-Small@2x.png */,
@@ -591,6 +594,7 @@
 				FE2828131AE87114005B83A3 /* SoundCloud.bundle in Resources */,
 				FE6A98541AF10D44009D37F1 /* NowPlaying.png in Resources */,
 				FED837A01AE98BDB009630C3 /* Cookie-Regular.ttf in Resources */,
+				FE6A99081AF6F703009D37F1 /* dropItIcon.png in Resources */,
 				FE2827AC1AE8690D005B83A3 /* LaunchScreen.xib in Resources */,
 				FEA77A4C1AEDFE1D000CBFD3 /* whitePlay.png in Resources */,
 				FE6A984E1AF10B82009D37F1 /* Icon-60@2x.png in Resources */,

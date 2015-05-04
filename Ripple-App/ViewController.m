@@ -232,24 +232,24 @@
 //    location[@"longitude"] = tempNumber2;
     
     NSDictionary* songs = [DataManager getSongList:location];
-    NSLog(@"Got the song IDs");
+    NSLog(@"Got the song IDs: %@", songs);
     
     for (NSDictionary* song_id in songs) {
         NSDictionary* track = [DataManager getTrackInfo:song_id[@"song_id"]];
-        [self.tracks addObject: track];
-        
-        
-        
-        // YOOO
-        UIImage* albumCoverImage = [UIImage imageNamed:@"NowPlaying.png"];
-        if (![track[@"artwork_url"] isEqual:[NSNull null]] && [track[@"artwork_url"] length] > 0){
-            NSString* url = [track[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
-            albumCoverImage = [UIImage imageWithData:
-                                        [NSData dataWithContentsOfURL:
-                                         [NSURL URLWithString: url]]];
+        if (track) {
+            [self.tracks addObject: track];
+    
+            // YOOO
+            UIImage* albumCoverImage = [UIImage imageNamed:@"NowPlaying.png"];
+            if (![track[@"artwork_url"] isEqual:[NSNull null]] && [track[@"artwork_url"] length] > 0){
+                NSString* url = [track[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
+                albumCoverImage = [UIImage imageWithData:
+                                            [NSData dataWithContentsOfURL:
+                                             [NSURL URLWithString: url]]];
+            }
+            
+            [self.albumCovers addObject:albumCoverImage];
         }
-        
-        [self.albumCovers addObject:albumCoverImage];
     }
     NSLog(@"Got the actual songs");
     
@@ -479,6 +479,7 @@
 //            UITableViewCell* thisSongCell = [self.tableView cellForRowAtIndexPath:thisSongCellPath];
 //            thisSongCell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
         }
+        [self.playerGui resetProgress];
     }
 }
 

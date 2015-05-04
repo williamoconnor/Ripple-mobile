@@ -143,4 +143,10 @@
     return timeString;
 }
 
+-(void) resetProgress
+{
+    self.timeLabel.text = @"00 : 00";
+    [self.trackProgressSlider setValue:0.0];
+}
+
 @end

@@ -18,14 +18,13 @@
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
-                    <variation key="widthClass=compact" fixedFrame="YES">
-                        <rect key="frame" x="13" y="368" width="213" height="21"/>
-                    </variation>
                 </label>
             </subviews>
             <color key="backgroundColor" red="0.28235294117647058" green="0.59607843137254901" blue="0.74117647058823533" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstAttribute="bottom" secondItem="OIQ-OV-cmd" secondAttribute="bottom" constant="39" id="2WE-we-Q8o"/>
                 <constraint firstAttribute="trailing" secondItem="k22-Qd-F9V" secondAttribute="trailing" id="3bD-ha-Esx"/>
+                <constraint firstItem="OIQ-OV-cmd" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="23" id="WBH-mP-PnM"/>
                 <constraint firstItem="k22-Qd-F9V" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="hZV-49-LGY"/>
                 <constraint firstAttribute="bottom" secondItem="k22-Qd-F9V" secondAttribute="bottom" id="rDc-FV-47j"/>
                 <constraint firstItem="k22-Qd-F9V" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="sb0-hF-NC0"/>
@@ -38,6 +37,8 @@
                     <exclude reference="OIQ-OV-cmd"/>
                 </mask>
                 <mask key="constraints">
+                    <exclude reference="2WE-we-Q8o"/>
+                    <exclude reference="WBH-mP-PnM"/>
                     <exclude reference="3bD-ha-Esx"/>
                     <exclude reference="hZV-49-LGY"/>
                     <exclude reference="rDc-FV-47j"/>
@@ -50,6 +51,8 @@
                     <include reference="OIQ-OV-cmd"/>
                 </mask>
                 <mask key="constraints">
+                    <include reference="2WE-we-Q8o"/>
+                    <include reference="WBH-mP-PnM"/>
                     <include reference="3bD-ha-Esx"/>
                     <include reference="hZV-49-LGY"/>
                     <include reference="rDc-FV-47j"/>

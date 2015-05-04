@@ -56,7 +56,9 @@
     [logoutButton setTitle:@"Logout" forState:UIControlStateNormal];
     [logoutButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     logoutButton.backgroundColor = [UIColor colorWithRed:0xE8/255.0 green:0x64/255.0 blue:0x64/255.0 alpha:1.0];
-    logoutButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:14.0];
+    logoutButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:18.0];
+    [[logoutButton layer] setBorderWidth:1.0f];
+    [[logoutButton layer] setBorderColor:[UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0].CGColor];
     [self.view addSubview:logoutButton];
     
     // POINTS LABEL

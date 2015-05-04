@@ -66,7 +66,6 @@
     // Set the request type to POST
     [request setHTTPMethod:@"POST"];
     
-    NSLog(@"data string: %@, url: %@", dataString, resource);
     // Convert the information to post to NSData
     NSData *postData = [dataString dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];

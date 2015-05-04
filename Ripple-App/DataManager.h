@@ -17,5 +17,6 @@
 + (NSDictionary *) getTrackInfo:(NSString*)song_id;
 + (NSDictionary *) signIn:(NSMutableDictionary*)data;
 + (NSDictionary *) dropSong:(NSMutableDictionary*)data;
++ (NSDictionary *) getUserInfo:(NSString*)email;
 
 @end

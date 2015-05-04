@@ -11,19 +11,22 @@
 
 @protocol rippleSongCellDelegate <NSObject>
 
-- (void) drop;
+- (void) drop:(NSNumber*) song_id;
 
 @end
 
 @interface songCell: UITableViewCell
 
-@property (strong, nonatomic) NSDictionary* track;
+@property (strong, nonatomic) NSNumber* track;
 @property (strong, nonatomic) UILabel *titleLabel;
 @property (strong, nonatomic) UILabel *artistLabel;
 @property (strong, nonatomic) UIImageView *albumCover;
 @property (weak, nonatomic) id <rippleSongCellDelegate> delegate;
+@property (strong, nonatomic) UIButton* dropButton;
 
 
 -(void) setData: (NSDictionary*)track;
+-(void) createDropButton;
+-(void) hideDropButton;
 
 @end

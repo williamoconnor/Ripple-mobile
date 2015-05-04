@@ -42,7 +42,7 @@
         [self.contentView addSubview:self.albumCover];
         
 //        self.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:@"email"]) {
+        if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"email"] length] > 3) {
             [self dropButton];
         }
         
@@ -79,28 +79,32 @@
         }
         
         self.albumCover.image = albumCoverImage;
+        self.track = track[@"id"];
     }
 }
 
-- (void) dropButton
+- (void) createDropButton
 {
-    UIButton* dropButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    dropButton.frame = CGRectMake([self.screen[@"width"] floatValue] - 45.0, 30.0, 40.0, 40.0);
-    [dropButton addTarget:self
+    self.dropButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    self.dropButton.frame = CGRectMake([self.screen[@"width"] floatValue] - 45.0, 30.0, 40.0, 40.0);
+    [self.dropButton addTarget:self
                      action:@selector(drop)
            forControlEvents:UIControlEventTouchUpInside];
-    [dropButton setTitle:@"Drop" forState:UIControlStateNormal];
-    dropButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:14.0];
-    [dropButton setTitleColor: [UIColor whiteColor] forState:UIControlStateNormal]; // [UIColor colorWithRed:0x48/255.0 green:0x98/255.0 blue:0xBD/255.0 alpha:1.0]
-//    dropButton.backgroundColor = [UIColor whiteColor];
-//    [dropButton.layer setBorderColor:[UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0].CGColor];
-//    [dropButton.layer setBorderWidth:1.0];
-    [self.contentView addSubview:dropButton];
+    [self.dropButton setTitle:@"Drop" forState:UIControlStateNormal];
+    self.dropButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:14.0];
+    [self.dropButton setTitleColor: [UIColor whiteColor] forState:UIControlStateNormal];
+    [self.contentView addSubview:self.dropButton];
 }
 
 -(void) drop
 {
-    [self.delegate drop];
+    NSLog(@"Track: %@", self.track);
+    [self.delegate drop: self.track];
+}
+
+-(void) hideDropButton
+{
+    self.dropButton.hidden = YES;
 }
 
 

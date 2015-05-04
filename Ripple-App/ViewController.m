@@ -73,7 +73,6 @@
     CGFloat screenHeight = screenRect.size.height;
     NSNumber *height = [[NSNumber alloc] initWithDouble:screenHeight];
     NSNumber *width = [[NSNumber alloc] initWithDouble:screenWidth];
-    NSLog(@"width: %@", width);
     
     self.screenSize[@"height"] = height;
     self.screenSize[@"width"] = width;
@@ -107,7 +106,7 @@
     self.tableView = [[UITableView alloc] init];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.frame = CGRectMake(0.0, 64.0, [self.screenSize[@"width"] doubleValue], [self.screenSize[@"height"] doubleValue]);
+    self.tableView.frame = CGRectMake(0.0, 64.0, [self.screenSize[@"width"] doubleValue], [self.screenSize[@"height"] doubleValue]-64.0);
     self.tableView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     self.view.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     [self.tableView registerClass:[songCell class] forCellReuseIdentifier:@"cell"];
@@ -142,6 +141,13 @@
         [self loadSongs];
     }
     
+    [self.player prepareToPlay];
+    
+}
+
+-(void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
     // check for signed in
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"email"] length] > 3) {
         NSLog(@"email: %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"email"]);
@@ -152,9 +158,8 @@
         self.signedIn = NO;
         self.signInButton.title = @"Sign In";
     }
-    
-    [self.player prepareToPlay];
-    
+    [self.tableView reloadData];
+    NSLog(@"reloaded");
 }
 
 - (void) setUpLocation {
@@ -295,6 +300,14 @@
     }
     else {
         cell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
+    }
+    
+    if (self.signedIn) {
+        
+        [cell createDropButton];
+    }
+    else {
+        [cell hideDropButton];
     }
     
     cell.delegate = self;
@@ -646,9 +659,31 @@
 }
 
 #pragma mark - Ripple Song Cell Delegate
-- (void) drop
+- (void) drop:(NSNumber*) song_id
 {
     
+    NSMutableDictionary* drop = [[NSMutableDictionary alloc] init];
+    drop[@"email"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"email"];
+    drop[@"latitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"latitude"];
+    drop[@"longitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"longitude"];
+    drop[@"song_id"] = song_id;
+//    NSLog(@"Called drop with %@", drop);
+    NSDictionary* result = [DataManager dropSong:drop];
+    if ([result[@"result"] isEqualToString:@"success"]){
+        [self.loading startAnimating];
+        //gotta move some cells and shit
+        [self loadSongs];
+        [self.tableView reloadData]; // this doesn't do it
+        
+        // FIGURE THIS OUT
+        
+        [self.loading stopAnimating];
+        NSLog(@"it works");
+    }
+    else {
+        UIAlertView* failure = [[UIAlertView alloc] initWithTitle:@"Nahhh" message:result[@"reason"] delegate:nil cancelButtonTitle:@"Okay fine" otherButtonTitles:nil, nil];
+        [failure show];
+    }
 }
 
 @end

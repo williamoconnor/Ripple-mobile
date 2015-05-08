@@ -104,7 +104,7 @@
 
 -(void) hideDropButton
 {
-    self.dropButton.hidden = YES;
+    [self.dropButton removeFromSuperview];
     NSLog(@"Called it");
 }
 

@@ -303,6 +303,7 @@
         cell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     }
     
+    NSLog(@"signed in? %d", self.signedIn);
     if (self.signedIn) {
         
         [cell createDropButton];

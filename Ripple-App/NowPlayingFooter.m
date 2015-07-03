@@ -30,6 +30,7 @@
         self.songLabel.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:14];
         [self.songLabel setTintColor:[UIColor whiteColor]];
         self.songLabel.backgroundColor = [UIColor colorWithWhite:255.0 alpha:0.0];
+        self.songLabel.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
         [self.songLabel addTarget:self action:@selector(footerPressed) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.songLabel];
         
@@ -43,6 +44,12 @@
 -(void) footerPressed
 {
     [self.delegate footerPressed];
+}
+
+-(void) updateInfo:(NSDictionary *)info
+{
+    [self.songLabel setTitle:info[@"song"] forState:UIControlStateNormal];
+    self.albumView.image = info[@"album"];
 }
 /*
 // Only override drawRect: if you perform custom drawing.

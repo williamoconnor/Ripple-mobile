@@ -21,4 +21,6 @@
 - (id) initWithSongName:(NSString*)song andAlbumCover:(UIImage*)albumCover;
 @property (nonatomic) id <NowPlayingFooterDelegate> delegate;
 
+-(void) updateInfo:(NSDictionary*)info;
+
 @end

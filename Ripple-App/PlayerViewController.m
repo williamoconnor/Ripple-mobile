@@ -52,15 +52,15 @@
     
     //BACK BUTTON
     self.backButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    self.backButton.frame = CGRectMake(24.0, 28.0, 50.0, 21.0);
+    self.backButton.frame = CGRectMake(12.0, 28.0, 50.0, 21.0);
     [self.backButton setTintColor:[UIColor whiteColor]];
     [self.backButton setTitle:@"Back" forState:UIControlStateNormal];
     [self.backButton addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
-    self.backButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:21];
+    self.backButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:18];
     [fakeNavBar addSubview:self.backButton];
     
     //NAV TITLE
-    UILabel* title = [[UILabel alloc] initWithFrame:CGRectMake([width floatValue]/2 - 50.0, 10.0, 100.0, 48.0)];
+    UILabel* title = [[UILabel alloc] initWithFrame:CGRectMake([width floatValue]/2 - 50.0, 12.0, 100.0, 48.0)];
     title.textAlignment = NSTextAlignmentCenter;
     title.text = @"Ripple";
     title.textColor = [UIColor whiteColor];
@@ -76,6 +76,7 @@
     self.playerGui = [[wboPlayerView alloc] initWithFrame:CGRectMake(0.0, [height floatValue]-200, [width floatValue], 200)];
     self.playerGui.delegate = self;
     [self.view addSubview:self.playerGui];
+    [self.playerGui disableEnableButtons:NO];
     
 // ACTIVITY INDICATOR
     self.loading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -106,6 +107,15 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    //disable buttons
+    if (![self app].player.duration > 0) {
+        [self.playerGui disableEnableButtons:NO];
+    }
+}
+
 - (void) loadAlbumCover
 {
     UIImage *albumCoverImage = [[UIImage alloc] init];
@@ -120,6 +130,7 @@
 
 -(void) playSong // TODO: Actually write this method
 {
+    
     NSURL *trackURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://api.soundcloud.com/tracks/%@/stream?client_id=%@", self.song[@"id"], kClientId]];
     NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:trackURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
@@ -166,9 +177,19 @@
         NSLog(@"url: %@", trackURL);
         [[self app].player play];
         
-        // MEDIA PLAYER
+        // TRACK PROGRESS
         UIImage *albumArtImg = self.albumCovers[self.nowPlayingTrackIndex];
         MPMediaItemArtwork* albumArt = [[MPMediaItemArtwork alloc] initWithImage:albumArtImg];
+        [self startTimer];
+        
+        self.playerGui.trackProgressSlider.maximumValue = [self app].player.duration;
+        self.playerGui.trackProgressSlider.minimumValue = 0;
+        NSMutableDictionary* songInfo = [[NSMutableDictionary alloc] init];
+        songInfo[@"song"] = self.song[@"title"];
+        songInfo[@"album"] = albumArtImg;
+        [self.delegate setSongInfo:songInfo];
+        
+        // MEDIA PLAYER
         
         NSString* artist = @"";
         if (![self.song[@"label_name"] isEqual:[NSNull null]] && [self.song[@"label_name"] length] > 0){
@@ -188,14 +209,6 @@
         
         [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = info;
         
-        // TRACK PROGRESS
-        [self startTimer];
-        self.playerGui.trackProgressSlider.maximumValue = [self app].player.duration;
-        self.playerGui.trackProgressSlider.minimumValue = 0;
-        NSMutableDictionary* songInfo = [[NSMutableDictionary alloc] init];
-        songInfo[@"song"] = self.song[@"title"];
-        songInfo[@"album"] = albumArtImg;
-        [self.delegate setSongInfo:songInfo];
     }];
     [task resume];
     
@@ -207,11 +220,29 @@
 
 - (void) playNextSong // TODO: actually write this
 {
-
+    
+    [self.playerGui disableEnableButtons:NO];
     // select next cell
     NSLog(@"nextTrack: %@", self.tracks[self.nowPlayingTrackIndex+1][@"title"]);
     self.song = self.tracks[self.nowPlayingTrackIndex+1];
     self.nowPlayingTrackIndex += 1;
+    NSMutableDictionary* songInfo = [[NSMutableDictionary alloc] init];
+    songInfo[@"song"] = self.song[@"title"];
+    songInfo[@"album"] = self.albumCovers[self.nowPlayingTrackIndex];
+    [self.delegate songChanged:songInfo];
+    [self playSong];
+}
+
+-(void)playPreviousSong
+{
+    [self.playerGui disableEnableButtons:NO];
+    // select next cell
+    self.song = self.tracks[self.nowPlayingTrackIndex-1];
+    self.nowPlayingTrackIndex -= 1;
+    NSMutableDictionary* songInfo = [[NSMutableDictionary alloc] init];
+    songInfo[@"song"] = self.song[@"title"];
+    songInfo[@"album"] = self.albumCovers[self.nowPlayingTrackIndex];
+    [self.delegate songChanged:songInfo];
     [self playSong];
     
 }
@@ -260,14 +291,22 @@
 -(void) forwardPressed
 {
     [self pauseButtonPressed];
+    [self.playerGui disableEnableButtons:NO];
     [self playNextSong];
 }
 
 -(void) backwardPressed
 {
     [self pauseButtonPressed];
+    [self.playerGui disableEnableButtons:NO];
     if (self.nowPlayingTrackIndex > 0) {
-        [self playSong];
+        if ([self app].player.currentTime > 3) {
+            [self playSong];
+        }
+        else {
+            self.nowPlayingTrackIndex -= 1;
+            [self playPreviousSong];
+        }
     }
 }
 
@@ -309,7 +348,7 @@
         {
             [self pauseButtonPressed];
             if (self.nowPlayingTrackIndex > 0) {
-                [self playSong];
+                [self backwardPressed];
             }
         }
     }
@@ -336,6 +375,12 @@
 
 - (void) countup
 {
+    
+    //enable buttons
+    if ([[self app].player isPlaying]) {
+        [self.playerGui disableEnableButtons:YES];
+    }
+    
     [self.playerGui.trackProgressSlider setValue:[self app].player.currentTime animated:YES];
     [self.playerGui setSongDuration:self.playerGui.trackProgressSlider.value andDuration:[self app].player.duration];
     [self.loading stopAnimating];

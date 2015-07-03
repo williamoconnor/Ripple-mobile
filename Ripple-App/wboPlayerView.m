@@ -41,7 +41,7 @@
         [self.playButton addTarget:self action:@selector(playButtonPressed) forControlEvents:UIControlEventTouchUpInside];
         self.playButton.hidden = YES;
         self.playButton.frame = CGRectMake([self.screen[@"width"]doubleValue]/2 - 20.0, 80.0, 40.0, 40.0);
-        [self.playButton setBackgroundImage:[UIImage imageNamed:@"whitePlay.png"] forState:UIControlStateNormal];
+        [self.playButton setBackgroundImage:[UIImage imageNamed:@"play.png"] forState:UIControlStateNormal];
         [self addSubview:self.playButton];
         
         // PAUSE BUTTON
@@ -183,6 +183,14 @@
 {
     self.frontTimeLabel.text = @"00 : 00";
     [self.trackProgressSlider setValue:0.0];
+}
+
+-(void) disableEnableButtons:(BOOL)enable
+{
+    self.pauseButton.enabled = enable;
+    self.forwardButton.enabled = enable;
+    self.backwardButton.enabled = enable;
+    self.trackProgressSlider.enabled = enable;
 }
 
 @end

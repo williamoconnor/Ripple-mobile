@@ -32,6 +32,7 @@
 @property (strong, nonatomic) PlayerViewController* playerView;
 @property (strong, nonatomic) NSString* footerText;
 @property (strong, nonatomic) UIImage* footerAlbum;
+@property (strong, nonatomic) NowPlayingFooter* footer;
 
 // TIMER
 //@property NSTimer *timer;
@@ -165,11 +166,12 @@
     }
     [self.tableView reloadData];
     
-    if ([[self app].player isPlaying]) {
-        NowPlayingFooter* footer = [[NowPlayingFooter alloc] initWithSongName:self.footerText andAlbumCover:self.footerAlbum];
-        footer.delegate = self;
-        [self.view addSubview:footer];
-        [self.view bringSubviewToFront:footer];
+    if ([self app].player.duration > 0) {
+        self.tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y, self.tableView.frame.size.width, self.tableView.frame.size.height-60.0);
+        self.footer = [[NowPlayingFooter alloc] initWithSongName:self.footerText andAlbumCover:self.footerAlbum];
+        self.footer.delegate = self;
+        [self.view addSubview:self.footer];
+        [self.view bringSubviewToFront:self.footer];
         
         NSLog(@"%@",self.navigationController.viewControllers);
     }
@@ -249,7 +251,7 @@
     
     for (NSDictionary* song_id in songs) {
         NSDictionary* track = [DataManager getTrackInfo:song_id[@"song_id"]];
-        if (track) {
+        if (track && (BOOL)track[@"streamable"] == true) {
             [self.tracks addObject: track];
     
             // YOOO
@@ -305,6 +307,7 @@
     
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
 //    NSLog(@"Track: %@", track);
+    cell.signedIn = self.signedIn;
     [cell setData:track];
     
     //to change background color of selected cell
@@ -315,13 +318,6 @@
         cell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     }
     
-    if (self.signedIn) {
-        
-        [cell createDropButton];
-    }
-    else {
-        [cell hideDropButton];
-    }
     
     cell.delegate = self;
     return cell;
@@ -363,40 +359,25 @@
     
 //    [self playSong:track];
     [self performSegueWithIdentifier:@"playerSegue" sender:self];
+    
+    if ([[self app].player isPlaying]) {
+        [[self app].player stop];
+    }
 }
 
 -(void)selectRow:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     self.nowPlayingTrack = [self.tracks objectAtIndex:indexPath.row];
-    NSLog(@"track: %@", self.nowPlayingTrack[@"title"]);
 //    [self.timer invalidate];
-    
-    float tableViewHeight = [self.screenSize[@"height"] floatValue] - 264.0;
-    self.tableView.frame = CGRectMake(0, 264.0, [self.screenSize[@"width"] doubleValue], tableViewHeight);
     
     //loader
     double x = [self.screenSize[@"width"] doubleValue]/2;
     self.loading.center = CGPointMake(x, 100.0);
-    [self.albumCover addSubview:self.loading];
-    [self.albumCover bringSubviewToFront:self.loading];
     [self.loading startAnimating];
-    
-    if (self.tableView.frame.origin.y == 264.0) {
-        self.albumCover.hidden = NO;
-        self.playerGui.hidden = NO;
-        self.playerGui.playButton.hidden = YES;
-        self.playerGui.pauseButton.hidden = NO;
-    }
-    else {
-        NSLog(@"%f", self.tableView.frame.origin.y);
-    }
-    
     
     // PLAY SONG
     songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
-    self.nowPlayingTrackIndex = indexPath.row;
-    NSLog(@"index path track: %@", self.tracks[self.nowPlayingTrackIndex][@"title"]);
 }
 
 
@@ -625,41 +606,6 @@
 //    
 //}
 
-//- (void)remoteControlReceivedWithEvent:(UIEvent *)event {
-//    //if it is a remote control event handle it correctly
-//    if (event.type == UIEventTypeRemoteControl)
-//    {
-//        if (event.subtype == UIEventSubtypeRemoteControlPlay)
-//        {
-//            [self playButtonPressed];
-//            [self.playerGui togglePlayButton];
-//        }
-//        else if (event.subtype == UIEventSubtypeRemoteControlPause)
-//        {
-//            [self pauseButtonPressed];
-//            [self.playerGui togglePlayButton];
-//        }
-//        else if (event.subtype == UIEventSubtypeRemoteControlNextTrack)
-//        {
-//            [self pauseButtonPressed];
-//            [self playNextSong];
-////            if (self.nowPlayingTrackIndex < [self.tracks count]) {
-////                NSIndexPath* nextSongPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex+1) inSection:0];
-////                [self selectRow:self.tableView didSelectRowAtIndexPath:nextSongPath];
-////            }
-//        }
-//        else if (event.subtype == UIEventSubtypeRemoteControlPreviousTrack)
-//        {
-//            [self pauseButtonPressed];
-//            if (self.nowPlayingTrackIndex > 0) {
-//                NSIndexPath* prevSongPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex-1) inSection:0];
-//                [self selectRow:self.tableView didSelectRowAtIndexPath:prevSongPath];
-//                [self playSong:self.nowPlayingTrack];
-//            }
-//        }
-//    }
-//}
-
 - (IBAction)signInButtonPressed:(UIBarButtonItem *)sender {
     if ([self.signInButton.title isEqualToString:@"Sign In"]) {
         [self performSegueWithIdentifier:@"signInSegue" sender:self];
@@ -742,11 +688,24 @@
 {
     self.footerAlbum = info[@"album"];
     self.footerText = info[@"song"];
+    [self.footer updateInfo:info];
 }
 
 -(void) keepVC:(id)player
 {
     self.playerView = player;
+}
+
+-(void)songChanged:(NSDictionary *)info
+{
+    [self setSongInfo:info];
+    NSIndexPath *lastSongCellPath = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
+    [self deselectRow:self.tableView didDeselectRowAtIndexPath:lastSongCellPath];
+
+    NSIndexPath *thisSongCellPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex+1) inSection:0];
+    [self selectRow:self.tableView didSelectRowAtIndexPath:thisSongCellPath];
+    
+    self.nowPlayingTrackIndex += 1;
 }
 
 @end

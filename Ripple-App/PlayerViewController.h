@@ -14,6 +14,7 @@
 @protocol PlayerDelegate <NSObject>
 
 -(void) setSongInfo:(NSDictionary*)info;
+-(void) songChanged:(NSDictionary*)info;
 -(void) keepVC:(id)player;
 
 @end

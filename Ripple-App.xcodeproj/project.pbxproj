@@ -37,6 +37,7 @@
 		FE601A521B4243D100F406AE /* backward.png in Resources */ = {isa = PBXBuildFile; fileRef = FE601A501B4243D100F406AE /* backward.png */; };
 		FE601A531B4243D100F406AE /* forward.png in Resources */ = {isa = PBXBuildFile; fileRef = FE601A511B4243D100F406AE /* forward.png */; };
 		FE601A921B44D91700F406AE /* NowPlayingFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = FE601A911B44D91700F406AE /* NowPlayingFooter.m */; };
+		FE601A991B46544D00F406AE /* play.png in Resources */ = {isa = PBXBuildFile; fileRef = FE601A981B46544D00F406AE /* play.png */; };
 		FE6A98451AEEB076009D37F1 /* progressMarker.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A98441AEEB076009D37F1 /* progressMarker.png */; };
 		FE6A984A1AEEB4CE009D37F1 /* rectangle.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A98491AEEB4CE009D37F1 /* rectangle.png */; };
 		FE6A984D1AF10B82009D37F1 /* Icon-40@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A984B1AF10B82009D37F1 /* Icon-40@3x.png */; };
@@ -214,6 +215,7 @@
 		FE601A511B4243D100F406AE /* forward.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = forward.png; sourceTree = "<group>"; };
 		FE601A901B44D91700F406AE /* NowPlayingFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NowPlayingFooter.h; sourceTree = "<group>"; };
 		FE601A911B44D91700F406AE /* NowPlayingFooter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NowPlayingFooter.m; sourceTree = "<group>"; };
+		FE601A981B46544D00F406AE /* play.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = play.png; sourceTree = "<group>"; };
 		FE6A98441AEEB076009D37F1 /* progressMarker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressMarker.png; sourceTree = "<group>"; };
 		FE6A98491AEEB4CE009D37F1 /* rectangle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rectangle.png; sourceTree = "<group>"; };
 		FE6A984B1AF10B82009D37F1 /* Icon-40@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40@3x.png"; sourceTree = "<group>"; };
@@ -330,6 +332,7 @@
 		FE28279B1AE8690D005B83A3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				FE601A981B46544D00F406AE /* play.png */,
 				FE601A501B4243D100F406AE /* backward.png */,
 				FE601A511B4243D100F406AE /* forward.png */,
 				FE6A99071AF6F703009D37F1 /* dropItIcon.png */,
@@ -606,6 +609,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE6A98501AF10BBE009D37F1 /* Icon-60@3x.png in Resources */,
+				FE601A991B46544D00F406AE /* play.png in Resources */,
 				FE2827A71AE8690D005B83A3 /* Main.storyboard in Resources */,
 				FE2828131AE87114005B83A3 /* SoundCloud.bundle in Resources */,
 				FE6A98541AF10D44009D37F1 /* NowPlaying.png in Resources */,

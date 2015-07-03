@@ -81,6 +81,13 @@
         self.albumCover.image = albumCoverImage;
         self.track = track[@"id"];
     }
+    
+    if (self.signedIn) {
+        [self createDropButton];
+    }
+    else {
+        [self hideDropButton];
+    }
 }
 
 - (void) createDropButton

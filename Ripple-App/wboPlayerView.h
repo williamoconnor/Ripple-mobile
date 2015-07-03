@@ -34,6 +34,7 @@
 - (void) resetProgress;
 - (void) setSongDuration: (float)progress andDuration: (float)duration;
 - (void) togglePlayButton;
+- (void) disableEnableButtons:(BOOL)enable;
 
 
 @end

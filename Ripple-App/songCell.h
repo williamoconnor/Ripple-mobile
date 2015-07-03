@@ -23,6 +23,7 @@
 @property (strong, nonatomic) UIImageView *albumCover;
 @property (weak, nonatomic) id <rippleSongCellDelegate> delegate;
 @property (strong, nonatomic) UIButton* dropButton;
+@property BOOL signedIn;
 
 
 -(void) setData: (NSDictionary*)track;

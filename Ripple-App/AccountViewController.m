@@ -12,6 +12,7 @@
 @interface AccountViewController ()
 
 @property (strong, nonatomic) NSDictionary* userAccount;
+@property(nonatomic, strong) CLLocationManager *locationManager;
 
 @end
 
@@ -77,6 +78,19 @@
     dropsLabel.font = [UIFont fontWithName:@"Poiret One" size:24.0];
     [self.view addSubview:dropsLabel];
     
+    //RESET LOCATION BUTTON
+    UIButton* resetLocationButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    resetLocationButton.frame = CGRectMake(0.0, [screen[@"height"] floatValue] - 50, [screen[@"width"] floatValue], 50.0);
+    [resetLocationButton addTarget:self
+                     action:@selector(resetLocation)
+           forControlEvents:UIControlEventTouchUpInside];
+    [resetLocationButton setTitle:@"Reset Location" forState:UIControlStateNormal];
+    [resetLocationButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    resetLocationButton.backgroundColor = [UIColor colorWithRed:0xE8/255.0 green:0x64/255.0 blue:0x64/255.0 alpha:1.0];
+    resetLocationButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:18.0];
+    [[resetLocationButton layer] setBorderWidth:1.0f];
+    [[resetLocationButton layer] setBorderColor:[UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0].CGColor];
+    [self.view addSubview:resetLocationButton];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -103,6 +117,58 @@
 {
     [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"email"];
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+-(void) resetLocation
+{
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    self.locationManager.distanceFilter = kCLLocationAccuracyThreeKilometers;
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
+    
+    if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+        [self.locationManager requestWhenInUseAuthorization];
+        [self.locationManager startUpdatingLocation];
+    }
+    
+}
+
+-(void) locationManager: (CLLocationManager *)manager didUpdateToLocation: (CLLocation *) newLocation
+           fromLocation: (CLLocation *) oldLocation {
+    CLLocation *location = newLocation;
+    // Configure the new event with information from the location
+    CLLocationCoordinate2D coordinate = [location coordinate];
+    
+    float longitude = coordinate.longitude;
+    float latitude = coordinate.latitude;
+    
+    int lat = (int) latitude;
+    int lon = (int) longitude;
+    
+    NSString *latS = [NSString stringWithFormat:@"%i", lat];
+    NSString *lonS = [NSString stringWithFormat:@"%i", lon];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:latS forKey:@"latitude"];
+    [[NSUserDefaults standardUserDefaults] setObject:lonS forKey:@"longitude"];
+    [self.locationManager stopUpdatingLocation];
+        
+}
+
+-(void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    switch (status) {
+        case kCLAuthorizationStatusNotDetermined:
+        case kCLAuthorizationStatusRestricted:
+        case kCLAuthorizationStatusDenied:
+        {
+            // do some error handling
+        }
+            break;
+        default:{
+            [self.locationManager startUpdatingLocation];
+        }
+            break;
+    }
 }
 
 @end

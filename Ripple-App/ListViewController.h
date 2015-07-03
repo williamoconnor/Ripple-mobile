@@ -12,8 +12,10 @@
 #import <CoreLocation/CoreLocation.h>
 #import "wboPlayerView.h"
 #import "songCell.h"
+#import "NowPlayingFooter.h"
+#import "PlayerViewController.h"
 
-@interface ViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, CLLocationManagerDelegate, wboPlayerDelegate, rippleSongCellDelegate>
+@interface ListViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, CLLocationManagerDelegate, rippleSongCellDelegate, NowPlayingFooterDelegate, PlayerDelegate>
 
 extern NSMutableDictionary* screenSize;
 

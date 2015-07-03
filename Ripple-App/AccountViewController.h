@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 
-@interface AccountViewController : UIViewController
+@interface AccountViewController : UIViewController <CLLocationManagerDelegate>
 
 @end

@@ -26,10 +26,11 @@
     if (self) {
         self.screen = [[NSUserDefaults standardUserDefaults] objectForKey:@"screen"];
         
-        self.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.4];
+        self.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
         
         // TRACK NAME
-        self.nowPlayingSongNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, [self.screen[@"width"] doubleValue], 40.0)];
+        self.nowPlayingSongNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(20.0, 0.0, [self.screen[@"width"] doubleValue]-40.0, 80.0)];
+        self.nowPlayingSongNameLabel.numberOfLines = 0;
         self.nowPlayingSongNameLabel.textColor = [UIColor whiteColor];
         self.nowPlayingSongNameLabel.font = [UIFont fontWithName:@"Poiret One" size:18];
         self.nowPlayingSongNameLabel.textAlignment = NSTextAlignmentCenter;
@@ -39,19 +40,33 @@
         self.playButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [self.playButton addTarget:self action:@selector(playButtonPressed) forControlEvents:UIControlEventTouchUpInside];
         self.playButton.hidden = YES;
-        self.playButton.frame = CGRectMake(10.0, 40.0, 20.0, 20.0);
+        self.playButton.frame = CGRectMake([self.screen[@"width"]doubleValue]/2 - 20.0, 80.0, 40.0, 40.0);
         [self.playButton setBackgroundImage:[UIImage imageNamed:@"whitePlay.png"] forState:UIControlStateNormal];
         [self addSubview:self.playButton];
         
         // PAUSE BUTTON
         self.pauseButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [self.pauseButton addTarget:self action:@selector(pauseButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-        self.pauseButton.frame = CGRectMake(10.0, 40.0, 20.0, 20.0);
+        self.pauseButton.frame = CGRectMake([self.screen[@"width"]doubleValue]/2 - 20.0, 80.0, 40.0, 40.0);
         [self.pauseButton setBackgroundImage:[UIImage imageNamed:@"whitePause.png"] forState:UIControlStateNormal];
         [self addSubview:self.pauseButton];
         
+        // FORWARD BUTTON
+        self.forwardButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self.forwardButton addTarget:self action:@selector(forwardButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        self.forwardButton.frame = CGRectMake([self.screen[@"width"]doubleValue]-80.0, 80.0, 40.0, 40.0);
+        [self.forwardButton setBackgroundImage:[UIImage imageNamed:@"forward.png"] forState:UIControlStateNormal];
+        [self addSubview:self.forwardButton];
+        
+        // BACKWARD BUTTON
+        self.backwardButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self.backwardButton addTarget:self action:@selector(backwardButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        self.backwardButton.frame = CGRectMake(40.0, 80.0, 40.0, 40.0);
+        [self.backwardButton setBackgroundImage:[UIImage imageNamed:@"backward.png"] forState:UIControlStateNormal];
+        [self addSubview:self.backwardButton];
+        
         // PROGRESS SLIDER
-        self.trackProgressSlider = [[UISlider alloc] initWithFrame:CGRectMake(75.0, 40.0, 0.75*[self.screen[@"width"] doubleValue], 20.0)];
+        self.trackProgressSlider = [[UISlider alloc] initWithFrame:CGRectMake(0.125*[self.screen[@"width"] doubleValue], 140.0, 0.75*[self.screen[@"width"] doubleValue], 20.0)];
         self.trackProgressSlider.minimumTrackTintColor = [UIColor colorWithRed:0x48/255.0 green:0x98/255.0 blue:0xBD/255.0 alpha:1.0];
         self.trackProgressSlider.maximumTrackTintColor = [UIColor colorWithRed:0xCC/255.0 green:0xCC/255.0 blue:0xCC/255.0 alpha:1.0];
         self.trackProgressSlider.continuous = YES;
@@ -60,16 +75,25 @@
         [self.trackProgressSlider addTarget:self action:@selector(sliderValueChanged) forControlEvents:UIControlEventValueChanged];
         [self addSubview:self.trackProgressSlider];
         
-        // TIME INDICATOR
-        self.timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(35.0, 40.0, 37.5, 20.0)];
-        self.timeLabel.font = [UIFont fontWithName:@"Poiret One" size:8];
-        self.timeLabel.textAlignment = NSTextAlignmentCenter;
-        self.timeLabel.textColor = [UIColor whiteColor];
-        self.timeLabel.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.4];
-        self.timeLabel.text = @"00 : 00";
-        [self addSubview:self.timeLabel];
-        [self bringSubviewToFront:self.timeLabel];
+        // TIME INDICATOR - Front
+        self.frontTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.125*[self.screen[@"width"] doubleValue]-18.75, 160.0, 37.5, 20.0)];
+        self.frontTimeLabel.font = [UIFont fontWithName:@"Poiret One" size:8];
+        self.frontTimeLabel.textAlignment = NSTextAlignmentCenter;
+        self.frontTimeLabel.textColor = [UIColor whiteColor];
+        self.frontTimeLabel.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.4];
+        self.frontTimeLabel.text = @"00 : 00";
+        [self addSubview:self.frontTimeLabel];
+        [self bringSubviewToFront:self.frontTimeLabel];
         
+        // TIME INDICATOR - End
+        self.backTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.875*[self.screen[@"width"] floatValue] - 18.75, 160.0, 37.5, 20.0)];
+        self.backTimeLabel.font = [UIFont fontWithName:@"Poiret One" size:8];
+        self.backTimeLabel.textAlignment = NSTextAlignmentCenter;
+        self.backTimeLabel.textColor = [UIColor whiteColor];
+        self.backTimeLabel.backgroundColor = [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:0.4];
+        self.backTimeLabel.text = @"-- : --";
+        [self addSubview:self.backTimeLabel];
+        [self bringSubviewToFront:self.backTimeLabel];
     }
     return self;
 }
@@ -84,6 +108,16 @@
 {
     [self togglePlayButton];
     [self.delegate pauseButtonPressed];
+}
+
+-(void) forwardButtonPressed
+{
+    [self.delegate forwardPressed];
+}
+
+-(void) backwardButtonPressed
+{
+    [self.delegate backwardPressed];
 }
 
 - (void) sliderValueChanged
@@ -122,11 +156,13 @@
     return timeString;
 }
 
-- (void) setSongDuration:(float)duration
+- (void) setSongDuration:(float)progress andDuration:(float)duration
 {
-    NSString* time = [self convertSecondsToTimeString:duration];
+    NSString* frontTime = [self convertSecondsToTimeString:progress];
+    NSString* backTime = [self convertSecondsToTimeString:(duration-progress)];
     
-    [self.timeLabel setText:time];
+    [self.frontTimeLabel setText:frontTime];
+    [self.backTimeLabel setText:[NSString stringWithFormat:@"-%@", backTime]];
 }
 
 - (NSString*) intToTimeString:(int)timeInt
@@ -145,7 +181,7 @@
 
 -(void) resetProgress
 {
-    self.timeLabel.text = @"00 : 00";
+    self.frontTimeLabel.text = @"00 : 00";
     [self.trackProgressSlider setValue:0.0];
 }
 

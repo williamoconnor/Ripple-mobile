@@ -6,11 +6,14 @@
 //  Copyright (c) 2015 Gooey Dee Bee. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "ListViewController.h"
 #import "SCUI.h"
 #import "DataManager.h"
+#import "PlayerViewController.h"
+#import "AppDelegate.h"
+#import "NowPlayingFooter.h"
 
-@interface ViewController ()
+@interface ListViewController ()
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) NSMutableArray *tracks;
@@ -26,17 +29,26 @@
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *signInButton;
 @property BOOL signedIn;
 
+@property (strong, nonatomic) PlayerViewController* playerView;
+@property (strong, nonatomic) NSString* footerText;
+@property (strong, nonatomic) UIImage* footerAlbum;
+
 // TIMER
-@property NSTimer *timer;
-@property int time;
-- (void) clock;
-- (void) startTimer;
-- (void) countup;
-- (void) updateSlider;
+//@property NSTimer *timer;
+//@property int time;
+//- (void) clock;
+//- (void) startTimer;
+//- (void) countup;
+//- (void) updateSlider;
 
 @end
 
-@implementation ViewController
+@implementation ListViewController
+
+-(AppDelegate*) app
+{
+    return (AppDelegate*) [[UIApplication sharedApplication] delegate];
+}
 
 -(NSMutableArray*)tracks
 {
@@ -78,24 +90,17 @@
     self.screenSize[@"width"] = width;
     
     [[NSUserDefaults standardUserDefaults] setObject:self.screenSize forKey:@"screen"];
-    
-
-    
-    self.albumCover = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 64.0, [self.screenSize[@"width"] doubleValue], 200.0)];
-    self.albumCover.hidden = YES;
-    [self.view addSubview:self.albumCover];
 
 //      PLAYER
-    self.playerGui = [[wboPlayerView alloc] initWithFrame:CGRectMake(0.0, 184.0, [self.screenSize[@"width"] doubleValue], 80.0)];
-    self.playerGui.hidden = YES;
-    self.playerGui.delegate = self;
-    [self.view addSubview:self.playerGui];
-    
+//    self.playerGui = [[wboPlayerView alloc] initWithFrame:CGRectMake(0.0, 184.0, [self.screenSize[@"width"] doubleValue], 80.0)];
+//    self.playerGui.hidden = YES;
+//    self.playerGui.delegate = self;
+//    [self.view addSubview:self.playerGui];
+//    
 //      ACTIVITY INDICATOR
     self.loading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     double x = [self.screenSize[@"width"] doubleValue]/2;
     self.loading.center = CGPointMake(x, 160.0);
-    NSLog(@"center: %f", self.loading.center.x);
     self.loading.hidesWhenStopped = YES;
     [self.tableView addSubview:self.loading];
     [self.tableView bringSubviewToFront:self.loading];
@@ -106,7 +111,7 @@
     self.tableView = [[UITableView alloc] init];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.frame = CGRectMake(0.0, 64.0, [self.screenSize[@"width"] doubleValue], [self.screenSize[@"height"] doubleValue]-64.0);
+    self.tableView.frame = CGRectMake(0.0, 0.0, [self.screenSize[@"width"] doubleValue], [self.screenSize[@"height"] doubleValue]);
     self.tableView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     self.view.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     [self.tableView registerClass:[songCell class] forCellReuseIdentifier:@"cell"];
@@ -159,7 +164,15 @@
         self.signInButton.title = @"Sign In";
     }
     [self.tableView reloadData];
-    NSLog(@"reloaded");
+    
+    if ([[self app].player isPlaying]) {
+        NowPlayingFooter* footer = [[NowPlayingFooter alloc] initWithSongName:self.footerText andAlbumCover:self.footerAlbum];
+        footer.delegate = self;
+        [self.view addSubview:footer];
+        [self.view bringSubviewToFront:footer];
+        
+        NSLog(@"%@",self.navigationController.viewControllers);
+    }
 }
 
 - (void) setUpLocation {
@@ -302,7 +315,6 @@
         cell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     }
     
-    NSLog(@"signed in? %d", self.signedIn);
     if (self.signedIn) {
         
         [cell createDropButton];
@@ -323,10 +335,7 @@
     }
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
     NSLog(@"track: %@", track[@"title"]);
-    [self.timer invalidate];
-    
-    float tableViewHeight = [self.screenSize[@"height"] floatValue] - 264.0;
-    self.tableView.frame = CGRectMake(0, 264.0, [self.screenSize[@"width"] doubleValue], tableViewHeight);
+//    [self.timer invalidate];
     
     //loader
     double x = [self.screenSize[@"width"] doubleValue]/2;
@@ -335,15 +344,15 @@
     [self.albumCover bringSubviewToFront:self.loading];
     [self.loading startAnimating];
     
-    if (self.tableView.frame.origin.y == 264.0) {
-        self.albumCover.hidden = NO;
-        self.playerGui.hidden = NO;
-        self.playerGui.playButton.hidden = YES;
-        self.playerGui.pauseButton.hidden = NO;
-    }
-    else {
-        NSLog(@"%f", self.tableView.frame.origin.y);
-    }
+//    if (self.tableView.frame.origin.y == 264.0) {
+//        self.albumCover.hidden = NO;
+//        self.playerGui.hidden = NO;
+//        self.playerGui.playButton.hidden = YES;
+//        self.playerGui.pauseButton.hidden = NO;
+//    }
+//    else {
+//        NSLog(@"%f", self.tableView.frame.origin.y);
+//    }
     
     
     // PLAY SONG
@@ -352,14 +361,15 @@
     self.nowPlayingTrackIndex = indexPath.row;
     NSLog(@"index path: %ld", self.nowPlayingTrackIndex);
     
-    [self playSong:track];
+//    [self playSong:track];
+    [self performSegueWithIdentifier:@"playerSegue" sender:self];
 }
 
 -(void)selectRow:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     self.nowPlayingTrack = [self.tracks objectAtIndex:indexPath.row];
     NSLog(@"track: %@", self.nowPlayingTrack[@"title"]);
-    [self.timer invalidate];
+//    [self.timer invalidate];
     
     float tableViewHeight = [self.screenSize[@"height"] floatValue] - 264.0;
     self.tableView.frame = CGRectMake(0, 264.0, [self.screenSize[@"width"] doubleValue], tableViewHeight);
@@ -423,13 +433,13 @@
 
 - (void)refresh:(UIRefreshControl *)refreshControl {
     //MAINTAIN PROPER HIGHLIGHTING
-//    NSInteger oldNumSongs = [self.tracks count];
-//    [self loadSongs];
-//    NSInteger offset = 0;
-//    if (self.nowPlayingTrackIndex > -1) { // a song is playing
-//        offset = [self.tracks count] - oldNumSongs;
-//    }
-//    self.nowPlayingTrackIndex += offset;
+    NSInteger oldNumSongs = [self.tracks count];
+    [self loadSongs];
+    NSInteger offset = 0;
+    if (self.nowPlayingTrackIndex > -1) { // a song is playing
+        offset = [self.tracks count] - oldNumSongs;
+    }
+    self.nowPlayingTrackIndex += offset;
     
     // ^ That only works when I don't get a full array back
     
@@ -438,57 +448,57 @@
     [self.tableView reloadData];
     
     // CELL COLORS
-//    // paths
-//    NSIndexPath *oldCellPath = [NSIndexPath indexPathForRow:oldNumSongs inSection:0];
-//    NSIndexPath *newCellPath = [NSIndexPath indexPathForRow:[self.tracks count] inSection:0];
-//    // cells
-//    UITableViewCell *oldCell = [self.tableView cellForRowAtIndexPath:oldCellPath];
-//    UITableViewCell *newCell = [self.tableView cellForRowAtIndexPath:newCellPath];
-//    //colors
-//    newCell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
-//    oldCell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
+    // paths
+    NSIndexPath *oldCellPath = [NSIndexPath indexPathForRow:oldNumSongs inSection:0];
+    NSIndexPath *newCellPath = [NSIndexPath indexPathForRow:[self.tracks count] inSection:0];
+    // cells
+    UITableViewCell *oldCell = [self.tableView cellForRowAtIndexPath:oldCellPath];
+    UITableViewCell *newCell = [self.tableView cellForRowAtIndexPath:newCellPath];
+    //colors
+    newCell.contentView.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
+    oldCell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
     
     [refreshControl endRefreshing];
 }
 
 // TIMER
 
-- (void) updateSlider
-{
-    [self.playerGui.trackProgressSlider setValue: self.player.currentTime animated:YES];
-}
-
-- (void) startTimer
-{
-    self.timer = [NSTimer timerWithTimeInterval:1.0 target:self selector:@selector(countup) userInfo:nil repeats:YES];
-    [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSDefaultRunLoopMode];
-}
-
-- (void) clock
-{
-}
-
-- (void) countup
-{
-    [self.playerGui.trackProgressSlider setValue:self.player.currentTime animated:YES];
-    [self.playerGui setSongDuration:self.playerGui.trackProgressSlider.value];
-    [self.loading stopAnimating];
-    
-    if (self.player.currentTime > self.player.duration-1) {
-        [self.player prepareToPlay];
-        [self.timer invalidate];
-        if (self.nowPlayingTrackIndex < self.tracks.count - 1) {
-            [self playNextSong];
-        }
-        else {
-            NSIndexPath *thisSongCellPath = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex+1 inSection:0];
-            [self.tableView deselectRowAtIndexPath:thisSongCellPath animated:YES];
-//            UITableViewCell* thisSongCell = [self.tableView cellForRowAtIndexPath:thisSongCellPath];
-//            thisSongCell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
-        }
-        [self.playerGui resetProgress];
-    }
-}
+//- (void) updateSlider
+//{
+//    [self.playerGui.trackProgressSlider setValue: self.player.currentTime animated:YES];
+//}
+//
+//- (void) startTimer
+//{
+//    self.timer = [NSTimer timerWithTimeInterval:1.0 target:self selector:@selector(countup) userInfo:nil repeats:YES];
+//    [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSDefaultRunLoopMode];
+//}
+//
+//- (void) clock
+//{
+//}
+//
+//- (void) countup
+//{
+//    [self.playerGui.trackProgressSlider setValue:self.player.currentTime animated:YES];
+//    [self.playerGui setSongDuration:self.playerGui.trackProgressSlider.value];
+//    [self.loading stopAnimating];
+//    
+//    if (self.player.currentTime > self.player.duration-1) {
+//        [self.player prepareToPlay];
+//        [self.timer invalidate];
+//        if (self.nowPlayingTrackIndex < self.tracks.count - 1) {
+//            [self playNextSong];
+//        }
+//        else {
+//            NSIndexPath *thisSongCellPath = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex+1 inSection:0];
+//            [self.tableView deselectRowAtIndexPath:thisSongCellPath animated:YES];
+////            UITableViewCell* thisSongCell = [self.tableView cellForRowAtIndexPath:thisSongCellPath];
+////            thisSongCell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
+//        }
+//        [self.playerGui resetProgress];
+//    }
+//}
 
 // DELEGATE METHODS
 
@@ -516,139 +526,139 @@
     [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = playInfo;
 }
 
-- (void) playSong: (NSDictionary*)track
-{
-    // this will not need to fire up the player
-    // it will simply call play on it
-    
-    NSURL *trackURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://api.soundcloud.com/tracks/%@/stream?client_id=%@", track[@"id"], kClientId]];
-    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:trackURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        
-        if (error) {
-            NSLog(@"error: %@", error);
-        }
-        
-
-//        while (data.length < 100) {
-//            data = [NSData dataWithContentsOfURL:trackURL];
+//- (void) playSong: (NSDictionary*)track
+//{
+//    // this will not need to fire up the player
+//    // it will simply call play on it
+//    
+//    NSURL *trackURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://api.soundcloud.com/tracks/%@/stream?client_id=%@", track[@"id"], kClientId]];
+//    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:trackURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+//        
+//        if (error) {
+//            NSLog(@"error: %@", error);
 //        }
-        
-        self.player = [[AVAudioPlayer alloc] initWithData:data error:nil];
-        
-        
-        //get your app's audioSession singleton object
-        AVAudioSession* session = [AVAudioSession sharedInstance];
-        
-        //error handling
-        BOOL success;
-        NSError* session_error;
-        
-        //set the audioSession category.
-        //Needs to be Record or PlayAndRecord to use audioRouteOverride:
-        
-        success = [session setCategory:AVAudioSessionCategoryPlayback
-                                 error:&session_error];
-        
-        if (!success)  NSLog(@"AVAudioSession error setting category:%@",session_error);
-        
-        //set the audioSession override
-//        success = [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker
-//                                             error:&error];
-        if (!success)  NSLog(@"AVAudioSession error overrideOutputAudioPort:%@",session_error);
-        
-        //activate the audio session
-        success = [session setActive:YES error:&session_error];
-        if (!success) NSLog(@"AVAudioSession error activating: %@",session_error);
-        else NSLog(@"audioSession active");
-        [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-        
-        NSLog(@"url: %@", trackURL);
-        [self.player play];
-        
-        // MEDIA PLAYER
-        UIImage *albumArtImg = self.albumCovers[self.nowPlayingTrackIndex];
-        MPMediaItemArtwork* albumArt = [[MPMediaItemArtwork alloc] initWithImage:albumArtImg];
-        
-        NSString* artist = @"";
-        if (![track[@"label_name"] isEqual:[NSNull null]] && [track[@"label_name"] length] > 0){
-            artist = track[@"label_name"];
-        }
-        else {
-            artist = track[@"user"][@"permalink"];
-        }
-        NSNumber* duration = [NSNumber numberWithFloat:self.player.duration];
-        
-        NSDictionary *info = @{ MPMediaItemPropertyArtist: artist,
-                                MPMediaItemPropertyAlbumTitle: @"",
-                                MPMediaItemPropertyTitle: track[@"title"],
-                                MPMediaItemPropertyPlaybackDuration: duration,
-                                MPMediaItemPropertyArtwork: albumArt
-                                };
-        
-        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = info;
-        
-        // TRACK PROGRESS
-        [self startTimer];
-        self.playerGui.trackProgressSlider.maximumValue = self.player.duration;
-        self.playerGui.trackProgressSlider.minimumValue = 0;
-    }];
-    
-    [task resume];
-    
-    // PREPARE NEXT SONG
-    
-    self.playerGui.nowPlayingSongNameLabel.text = track[@"title"];
-    self.albumCover.image = self.albumCovers[self.nowPlayingTrackIndex];
-}
+//        
+//
+////        while (data.length < 100) {
+////            data = [NSData dataWithContentsOfURL:trackURL];
+////        }
+//        
+//        self.player = [[AVAudioPlayer alloc] initWithData:data error:nil];
+//        
+//        
+//        //get your app's audioSession singleton object
+//        AVAudioSession* session = [AVAudioSession sharedInstance];
+//        
+//        //error handling
+//        BOOL success;
+//        NSError* session_error;
+//        
+//        //set the audioSession category.
+//        //Needs to be Record or PlayAndRecord to use audioRouteOverride:
+//        
+//        success = [session setCategory:AVAudioSessionCategoryPlayback
+//                                 error:&session_error];
+//        
+//        if (!success)  NSLog(@"AVAudioSession error setting category:%@",session_error);
+//        
+//        //set the audioSession override
+////        success = [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker
+////                                             error:&error];
+//        if (!success)  NSLog(@"AVAudioSession error overrideOutputAudioPort:%@",session_error);
+//        
+//        //activate the audio session
+//        success = [session setActive:YES error:&session_error];
+//        if (!success) NSLog(@"AVAudioSession error activating: %@",session_error);
+//        else NSLog(@"audioSession active");
+//        [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+//        
+//        NSLog(@"url: %@", trackURL);
+//        [self.player play];
+//        
+//        // MEDIA PLAYER
+//        UIImage *albumArtImg = self.albumCovers[self.nowPlayingTrackIndex];
+//        MPMediaItemArtwork* albumArt = [[MPMediaItemArtwork alloc] initWithImage:albumArtImg];
+//        
+//        NSString* artist = @"";
+//        if (![track[@"label_name"] isEqual:[NSNull null]] && [track[@"label_name"] length] > 0){
+//            artist = track[@"label_name"];
+//        }
+//        else {
+//            artist = track[@"user"][@"permalink"];
+//        }
+//        NSNumber* duration = [NSNumber numberWithFloat:self.player.duration];
+//        
+//        NSDictionary *info = @{ MPMediaItemPropertyArtist: artist,
+//                                MPMediaItemPropertyAlbumTitle: @"",
+//                                MPMediaItemPropertyTitle: track[@"title"],
+//                                MPMediaItemPropertyPlaybackDuration: duration,
+//                                MPMediaItemPropertyArtwork: albumArt
+//                                };
+//        
+//        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = info;
+//        
+//        // TRACK PROGRESS
+//        [self startTimer];
+//        self.playerGui.trackProgressSlider.maximumValue = self.player.duration;
+//        self.playerGui.trackProgressSlider.minimumValue = 0;
+//    }];
+//    
+//    [task resume];
+//    
+//    // PREPARE NEXT SONG
+//    
+//    self.playerGui.nowPlayingSongNameLabel.text = track[@"title"];
+//    self.albumCover.image = self.albumCovers[self.nowPlayingTrackIndex];
+//}
 
-- (void) playNextSong
-{
-    // deselect the last one
-    NSIndexPath *lastSongCellPath = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
-    [self deselectRow:self.tableView didDeselectRowAtIndexPath:lastSongCellPath];
-    
-    // select next cell
-    NSLog(@"nextTrack: %@", self.tracks[self.nowPlayingTrackIndex+1][@"title"]);
-    NSIndexPath *thisSongCellPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex+1) inSection:0];
-    [self selectRow:self.tableView didSelectRowAtIndexPath:thisSongCellPath];
-    [self playSong:self.nowPlayingTrack];
-    
-}
+//- (void) playNextSong
+//{
+//    // deselect the last one
+//    NSIndexPath *lastSongCellPath = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
+//    [self deselectRow:self.tableView didDeselectRowAtIndexPath:lastSongCellPath];
+//    
+//    // select next cell
+//    NSLog(@"nextTrack: %@", self.tracks[self.nowPlayingTrackIndex+1][@"title"]);
+//    NSIndexPath *thisSongCellPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex+1) inSection:0];
+//    [self selectRow:self.tableView didSelectRowAtIndexPath:thisSongCellPath];
+//    [self playSong:self.nowPlayingTrack];
+//    
+//}
 
-- (void)remoteControlReceivedWithEvent:(UIEvent *)event {
-    //if it is a remote control event handle it correctly
-    if (event.type == UIEventTypeRemoteControl)
-    {
-        if (event.subtype == UIEventSubtypeRemoteControlPlay)
-        {
-            [self playButtonPressed];
-            [self.playerGui togglePlayButton];
-        }
-        else if (event.subtype == UIEventSubtypeRemoteControlPause)
-        {
-            [self pauseButtonPressed];
-            [self.playerGui togglePlayButton];
-        }
-        else if (event.subtype == UIEventSubtypeRemoteControlNextTrack)
-        {
-            [self pauseButtonPressed];
-            [self playNextSong];
-//            if (self.nowPlayingTrackIndex < [self.tracks count]) {
-//                NSIndexPath* nextSongPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex+1) inSection:0];
-//                [self selectRow:self.tableView didSelectRowAtIndexPath:nextSongPath];
+//- (void)remoteControlReceivedWithEvent:(UIEvent *)event {
+//    //if it is a remote control event handle it correctly
+//    if (event.type == UIEventTypeRemoteControl)
+//    {
+//        if (event.subtype == UIEventSubtypeRemoteControlPlay)
+//        {
+//            [self playButtonPressed];
+//            [self.playerGui togglePlayButton];
+//        }
+//        else if (event.subtype == UIEventSubtypeRemoteControlPause)
+//        {
+//            [self pauseButtonPressed];
+//            [self.playerGui togglePlayButton];
+//        }
+//        else if (event.subtype == UIEventSubtypeRemoteControlNextTrack)
+//        {
+//            [self pauseButtonPressed];
+//            [self playNextSong];
+////            if (self.nowPlayingTrackIndex < [self.tracks count]) {
+////                NSIndexPath* nextSongPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex+1) inSection:0];
+////                [self selectRow:self.tableView didSelectRowAtIndexPath:nextSongPath];
+////            }
+//        }
+//        else if (event.subtype == UIEventSubtypeRemoteControlPreviousTrack)
+//        {
+//            [self pauseButtonPressed];
+//            if (self.nowPlayingTrackIndex > 0) {
+//                NSIndexPath* prevSongPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex-1) inSection:0];
+//                [self selectRow:self.tableView didSelectRowAtIndexPath:prevSongPath];
+//                [self playSong:self.nowPlayingTrack];
 //            }
-        }
-        else if (event.subtype == UIEventSubtypeRemoteControlPreviousTrack)
-        {
-            [self pauseButtonPressed];
-            if (self.nowPlayingTrackIndex > 0) {
-                NSIndexPath* prevSongPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex-1) inSection:0];
-                [self selectRow:self.tableView didSelectRowAtIndexPath:prevSongPath];
-                [self playSong:self.nowPlayingTrack];
-            }
-        }
-    }
-}
+//        }
+//    }
+//}
 
 - (IBAction)signInButtonPressed:(UIBarButtonItem *)sender {
     if ([self.signInButton.title isEqualToString:@"Sign In"]) {
@@ -685,6 +695,58 @@
         UIAlertView* failure = [[UIAlertView alloc] initWithTitle:@"Drop Unsuccessful" message:result[@"reason"] delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
         [failure show];
     }
+}
+
+#pragma mark - navigation
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.destinationViewController isKindOfClass:[PlayerViewController class]] && sender != nil) {
+        PlayerViewController* dest = segue.destinationViewController;
+        BOOL newsong = true;
+        if (dest.song == self.tracks[(long)self.nowPlayingTrackIndex]) {
+            newsong = false;
+        }
+        
+        dest.song = self.tracks[(long)self.nowPlayingTrackIndex];
+        dest.tracks = self.tracks;
+        dest.nowPlayingTrackIndex = self.nowPlayingTrackIndex;
+        dest.albumCovers = self.albumCovers;
+        dest.delegate = self;
+        [dest playSong];
+        
+        // BACK BUTTON
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Songs" style:UIBarButtonItemStylePlain target:nil action:nil];
+        
+        NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                       [UIFont fontWithName:@"Poiret One" size:18.0], NSFontAttributeName,
+                       [UIColor whiteColor], NSForegroundColorAttributeName,
+                                    nil];
+        [[UIBarButtonItem appearance] setTitleTextAttributes:
+         [NSDictionary dictionaryWithObjectsAndKeys:
+          [UIColor whiteColor], NSForegroundColorAttributeName,
+          [UIFont fontWithName:@"Poiret One" size:18.0], NSFontAttributeName,
+          nil] forState:UIControlStateNormal];
+        self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+//        [self.navigationItem.backBarButtonItem setTitleTextAttributes:attributes forState:UIControlStateNormal];
+    }
+}
+
+#pragma mark - now playing footer delegate
+- (void) footerPressed
+{
+    [self presentViewController:self.playerView animated:YES completion:nil];
+}
+
+#pragma mark - player delegate
+-(void) setSongInfo:(NSDictionary *)info
+{
+    self.footerAlbum = info[@"album"];
+    self.footerText = info[@"song"];
+}
+
+-(void) keepVC:(id)player
+{
+    self.playerView = player;
 }
 
 @end

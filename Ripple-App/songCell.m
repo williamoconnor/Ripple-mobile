@@ -105,6 +105,7 @@
 -(void) hideDropButton
 {
     [self.dropButton removeFromSuperview];
+    NSLog(@"%@",[self.contentView subviews]);
     NSLog(@"Called it");
 }
 

@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		FE28279E1AE8690D005B83A3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FE28279D1AE8690D005B83A3 /* main.m */; };
 		FE2827A11AE8690D005B83A3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2827A01AE8690D005B83A3 /* AppDelegate.m */; };
-		FE2827A41AE8690D005B83A3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2827A31AE8690D005B83A3 /* ViewController.m */; };
+		FE2827A41AE8690D005B83A3 /* ListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2827A31AE8690D005B83A3 /* ListViewController.m */; };
 		FE2827A71AE8690D005B83A3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FE2827A51AE8690D005B83A3 /* Main.storyboard */; };
 		FE2827A91AE8690D005B83A3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FE2827A81AE8690D005B83A3 /* Images.xcassets */; };
 		FE2827AC1AE8690D005B83A3 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE2827AA1AE8690D005B83A3 /* LaunchScreen.xib */; };
@@ -33,6 +33,10 @@
 		FE28281D1AE873A0005B83A3 /* REST_API.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2828191AE873A0005B83A3 /* REST_API.m */; };
 		FE28282D1AE8A7B7005B83A3 /* songCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE28282C1AE8A7B7005B83A3 /* songCell.m */; };
 		FE28282F1AE96010005B83A3 /* PoiretOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FE28282E1AE95CFE005B83A3 /* PoiretOne-Regular.ttf */; };
+		FE601A161B292D4E00F406AE /* PlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE601A151B292D4E00F406AE /* PlayerViewController.m */; };
+		FE601A521B4243D100F406AE /* backward.png in Resources */ = {isa = PBXBuildFile; fileRef = FE601A501B4243D100F406AE /* backward.png */; };
+		FE601A531B4243D100F406AE /* forward.png in Resources */ = {isa = PBXBuildFile; fileRef = FE601A511B4243D100F406AE /* forward.png */; };
+		FE601A921B44D91700F406AE /* NowPlayingFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = FE601A911B44D91700F406AE /* NowPlayingFooter.m */; };
 		FE6A98451AEEB076009D37F1 /* progressMarker.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A98441AEEB076009D37F1 /* progressMarker.png */; };
 		FE6A984A1AEEB4CE009D37F1 /* rectangle.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A98491AEEB4CE009D37F1 /* rectangle.png */; };
 		FE6A984D1AF10B82009D37F1 /* Icon-40@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A984B1AF10B82009D37F1 /* Icon-40@3x.png */; };
@@ -172,8 +176,8 @@
 		FE28279D1AE8690D005B83A3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		FE28279F1AE8690D005B83A3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		FE2827A01AE8690D005B83A3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		FE2827A21AE8690D005B83A3 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		FE2827A31AE8690D005B83A3 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		FE2827A21AE8690D005B83A3 /* ListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ListViewController.h; sourceTree = "<group>"; };
+		FE2827A31AE8690D005B83A3 /* ListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ListViewController.m; sourceTree = "<group>"; };
 		FE2827A61AE8690D005B83A3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		FE2827A81AE8690D005B83A3 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		FE2827AB1AE8690D005B83A3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -204,6 +208,12 @@
 		FE28282B1AE8A7B7005B83A3 /* songCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = songCell.h; sourceTree = "<group>"; };
 		FE28282C1AE8A7B7005B83A3 /* songCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = songCell.m; sourceTree = "<group>"; };
 		FE28282E1AE95CFE005B83A3 /* PoiretOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "PoiretOne-Regular.ttf"; path = "../PoiretOne-Regular.ttf"; sourceTree = "<group>"; };
+		FE601A141B292D4E00F406AE /* PlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerViewController.h; sourceTree = "<group>"; };
+		FE601A151B292D4E00F406AE /* PlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerViewController.m; sourceTree = "<group>"; };
+		FE601A501B4243D100F406AE /* backward.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backward.png; sourceTree = "<group>"; };
+		FE601A511B4243D100F406AE /* forward.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = forward.png; sourceTree = "<group>"; };
+		FE601A901B44D91700F406AE /* NowPlayingFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NowPlayingFooter.h; sourceTree = "<group>"; };
+		FE601A911B44D91700F406AE /* NowPlayingFooter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NowPlayingFooter.m; sourceTree = "<group>"; };
 		FE6A98441AEEB076009D37F1 /* progressMarker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressMarker.png; sourceTree = "<group>"; };
 		FE6A98491AEEB4CE009D37F1 /* rectangle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rectangle.png; sourceTree = "<group>"; };
 		FE6A984B1AF10B82009D37F1 /* Icon-40@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-40@3x.png"; sourceTree = "<group>"; };
@@ -293,12 +303,16 @@
 		FE28279A1AE8690D005B83A3 /* Ripple-App */ = {
 			isa = PBXGroup;
 			children = (
+				FE601A901B44D91700F406AE /* NowPlayingFooter.h */,
+				FE601A911B44D91700F406AE /* NowPlayingFooter.m */,
 				FE28282B1AE8A7B7005B83A3 /* songCell.h */,
 				FE28282C1AE8A7B7005B83A3 /* songCell.m */,
 				FE28279F1AE8690D005B83A3 /* AppDelegate.h */,
 				FE2827A01AE8690D005B83A3 /* AppDelegate.m */,
-				FE2827A21AE8690D005B83A3 /* ViewController.h */,
-				FE2827A31AE8690D005B83A3 /* ViewController.m */,
+				FE601A141B292D4E00F406AE /* PlayerViewController.h */,
+				FE601A151B292D4E00F406AE /* PlayerViewController.m */,
+				FE2827A21AE8690D005B83A3 /* ListViewController.h */,
+				FE2827A31AE8690D005B83A3 /* ListViewController.m */,
 				FEA77A1E1AED5CE1000CBFD3 /* wboPlayerView.h */,
 				FEA77A1F1AED5CE1000CBFD3 /* wboPlayerView.m */,
 				FE2827A51AE8690D005B83A3 /* Main.storyboard */,
@@ -316,6 +330,8 @@
 		FE28279B1AE8690D005B83A3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				FE601A501B4243D100F406AE /* backward.png */,
+				FE601A511B4243D100F406AE /* forward.png */,
 				FE6A99071AF6F703009D37F1 /* dropItIcon.png */,
 				FE6A986B1AF29AEE009D37F1 /* ripple_Fotor.jpg */,
 				FE6A98531AF10D44009D37F1 /* NowPlaying.png */,
@@ -593,6 +609,7 @@
 				FE2827A71AE8690D005B83A3 /* Main.storyboard in Resources */,
 				FE2828131AE87114005B83A3 /* SoundCloud.bundle in Resources */,
 				FE6A98541AF10D44009D37F1 /* NowPlaying.png in Resources */,
+				FE601A521B4243D100F406AE /* backward.png in Resources */,
 				FED837A01AE98BDB009630C3 /* Cookie-Regular.ttf in Resources */,
 				FE6A99081AF6F703009D37F1 /* dropItIcon.png in Resources */,
 				FE2827AC1AE8690D005B83A3 /* LaunchScreen.xib in Resources */,
@@ -604,6 +621,7 @@
 				FEA77A4A1AEDFE1D000CBFD3 /* whitePause.png in Resources */,
 				FE6A98521AF10CE2009D37F1 /* Icon-Small@2x.png in Resources */,
 				FE6A98451AEEB076009D37F1 /* progressMarker.png in Resources */,
+				FE601A531B4243D100F406AE /* forward.png in Resources */,
 				FE6A984A1AEEB4CE009D37F1 /* rectangle.png in Resources */,
 				FE2827A91AE8690D005B83A3 /* Images.xcassets in Resources */,
 			);
@@ -624,14 +642,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE28281C1AE873A0005B83A3 /* JSONConverter.m in Sources */,
-				FE2827A41AE8690D005B83A3 /* ViewController.m in Sources */,
+				FE2827A41AE8690D005B83A3 /* ListViewController.m in Sources */,
 				FE28281D1AE873A0005B83A3 /* REST_API.m in Sources */,
 				FE28282D1AE8A7B7005B83A3 /* songCell.m in Sources */,
+				FE601A921B44D91700F406AE /* NowPlayingFooter.m in Sources */,
 				FE6A98811AF40197009D37F1 /* AccountViewController.m in Sources */,
 				FE28281B1AE873A0005B83A3 /* DataManager.m in Sources */,
 				FEA77A201AED5CE1000CBFD3 /* wboPlayerView.m in Sources */,
 				FE2827A11AE8690D005B83A3 /* AppDelegate.m in Sources */,
 				FE6A98791AF2A8B1009D37F1 /* SignInViewController.m in Sources */,
+				FE601A161B292D4E00F406AE /* PlayerViewController.m in Sources */,
 				FE28279E1AE8690D005B83A3 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

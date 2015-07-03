@@ -12,6 +12,8 @@
 
 - (void) pauseButtonPressed;
 - (void) playButtonPressed;
+- (void) backwardPressed;
+- (void) forwardPressed;
 - (void) navigateInSong:(float) newTime;
 
 @end
@@ -24,9 +26,13 @@
 @property (strong, nonatomic) UISlider *trackProgressSlider;
 @property (strong, nonatomic) UIButton *playButton;
 @property (strong, nonatomic) UIButton *pauseButton;
-@property (strong, nonatomic) UILabel *timeLabel;
+@property (strong, nonatomic) UIButton *forwardButton;
+@property (strong, nonatomic) UIButton *backwardButton;
+@property (strong, nonatomic) UILabel *frontTimeLabel;
+@property (strong, nonatomic) UILabel *backTimeLabel;
+
 - (void) resetProgress;
-- (void) setSongDuration: (float)duration;
+- (void) setSongDuration: (float)progress andDuration: (float)duration;
 - (void) togglePlayButton;
 
 

@@ -1,0 +1,58 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "3F352B067C0DFA70BDAE43020BAFF0492DAEDEA9",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "48734AC5978E47BCAB24F1E9699B65204C5FF04A" : 0,
+    "4DFCCBAAFC97C65D80F81B0E4894DA70B64A77E3" : 0,
+    "2F16ABB5253C8A53BD834DD2135B7E534A667AC1" : 0,
+    "EF51387A5AF28E4351AFB0302884600583A438B5" : 0,
+    "3F352B067C0DFA70BDAE43020BAFF0492DAEDEA9" : 0,
+    "EB5674475998A0DD33CD59076628ED3B93CBE9CA" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "B0301A4C-24C8-4AF8-A206-454726344455",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "48734AC5978E47BCAB24F1E9699B65204C5FF04A" : "Ripple-App\/OHAttributedLabel\/",
+    "4DFCCBAAFC97C65D80F81B0E4894DA70B64A77E3" : "Ripple-App\/CocoaSoundCloudAPI\/",
+    "2F16ABB5253C8A53BD834DD2135B7E534A667AC1" : "Ripple-App\/CocoaSoundCloudUI\/",
+    "EF51387A5AF28E4351AFB0302884600583A438B5" : "Ripple-App\/JSONKit\/",
+    "3F352B067C0DFA70BDAE43020BAFF0492DAEDEA9" : "Ripple-App\/",
+    "EB5674475998A0DD33CD59076628ED3B93CBE9CA" : "Ripple-App\/OAuth2Client\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Ripple-App",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Ripple-App.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "git:\/\/github.com\/soundcloud\/CocoaSoundCloudUI.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "2F16ABB5253C8A53BD834DD2135B7E534A667AC1"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/Gooey-Dee-Bee\/Ripple-app.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "3F352B067C0DFA70BDAE43020BAFF0492DAEDEA9"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "git:\/\/github.com\/nxtbgthng\/OHAttributedLabel.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "48734AC5978E47BCAB24F1E9699B65204C5FF04A"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "git:\/\/github.com\/soundcloud\/CocoaSoundCloudAPI.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "4DFCCBAAFC97C65D80F81B0E4894DA70B64A77E3"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "git:\/\/github.com\/nxtbgthng\/OAuth2Client.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "EB5674475998A0DD33CD59076628ED3B93CBE9CA"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "git:\/\/github.com\/nxtbgthng\/JSONKit.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "EF51387A5AF28E4351AFB0302884600583A438B5"
+    }
+  ]
+}

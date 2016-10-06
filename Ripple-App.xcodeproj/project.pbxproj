@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FE0D5AAB1DA6865500E37F77 /* HexColor.m in Sources */ = {isa = PBXBuildFile; fileRef = FE0D5AA81DA6865500E37F77 /* HexColor.m */; };
+		FE0D5AAC1DA6865500E37F77 /* Screen.m in Sources */ = {isa = PBXBuildFile; fileRef = FE0D5AAA1DA6865500E37F77 /* Screen.m */; };
 		FE28279E1AE8690D005B83A3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FE28279D1AE8690D005B83A3 /* main.m */; };
 		FE2827A11AE8690D005B83A3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2827A01AE8690D005B83A3 /* AppDelegate.m */; };
 		FE2827A41AE8690D005B83A3 /* ListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE2827A31AE8690D005B83A3 /* ListViewController.m */; };
@@ -49,11 +51,22 @@
 		FE6A986C1AF29AEE009D37F1 /* ripple_Fotor.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FE6A986B1AF29AEE009D37F1 /* ripple_Fotor.jpg */; };
 		FE6A98791AF2A8B1009D37F1 /* SignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE6A98781AF2A8B1009D37F1 /* SignInViewController.m */; };
 		FE6A98811AF40197009D37F1 /* AccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE6A98801AF40197009D37F1 /* AccountViewController.m */; };
-		FE6A99081AF6F703009D37F1 /* dropItIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = FE6A99071AF6F703009D37F1 /* dropItIcon.png */; };
+		FE7D6B9E1B9D07430010BB76 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = FE7D6B9D1B9D07430010BB76 /* logo.png */; };
+		FE7D6BA71B9D17E60010BB76 /* logoSmall.png in Resources */ = {isa = PBXBuildFile; fileRef = FE7D6BA61B9D17E60010BB76 /* logoSmall.png */; };
+		FE7D6BAA1B9D1C430010BB76 /* DropFeedTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = FE7D6BA91B9D1C430010BB76 /* DropFeedTableView.m */; };
+		FE7D6BAD1B9D287D0010BB76 /* LoginView.m in Sources */ = {isa = PBXBuildFile; fileRef = FE7D6BAC1B9D287D0010BB76 /* LoginView.m */; };
+		FE7D6BB01B9D289E0010BB76 /* RegisterView.m in Sources */ = {isa = PBXBuildFile; fileRef = FE7D6BAF1B9D289E0010BB76 /* RegisterView.m */; };
+		FE7D6BB31B9DE2CB0010BB76 /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE7D6BB21B9DE2CB0010BB76 /* SearchViewController.m */; };
+		FE7D6BB51B9E06890010BB76 /* drop-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = FE7D6BB41B9E06890010BB76 /* drop-icon.png */; };
+		FE7D6BB91B9E2E4A0010BB76 /* appIcon58.png in Resources */ = {isa = PBXBuildFile; fileRef = FE7D6BB61B9E2E4A0010BB76 /* appIcon58.png */; };
+		FE7D6BBA1B9E2E4A0010BB76 /* appIcon122.png in Resources */ = {isa = PBXBuildFile; fileRef = FE7D6BB71B9E2E4A0010BB76 /* appIcon122.png */; };
+		FE7D6BBB1B9E2E4A0010BB76 /* appIcon182.png in Resources */ = {isa = PBXBuildFile; fileRef = FE7D6BB81B9E2E4A0010BB76 /* appIcon182.png */; };
+		FE7D6BBD1B9E30110010BB76 /* launch.png in Resources */ = {isa = PBXBuildFile; fileRef = FE7D6BBC1B9E30110010BB76 /* launch.png */; };
+		FE7D6BBF1B9E4E230010BB76 /* appIcon120.png in Resources */ = {isa = PBXBuildFile; fileRef = FE7D6BBE1B9E4E230010BB76 /* appIcon120.png */; };
+		FE7D6BC11B9E4F600010BB76 /* AppIcon40x40.png in Resources */ = {isa = PBXBuildFile; fileRef = FE7D6BC01B9E4F600010BB76 /* AppIcon40x40.png */; };
 		FEA77A201AED5CE1000CBFD3 /* wboPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = FEA77A1F1AED5CE1000CBFD3 /* wboPlayerView.m */; };
 		FEA77A4A1AEDFE1D000CBFD3 /* whitePause.png in Resources */ = {isa = PBXBuildFile; fileRef = FEA77A471AEDFE1D000CBFD3 /* whitePause.png */; };
 		FEA77A4C1AEDFE1D000CBFD3 /* whitePlay.png in Resources */ = {isa = PBXBuildFile; fileRef = FEA77A491AEDFE1D000CBFD3 /* whitePlay.png */; };
-		FED837A01AE98BDB009630C3 /* Cookie-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FED8379F1AE98AF8009630C3 /* Cookie-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -172,6 +185,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FE01B63F1B9CF7A0008BFA8E /* Colors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Colors.h; sourceTree = "<group>"; };
+		FE0D5AA71DA6865500E37F77 /* HexColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexColor.h; sourceTree = "<group>"; };
+		FE0D5AA81DA6865500E37F77 /* HexColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HexColor.m; sourceTree = "<group>"; };
+		FE0D5AA91DA6865500E37F77 /* Screen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Screen.h; sourceTree = "<group>"; };
+		FE0D5AAA1DA6865500E37F77 /* Screen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Screen.m; sourceTree = "<group>"; };
 		FE2827981AE8690D005B83A3 /* Ripple-App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ripple-App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE28279C1AE8690D005B83A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FE28279D1AE8690D005B83A3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -229,12 +247,27 @@
 		FE6A98781AF2A8B1009D37F1 /* SignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignInViewController.m; sourceTree = "<group>"; };
 		FE6A987F1AF40197009D37F1 /* AccountViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccountViewController.h; sourceTree = "<group>"; };
 		FE6A98801AF40197009D37F1 /* AccountViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccountViewController.m; sourceTree = "<group>"; };
-		FE6A99071AF6F703009D37F1 /* dropItIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dropItIcon.png; sourceTree = "<group>"; };
+		FE7D6B9D1B9D07430010BB76 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
+		FE7D6BA61B9D17E60010BB76 /* logoSmall.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logoSmall.png; sourceTree = "<group>"; };
+		FE7D6BA81B9D1C430010BB76 /* DropFeedTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropFeedTableView.h; sourceTree = "<group>"; };
+		FE7D6BA91B9D1C430010BB76 /* DropFeedTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DropFeedTableView.m; sourceTree = "<group>"; };
+		FE7D6BAB1B9D287D0010BB76 /* LoginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginView.h; sourceTree = "<group>"; };
+		FE7D6BAC1B9D287D0010BB76 /* LoginView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginView.m; sourceTree = "<group>"; };
+		FE7D6BAE1B9D289E0010BB76 /* RegisterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterView.h; sourceTree = "<group>"; };
+		FE7D6BAF1B9D289E0010BB76 /* RegisterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterView.m; sourceTree = "<group>"; };
+		FE7D6BB11B9DE2CB0010BB76 /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
+		FE7D6BB21B9DE2CB0010BB76 /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchViewController.m; sourceTree = "<group>"; };
+		FE7D6BB41B9E06890010BB76 /* drop-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "drop-icon.png"; sourceTree = "<group>"; };
+		FE7D6BB61B9E2E4A0010BB76 /* appIcon58.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appIcon58.png; sourceTree = "<group>"; };
+		FE7D6BB71B9E2E4A0010BB76 /* appIcon122.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appIcon122.png; sourceTree = "<group>"; };
+		FE7D6BB81B9E2E4A0010BB76 /* appIcon182.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appIcon182.png; sourceTree = "<group>"; };
+		FE7D6BBC1B9E30110010BB76 /* launch.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = launch.png; sourceTree = "<group>"; };
+		FE7D6BBE1B9E4E230010BB76 /* appIcon120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appIcon120.png; sourceTree = "<group>"; };
+		FE7D6BC01B9E4F600010BB76 /* AppIcon40x40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon40x40.png; sourceTree = "<group>"; };
 		FEA77A1E1AED5CE1000CBFD3 /* wboPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wboPlayerView.h; sourceTree = "<group>"; };
 		FEA77A1F1AED5CE1000CBFD3 /* wboPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = wboPlayerView.m; sourceTree = "<group>"; };
 		FEA77A471AEDFE1D000CBFD3 /* whitePause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whitePause.png; sourceTree = "<group>"; };
 		FEA77A491AEDFE1D000CBFD3 /* whitePlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whitePlay.png; sourceTree = "<group>"; };
-		FED8379F1AE98AF8009630C3 /* Cookie-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cookie-Regular.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -305,6 +338,10 @@
 		FE28279A1AE8690D005B83A3 /* Ripple-App */ = {
 			isa = PBXGroup;
 			children = (
+				FE0D5AA71DA6865500E37F77 /* HexColor.h */,
+				FE0D5AA81DA6865500E37F77 /* HexColor.m */,
+				FE0D5AA91DA6865500E37F77 /* Screen.h */,
+				FE0D5AAA1DA6865500E37F77 /* Screen.m */,
 				FE601A901B44D91700F406AE /* NowPlayingFooter.h */,
 				FE601A911B44D91700F406AE /* NowPlayingFooter.m */,
 				FE28282B1AE8A7B7005B83A3 /* songCell.h */,
@@ -318,8 +355,16 @@
 				FEA77A1E1AED5CE1000CBFD3 /* wboPlayerView.h */,
 				FEA77A1F1AED5CE1000CBFD3 /* wboPlayerView.m */,
 				FE2827A51AE8690D005B83A3 /* Main.storyboard */,
+				FE7D6BB11B9DE2CB0010BB76 /* SearchViewController.h */,
+				FE7D6BB21B9DE2CB0010BB76 /* SearchViewController.m */,
+				FE7D6BAB1B9D287D0010BB76 /* LoginView.h */,
+				FE7D6BAC1B9D287D0010BB76 /* LoginView.m */,
+				FE7D6BAE1B9D289E0010BB76 /* RegisterView.h */,
+				FE7D6BAF1B9D289E0010BB76 /* RegisterView.m */,
 				FE6A987F1AF40197009D37F1 /* AccountViewController.h */,
 				FE6A98801AF40197009D37F1 /* AccountViewController.m */,
+				FE7D6BA81B9D1C430010BB76 /* DropFeedTableView.h */,
+				FE7D6BA91B9D1C430010BB76 /* DropFeedTableView.m */,
 				FE6A98771AF2A8B1009D37F1 /* SignInViewController.h */,
 				FE6A98781AF2A8B1009D37F1 /* SignInViewController.m */,
 				FE2827A81AE8690D005B83A3 /* Images.xcassets */,
@@ -332,21 +377,7 @@
 		FE28279B1AE8690D005B83A3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				FE601A981B46544D00F406AE /* play.png */,
-				FE601A501B4243D100F406AE /* backward.png */,
-				FE601A511B4243D100F406AE /* forward.png */,
-				FE6A99071AF6F703009D37F1 /* dropItIcon.png */,
-				FE6A986B1AF29AEE009D37F1 /* ripple_Fotor.jpg */,
-				FE6A98531AF10D44009D37F1 /* NowPlaying.png */,
-				FE6A98511AF10CE2009D37F1 /* Icon-Small@2x.png */,
-				FE6A984F1AF10BBE009D37F1 /* Icon-60@3x.png */,
-				FE6A984B1AF10B82009D37F1 /* Icon-40@3x.png */,
-				FE6A984C1AF10B82009D37F1 /* Icon-60@2x.png */,
-				FE6A98491AEEB4CE009D37F1 /* rectangle.png */,
-				FE6A98441AEEB076009D37F1 /* progressMarker.png */,
-				FEA77A471AEDFE1D000CBFD3 /* whitePause.png */,
-				FEA77A491AEDFE1D000CBFD3 /* whitePlay.png */,
-				FED8379F1AE98AF8009630C3 /* Cookie-Regular.ttf */,
+				FE7D6BC21B9F14B70010BB76 /* Images */,
 				FE28282E1AE95CFE005B83A3 /* PoiretOne-Regular.ttf */,
 				FE2828141AE873A0005B83A3 /* DataManager.h */,
 				FE2828151AE873A0005B83A3 /* DataManager.m */,
@@ -355,6 +386,7 @@
 				FE2828181AE873A0005B83A3 /* REST_API.h */,
 				FE2828191AE873A0005B83A3 /* REST_API.m */,
 				FE28281A1AE873A0005B83A3 /* Strings.h */,
+				FE01B63F1B9CF7A0008BFA8E /* Colors.h */,
 				FE28279C1AE8690D005B83A3 /* Info.plist */,
 				FE28279D1AE8690D005B83A3 /* main.m */,
 			);
@@ -423,6 +455,35 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		FE7D6BC21B9F14B70010BB76 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				FE7D6BBC1B9E30110010BB76 /* launch.png */,
+				FE7D6BC01B9E4F600010BB76 /* AppIcon40x40.png */,
+				FE7D6BB61B9E2E4A0010BB76 /* appIcon58.png */,
+				FE7D6BBE1B9E4E230010BB76 /* appIcon120.png */,
+				FE7D6BB71B9E2E4A0010BB76 /* appIcon122.png */,
+				FE7D6BB81B9E2E4A0010BB76 /* appIcon182.png */,
+				FE7D6BB41B9E06890010BB76 /* drop-icon.png */,
+				FE7D6BA61B9D17E60010BB76 /* logoSmall.png */,
+				FE7D6B9D1B9D07430010BB76 /* logo.png */,
+				FE601A981B46544D00F406AE /* play.png */,
+				FE601A501B4243D100F406AE /* backward.png */,
+				FE601A511B4243D100F406AE /* forward.png */,
+				FE6A986B1AF29AEE009D37F1 /* ripple_Fotor.jpg */,
+				FE6A98531AF10D44009D37F1 /* NowPlaying.png */,
+				FE6A98511AF10CE2009D37F1 /* Icon-Small@2x.png */,
+				FE6A984F1AF10BBE009D37F1 /* Icon-60@3x.png */,
+				FE6A984B1AF10B82009D37F1 /* Icon-40@3x.png */,
+				FE6A984C1AF10B82009D37F1 /* Icon-60@2x.png */,
+				FE6A98491AEEB4CE009D37F1 /* rectangle.png */,
+				FE6A98441AEEB076009D37F1 /* progressMarker.png */,
+				FEA77A471AEDFE1D000CBFD3 /* whitePause.png */,
+				FEA77A491AEDFE1D000CBFD3 /* whitePlay.png */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -473,10 +534,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0630;
-				ORGANIZATIONNAME = "Gooey Dee Bee";
+				ORGANIZATIONNAME = "Ripple, LLC";
 				TargetAttributes = {
 					FE2827971AE8690D005B83A3 = {
 						CreatedOnToolsVersion = 6.3;
+						DevelopmentTeam = Y3T9NX7WQR;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -608,25 +670,32 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE7D6BC11B9E4F600010BB76 /* AppIcon40x40.png in Resources */,
 				FE6A98501AF10BBE009D37F1 /* Icon-60@3x.png in Resources */,
 				FE601A991B46544D00F406AE /* play.png in Resources */,
+				FE7D6BBF1B9E4E230010BB76 /* appIcon120.png in Resources */,
 				FE2827A71AE8690D005B83A3 /* Main.storyboard in Resources */,
 				FE2828131AE87114005B83A3 /* SoundCloud.bundle in Resources */,
 				FE6A98541AF10D44009D37F1 /* NowPlaying.png in Resources */,
+				FE7D6BB51B9E06890010BB76 /* drop-icon.png in Resources */,
 				FE601A521B4243D100F406AE /* backward.png in Resources */,
-				FED837A01AE98BDB009630C3 /* Cookie-Regular.ttf in Resources */,
-				FE6A99081AF6F703009D37F1 /* dropItIcon.png in Resources */,
 				FE2827AC1AE8690D005B83A3 /* LaunchScreen.xib in Resources */,
 				FEA77A4C1AEDFE1D000CBFD3 /* whitePlay.png in Resources */,
 				FE6A984E1AF10B82009D37F1 /* Icon-60@2x.png in Resources */,
+				FE7D6B9E1B9D07430010BB76 /* logo.png in Resources */,
 				FE6A986C1AF29AEE009D37F1 /* ripple_Fotor.jpg in Resources */,
 				FE6A984D1AF10B82009D37F1 /* Icon-40@3x.png in Resources */,
 				FE28282F1AE96010005B83A3 /* PoiretOne-Regular.ttf in Resources */,
 				FEA77A4A1AEDFE1D000CBFD3 /* whitePause.png in Resources */,
+				FE7D6BA71B9D17E60010BB76 /* logoSmall.png in Resources */,
 				FE6A98521AF10CE2009D37F1 /* Icon-Small@2x.png in Resources */,
+				FE7D6BB91B9E2E4A0010BB76 /* appIcon58.png in Resources */,
 				FE6A98451AEEB076009D37F1 /* progressMarker.png in Resources */,
 				FE601A531B4243D100F406AE /* forward.png in Resources */,
+				FE7D6BBA1B9E2E4A0010BB76 /* appIcon122.png in Resources */,
+				FE7D6BBD1B9E30110010BB76 /* launch.png in Resources */,
 				FE6A984A1AEEB4CE009D37F1 /* rectangle.png in Resources */,
+				FE7D6BBB1B9E2E4A0010BB76 /* appIcon182.png in Resources */,
 				FE2827A91AE8690D005B83A3 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -647,16 +716,22 @@
 			files = (
 				FE28281C1AE873A0005B83A3 /* JSONConverter.m in Sources */,
 				FE2827A41AE8690D005B83A3 /* ListViewController.m in Sources */,
+				FE7D6BAD1B9D287D0010BB76 /* LoginView.m in Sources */,
 				FE28281D1AE873A0005B83A3 /* REST_API.m in Sources */,
 				FE28282D1AE8A7B7005B83A3 /* songCell.m in Sources */,
 				FE601A921B44D91700F406AE /* NowPlayingFooter.m in Sources */,
+				FE7D6BB31B9DE2CB0010BB76 /* SearchViewController.m in Sources */,
 				FE6A98811AF40197009D37F1 /* AccountViewController.m in Sources */,
 				FE28281B1AE873A0005B83A3 /* DataManager.m in Sources */,
 				FEA77A201AED5CE1000CBFD3 /* wboPlayerView.m in Sources */,
 				FE2827A11AE8690D005B83A3 /* AppDelegate.m in Sources */,
+				FE0D5AAC1DA6865500E37F77 /* Screen.m in Sources */,
 				FE6A98791AF2A8B1009D37F1 /* SignInViewController.m in Sources */,
 				FE601A161B292D4E00F406AE /* PlayerViewController.m in Sources */,
+				FE7D6BAA1B9D1C430010BB76 /* DropFeedTableView.m in Sources */,
 				FE28279E1AE8690D005B83A3 /* main.m in Sources */,
+				FE0D5AAB1DA6865500E37F77 /* HexColor.m in Sources */,
+				FE7D6BB01B9D289E0010BB76 /* RegisterView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -825,14 +900,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$PROJECT_DIR/**",
 				);
 				INFOPLIST_FILE = "Ripple-App/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -840,14 +919,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$PROJECT_DIR/**",
 				);
 				INFOPLIST_FILE = "Ripple-App/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

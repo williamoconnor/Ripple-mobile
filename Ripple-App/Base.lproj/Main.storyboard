@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="JmP-do-ydf">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <scenes>
         <!--List View Controller-->
@@ -17,16 +18,9 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" id="iwx-u3-f5b">
-                        <barButtonItem key="rightBarButtonItem" title="Item" id="bpZ-nC-RNz">
-                            <connections>
-                                <action selector="signInButtonPressed:" destination="vXZ-lx-hvc" id="o0I-Cr-Lz1"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="iwx-u3-f5b"/>
                     <connections>
-                        <outlet property="signInButton" destination="bpZ-nC-RNz" id="muF-SU-9np"/>
-                        <segue destination="UdU-MO-GIV" kind="presentation" identifier="signInSegue" id="4HS-i8-jD4"/>
+                        <segue destination="UdU-MO-GIV" kind="presentation" identifier="searchSegue" id="4HS-i8-jD4"/>
                         <segue destination="hOt-81-cWV" kind="presentation" identifier="accountSegue" id="Osi-Oy-Y3U"/>
                         <segue destination="ipz-zV-dRK" kind="presentation" identifier="playerSegue" id="ygf-K7-dY8"/>
                     </connections>
@@ -34,6 +28,27 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1257" y="362"/>
+        </scene>
+        <!--loginScreen-->
+        <scene sceneID="1IV-za-Dfv">
+            <objects>
+                <viewController storyboardIdentifier="loginScreen" title="loginScreen" id="MWd-Ju-zKr" customClass="SignInViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="sRl-y4-zcO"/>
+                        <viewControllerLayoutGuide type="bottom" id="Gwl-2h-ghQ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="IjX-C9-AJi">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <segue destination="JmP-do-ydf" kind="presentation" identifier="loginSegue" id="chq-kd-3V9"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5Vc-4V-MZr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="12" y="1294"/>
         </scene>
         <!--Player View Controller-->
         <scene sceneID="80F-s6-dAA">
@@ -51,7 +66,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uyB-ID-PCs" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2139" y="-58"/>
+            <point key="canvasLocation" x="3304.5" y="-372"/>
         </scene>
         <!--Account View Controller-->
         <scene sceneID="oAZ-R3-FZk">
@@ -66,15 +81,18 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <segue destination="ipz-zV-dRK" kind="presentation" identifier="accountToPlayerSegue" id="yEo-PG-aBn"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uPZ-q0-dqC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2137.5" y="632"/>
+            <point key="canvasLocation" x="2278.5" y="474"/>
         </scene>
-        <!--Sign In View Controller-->
+        <!--Search View Controller-->
         <scene sceneID="xMs-xR-duL">
             <objects>
-                <viewController id="UdU-MO-GIV" customClass="SignInViewController" sceneMemberID="viewController">
+                <viewController id="UdU-MO-GIV" customClass="SearchViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="JE6-lS-0AZ"/>
                         <viewControllerLayoutGuide type="bottom" id="8Zs-22-Qna"/>
@@ -84,15 +102,18 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <segue destination="ipz-zV-dRK" kind="presentation" identifier="searchToPlayerSegue" id="u3R-mr-hTA"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Nf5-yj-AOr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2137.5" y="1335"/>
+            <point key="canvasLocation" x="2278.5" y="1221"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--homeScreen-->
         <scene sceneID="NQV-dZ-tv7">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="JmP-do-ydf" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="homeScreen" title="homeScreen" automaticallyAdjustsScrollViewInsets="NO" id="JmP-do-ydf" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="1XN-y9-mSy">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -108,4 +129,7 @@
             <point key="canvasLocation" x="339" y="362"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="u3R-mr-hTA"/>
+    </inferredMetricsTieBreakers>
 </document>

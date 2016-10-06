@@ -3,79 +3,57 @@
 //  Ripple-App
 //
 //  Created by William O'Connor on 4/30/15.
-//  Copyright (c) 2015 Gooey Dee Bee. All rights reserved.
+//  Copyright (c) 2015 Ripple. All rights reserved.
 //
 
 #import "SignInViewController.h"
 #import "DataManager.h"
+#import "Colors.h"
 
 @interface SignInViewController ()
 
 @property (strong, nonatomic) UITextField* emailField;
 @property (strong, nonatomic) UITextField* passwordField;
+@property (strong, nonatomic) NSMutableDictionary* screenSize;
 
 @end
 
 @implementation SignInViewController
 
+-(NSMutableDictionary*)screenSize
+{
+    if (!_screenSize) {
+        _screenSize = [[NSMutableDictionary alloc] init];
+    }
+    return _screenSize;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenWidth = screenRect.size.width;
+    CGFloat screenHeight = screenRect.size.height;
+    NSNumber *height = [[NSNumber alloc] initWithDouble:screenHeight];
+    NSNumber *width = [[NSNumber alloc] initWithDouble:screenWidth];
+    
+    self.screenSize[@"height"] = height;
+    self.screenSize[@"width"] = width;
+    
+    [[NSUserDefaults standardUserDefaults] setObject:self.screenSize forKey:@"screen"];
+    
     // Do any additional setup after loading the view.
-    NSDictionary *screen = [[NSUserDefaults standardUserDefaults] objectForKey:@"screen"];
-    self.view.backgroundColor = [UIColor colorWithRed:0x48/255.0 green:0x98/255.0 blue:0xBD/255.0 alpha:1.0];
+    self.view.backgroundColor = cSlateNavy;
     
-    // GET EMAIL
-    self.emailField = [[UITextField alloc] initWithFrame:CGRectMake(0.2*[screen[@"width"] floatValue], 0.2*[screen[@"height"] floatValue], 0.6*[screen[@"width"] floatValue], 40.0)];
-    self.emailField.placeholder = @"Email";
-    self.emailField.font = [UIFont fontWithName:@"Poiret One" size:14.0];
-    self.emailField.backgroundColor = [UIColor whiteColor];
-    self.emailField.borderStyle = UITextBorderStyleRoundedRect;
-//    [self.emailField.layer setBorderColor:[UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0].CGColor];
-//    [self.emailField.layer setBorderWidth:1.0];
-    self.emailField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    [self.view addSubview: self.emailField];
+    self.loginView = [[LoginView alloc] initWithFrame:CGRectMake(20.0, 0.2*[self.screenSize[@"height"] floatValue], [self.screenSize[@"width"] floatValue] - 40.0, 0.6*[self.screenSize[@"height"] floatValue])];
+    self.loginView.delegate = self;
+    self.registerView = [[RegisterView alloc] initWithFrame:CGRectMake(20.0, 0.2*[self.screenSize[@"height"] floatValue], [self.screenSize[@"width"] floatValue] - 40.0, 0.6*[self.screenSize[@"height"] floatValue])];
+    self.registerView.delegate = self;
+    [self.view addSubview:self.loginView];
     
-    // GET PASSWORD
-    self.passwordField = [[UITextField alloc] initWithFrame:CGRectMake(0.2*[screen[@"width"] floatValue], 0.3*[screen[@"height"] floatValue], 0.6*[screen[@"width"] floatValue], 40.0)];
-    self.passwordField.placeholder = @"Password";
-    self.passwordField.font = [UIFont fontWithName:@"Poiret One" size:14.0];
-    self.passwordField.backgroundColor = [UIColor whiteColor];
-    self.passwordField.borderStyle = UITextBorderStyleRoundedRect;
-    self.passwordField.secureTextEntry = YES;
-    //    [self.emailField.layer setBorderColor:[UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0].CGColor];
-    //    [self.emailField.layer setBorderWidth:1.0];
-    self.passwordField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    [self.view addSubview: self.passwordField];
-    
-    
-    // SUBMIT
-    UIButton* signInButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    signInButton.frame = CGRectMake([screen[@"width"] floatValue]/2 - 50.0, 0.4*[screen[@"height"] floatValue], 100.0, 40.0);
-    [signInButton addTarget:self
-               action:@selector(submit)
-     forControlEvents:UIControlEventTouchUpInside];
-    [signInButton setTitle:@"Sign In" forState:UIControlStateNormal];
-    signInButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:18.0];
-    [signInButton setTitleColor:[UIColor colorWithRed:0x48/255.0 green:0x98/255.0 blue:0xBD/255.0 alpha:1.0] forState:UIControlStateNormal];
-    signInButton.backgroundColor = [UIColor whiteColor];
-    [signInButton.layer setBorderColor:[UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0].CGColor];
-    [signInButton.layer setBorderWidth:1.0];
-    [self.view addSubview:signInButton];
-    
-    UIButton* cancelButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    cancelButton.frame = CGRectMake([screen[@"width"] floatValue]/2 - 50.0, 0.4*[screen[@"height"] floatValue]+50, 100.0, 40.0);
-    [cancelButton addTarget:self
-                     action:@selector(cancel)
-           forControlEvents:UIControlEventTouchUpInside];
-    [cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
-    [cancelButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    cancelButton.backgroundColor = [UIColor clearColor];
-    cancelButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:14.0];
-    [self.view addSubview:cancelButton];
-    
-    
-    
-    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                          action:@selector(dismissKeyboard)];
+    [self.view addGestureRecognizer:tap];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -93,26 +71,61 @@
 }
 */
 
-- (void) submit
+- (void) dismissKeyboard
 {
-    //check login
-    NSMutableDictionary* credentials = [[NSMutableDictionary alloc] init];
-    credentials[@"password"] = self.passwordField.text;
-    credentials[@"email"] = self.emailField.text;
-    NSDictionary* result = [DataManager signIn:credentials];
+    [self.loginView.emailTextField resignFirstResponder];
+    [self.loginView.passwordTextField resignFirstResponder];
+    [self.registerView.emailTextField resignFirstResponder];
+    [self.registerView.passwordTextField resignFirstResponder];
+    [self.registerView.confirmPasswordTextField resignFirstResponder];
+}
+
+#pragma mark - login delegate
+
+- (void) loginUser:(NSMutableDictionary *)credentials
+{
+    NSLog(@"%@", credentials);
+    NSDictionary* result = [DataManager login:credentials];
     if ([result[@"result"] isEqualToString:@"success"]) {
-        [[NSUserDefaults standardUserDefaults] setObject:self.emailField.text forKey:@"email"];
-        [self dismissViewControllerAnimated:YES completion:nil];
+//        NSLog(@"%@", result);
+        [[NSUserDefaults standardUserDefaults] setObject:result[@"user"] forKey:@"user"];
+        NSLog(@"%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"user"]);
+        [self performSegueWithIdentifier:@"loginSegue" sender:nil];
     }
     else {
-        UIAlertView* failedLogin = [[UIAlertView alloc] initWithTitle:@"Login Failed" message:@"No account found with matching email/password pair" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
-        [failedLogin show];
+        UIAlertView* failed = [[UIAlertView alloc] initWithTitle:@"Login Failed" message:@"Please try again." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
+        [failed show];
     }
 }
 
-- (void) cancel
+- (void) newUser
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.loginView removeFromSuperview];
+    [self.view addSubview:self.registerView];
 }
+
+-(void) toLogin
+{
+    [self.registerView removeFromSuperview];
+    [self.view addSubview:self.loginView];
+}
+
+#pragma mark - register delegate
+
+-(void) registerUser:(NSMutableDictionary *)credentials
+{
+    NSDictionary* result = [DataManager registerUser:credentials];
+    if (result[@"_id"]) {
+        [[NSUserDefaults standardUserDefaults] setObject:result forKey:@"user"];
+        NSLog(@"%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"user"]);
+        UIAlertView* success = [[UIAlertView alloc] initWithTitle:@"Verification Email Sent" message:@"Check you email and verify your account" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
+        [success show];
+    }
+    else {
+        UIAlertView* failed = [[UIAlertView alloc] initWithTitle:@"Registration Failed" message:@"Please try again." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
+        [failed show];
+    }
+}
+
 
 @end

@@ -3,24 +3,23 @@
 //  Ripple-App
 //
 //  Created by William O'Connor on 4/19/15.
-//  Copyright (c) 2015 Gooey Dee Bee. All rights reserved.
+//  Copyright (c) 2015 Ripple. All rights reserved.
 //
 
 #import "DataManager.h"
+#import "Strings.h"
 
 @implementation DataManager
 
-+ (NSDictionary *)getSongList:(NSMutableDictionary*)data
++ (NSDictionary *)getDrops:(NSMutableDictionary*)data
 {
-    NSLog(@"%@", data);
-    NSDictionary* result = [REST_API postPath:[kRootURL stringByAppendingString:@"/php/loadDrops.php"] data:[JSONConverter convertNSMutableDictionaryToJSON:data]];
+    NSDictionary* result = [REST_API getPath:[[kRootURL stringByAppendingString:kGetDrops] stringByAppendingString:[NSString stringWithFormat: @"?latitude=%@&longitude=%@", data[@"latitude"], data[@"longitude"]]]];
     return result;
 }
 
 + (NSDictionary *) streamSong:(NSString*)song_id
 {
     NSString* path = [[[kSCTrackURL stringByAppendingString:@"/"] stringByAppendingString:song_id] stringByAppendingString:@"/stream"];
-    NSLog(@"path: %@", path);
     return [REST_API getPath:path];
 }
 
@@ -29,24 +28,48 @@
     return [REST_API getPath:[[[[kSCTrackURL stringByAppendingString:@"/"] stringByAppendingString:song_id] stringByAppendingString:@".json?client_id="] stringByAppendingString:kClientId] ];
 }
 
-+ (NSDictionary *) signIn:(NSMutableDictionary*)data
++ (NSDictionary *) login:(NSMutableDictionary*)data
 {
-    NSDictionary* result = [REST_API postPath:[kRootURL stringByAppendingString:@"/php/mobileLogin.php"] data:[JSONConverter convertNSMutableDictionaryToJSON:data]];
-    NSLog(@"result: %@", result);
+    NSDictionary* result = [REST_API postPath:[kRootURL stringByAppendingString:kLogin] data:[JSONConverter convertNSMutableDictionaryToJSON:data]];
     return result;
 }
 
 + (NSDictionary *) dropSong:(NSMutableDictionary*)data
 {
-    NSDictionary* result = [REST_API postPath:[kRootURL stringByAppendingString:@"/php/mobileDrop.php"] data:[JSONConverter convertNSMutableDictionaryToJSON:data]];
+    NSDictionary* result = [REST_API postPath:[kRootURL stringByAppendingString:kCreateDrop] data:[JSONConverter convertNSMutableDictionaryToJSON:data]];
     return result;
 }
 
-+ (NSDictionary *) getUserInfo:(NSString*)email
++ (NSDictionary *) redropSong:(NSMutableDictionary*)data
 {
-    NSMutableDictionary* emailDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:email, @"email", nil];
-    NSDictionary* result = [REST_API postPath:[kRootURL stringByAppendingString:@"/php/mobileGetUserInfo.php"] data:[JSONConverter convertNSMutableDictionaryToJSON:emailDict]];
+    NSDictionary* result = [REST_API postPath:[kRootURL stringByAppendingString:kCreateDrop] data:[JSONConverter convertNSMutableDictionaryToJSON:data]];
     return result;
+}
+
++ (NSDictionary *) getUserById:(NSString *)data
+{
+    NSDictionary* result = [REST_API getPath:[[kRootURL stringByAppendingString:kGetUser] stringByAppendingString:data]];
+    return result;
+}
+
++ (NSDictionary *) registerUser:(NSMutableDictionary*)data
+{
+    return [REST_API postPath:[kRootURL stringByAppendingString:kRegister] data:[JSONConverter convertNSMutableDictionaryToJSON:data]];
+}
+
++ (NSDictionary *) getDropsForUser:(NSString *)data
+{
+    return [REST_API getPath:[[kRootURL stringByAppendingString: kGetDrops] stringByAppendingString:[NSString stringWithFormat:@"/%@", data]]];
+}
+
++ (NSDictionary *) creditUser:(NSMutableDictionary *)data
+{
+    return [REST_API postPath:[kRootURL stringByAppendingString:kCredit] data:[JSONConverter convertNSMutableDictionaryToJSON:data]];
+}
+
++ (NSDictionary *) searchSoundcloud:(NSString*)data
+{
+    return [REST_API getPath: [[kSCSearchRoute stringByReplacingOccurrencesOfString:@"YOURCLIENTID" withString:kClientId] stringByReplacingOccurrencesOfString:@"YOURQUERY" withString:data]];
 }
 
 @end

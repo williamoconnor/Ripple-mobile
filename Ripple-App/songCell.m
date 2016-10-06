@@ -3,7 +3,7 @@
 //  Ripple-App
 //
 //  Created by William O'Connor on 4/22/15.
-//  Copyright (c) 2015 Gooey Dee Bee. All rights reserved.
+//  Copyright (c) 2015 Ripple. All rights reserved.
 //
 
 #import "songCell.h"
@@ -57,17 +57,14 @@
     self.backgroundColor = [UIColor colorWithRed:0x59/255.0 green:0x69/255.0 blue:0x80/255.0 alpha:1.0];
 }
 
--(void) setData:(NSDictionary *)track
+-(void) setData:(NSDictionary *)track andType:(NSString*)type
 {    
     if (track) {
         UIImage* albumCoverImage;
-        self.titleLabel.text = track[@"title"];
-        if (![track[@"label_name"] isEqual:[NSNull null]] && [track[@"label_name"] length] > 0){
-            self.artistLabel.text = track[@"label_name"];
-        }
-        else {
-            self.artistLabel.text = track[@"user"][@"permalink"];
-        }
+        NSDictionary* user = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
+        self.type = type;
+        self.titleLabel.text = track[@"name"];
+        self.artistLabel.text = track[@"artist"];
         
         if (![track[@"artwork_url"] isEqual:[NSNull null]] && [track[@"artwork_url"] length] > 0){
             albumCoverImage = [UIImage imageWithData:
@@ -79,14 +76,12 @@
         }
         
         self.albumCover.image = albumCoverImage;
-        self.track = track[@"id"];
-    }
-    
-    if (self.signedIn) {
-        [self createDropButton];
-    }
-    else {
-        [self hideDropButton];
+        self.track = track;
+        self.trackId = track[@"soundcloud_track_id"];
+        
+        if ([type isEqualToString: @"drop" ] || ([type isEqualToString: @"redrop"] && ![track[@"previous_dropper_ids"] containsObject:user[@"_id"]]) ) {
+            [self createDropButton];
+        }
     }
 }
 
@@ -97,7 +92,7 @@
     [self.dropButton addTarget:self
                      action:@selector(drop)
            forControlEvents:UIControlEventTouchUpInside];
-    [self.dropButton setImage:[UIImage imageNamed:@"dropItIcon.png"] forState:UIControlStateNormal];
+    [self.dropButton setImage:[UIImage imageNamed:@"drop-icon.png"] forState:UIControlStateNormal];
     
     self.titleLabel.frame = CGRectMake(120.0, 10.0, [self.screen[@"width"] doubleValue]*0.48, 60.0);
     [self.contentView addSubview:self.dropButton];
@@ -106,7 +101,7 @@
 -(void) drop
 {
     NSLog(@"Track: %@", self.track);
-    [self.delegate drop: self.track];
+    [self.delegate drop: self.type andTrack:self.track];
 }
 
 -(void) hideDropButton

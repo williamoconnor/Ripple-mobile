@@ -3,7 +3,7 @@
 //  Ripple-App
 //
 //  Created by William O'Connor on 4/19/15.
-//  Copyright (c) 2015 Gooey Dee Bee. All rights reserved.
+//  Copyright (c) 2015 Ripple. All rights reserved.
 //
 
 #import "REST_API.h"
@@ -21,7 +21,7 @@
 + (NSDictionary*)sendRequest:(NSMutableURLRequest*)request
 {
     NSHTTPURLResponse* urlResponse = nil;
-    NSError *error = [[NSError alloc] init];
+    NSError *error = [[NSError alloc] initWithDomain:request.URL.host code:0 userInfo:nil];
     NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&urlResponse error:&error];
     
     if ([urlResponse statusCode] >= 200 && [urlResponse statusCode] < 300) {
@@ -72,7 +72,7 @@
     
     // Set the values to the HTTP body
     [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
-    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:postData];
     
     // Return the results of the request
@@ -96,7 +96,7 @@
     
     // Set the values to the HTTP body
     [request setValue:putLength forHTTPHeaderField:@"Content-Length"];
-    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:putData];
     
     // Return the results of the request
@@ -115,7 +115,7 @@
     [request setHTTPMethod:@"GET"];
     
     NSHTTPURLResponse* urlResponse = nil;
-    NSError *error = [[NSError alloc] init];
+    NSError *error = [[NSError alloc] initWithDomain:request.URL.host code:0 userInfo:nil];
     [NSURLConnection sendSynchronousRequest:request returningResponse:&urlResponse error:&error];
     
     if ([urlResponse statusCode] >= 200 && [urlResponse statusCode] < 300) {

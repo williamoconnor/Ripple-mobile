@@ -3,10 +3,11 @@
 //  Ripple-App
 //
 //  Created by William O'Connor on 4/26/15.
-//  Copyright (c) 2015 Gooey Dee Bee. All rights reserved.
+//  Copyright (c) 2015 Ripple. All rights reserved.
 //
 
 #import "wboPlayerView.h"
+#import "Colors.h"
 
 @interface wboPlayerView()
 
@@ -26,7 +27,7 @@
     if (self) {
         self.screen = [[NSUserDefaults standardUserDefaults] objectForKey:@"screen"];
         
-        self.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
+        self.backgroundColor = cSlateNavy;
         
         // TRACK NAME
         self.nowPlayingSongNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(20.0, 0.0, [self.screen[@"width"] doubleValue]-40.0, 80.0)];
@@ -67,7 +68,7 @@
         
         // PROGRESS SLIDER
         self.trackProgressSlider = [[UISlider alloc] initWithFrame:CGRectMake(0.125*[self.screen[@"width"] doubleValue], 140.0, 0.75*[self.screen[@"width"] doubleValue], 20.0)];
-        self.trackProgressSlider.minimumTrackTintColor = [UIColor colorWithRed:0x48/255.0 green:0x98/255.0 blue:0xBD/255.0 alpha:1.0];
+        self.trackProgressSlider.minimumTrackTintColor = cPrimaryRed;
         self.trackProgressSlider.maximumTrackTintColor = [UIColor colorWithRed:0xCC/255.0 green:0xCC/255.0 blue:0xCC/255.0 alpha:1.0];
         self.trackProgressSlider.continuous = YES;
         
@@ -187,10 +188,17 @@
 
 -(void) disableEnableButtons:(BOOL)enable
 {
-    self.pauseButton.enabled = enable;
-    self.forwardButton.enabled = enable;
-    self.backwardButton.enabled = enable;
-    self.trackProgressSlider.enabled = enable;
+    UIViewTintAdjustmentMode mode = UIViewTintAdjustmentModeDimmed;
+    if (enable == NO) {
+        mode = UIViewTintAdjustmentModeNormal;
+    }
+    [self.pauseButton setTintAdjustmentMode:mode];
+    [self.pauseButton setEnabled:enable];
+    [self.forwardButton setTintAdjustmentMode:mode];
+    [self.forwardButton setEnabled:enable];
+    [self.backwardButton setTintAdjustmentMode:mode];
+    [self.backwardButton setEnabled:enable];
+    [self.trackProgressSlider setEnabled:enable];
 }
 
 @end

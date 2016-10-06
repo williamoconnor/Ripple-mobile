@@ -3,7 +3,7 @@
 //  Ripple-App
 //
 //  Created by William O'Connor on 4/22/15.
-//  Copyright (c) 2015 Gooey Dee Bee. All rights reserved.
+//  Copyright (c) 2015 Ripple. All rights reserved.
 //
 
 #import "AppDelegate.h"
@@ -28,6 +28,23 @@
 //    CGFloat screenHeight = screenRect.size.height;
 //    self.screenHeight = [[NSNumber alloc] initWithDouble:screenHeight];
 //    self.screenWidth = [[NSNumber alloc] initWithDouble:screenWidth];
+    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    
+    NSString* identifier = @"homeScreen";
+    
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"user"]) {
+        identifier = @"homeScreen";
+    }
+    else {
+        identifier = @"loginScreen";
+    }
+    
+    UIViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:identifier];
+    
+    self.window.rootViewController = viewController;
+    [self.window makeKeyAndVisible];
     
     return YES;
 }

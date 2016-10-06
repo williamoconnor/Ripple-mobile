@@ -3,94 +3,145 @@
 //  Ripple-App
 //
 //  Created by William O'Connor on 5/1/15.
-//  Copyright (c) 2015 Gooey Dee Bee. All rights reserved.
+//  Copyright (c) 2015 Ripple. All rights reserved.
 //
 
 #import "AccountViewController.h"
 #import "DataManager.h"
+#import "Colors.h"
+#import "AppDelegate.h"
 
 @interface AccountViewController ()
 
 @property (strong, nonatomic) NSDictionary* userAccount;
+@property (strong, nonatomic) UITableView* tableView;
+@property (strong, nonatomic) NSMutableArray* tracks;
+
+@property (nonatomic, strong) AVAudioPlayer *player;
 @property(nonatomic, strong) CLLocationManager *locationManager;
+@property (nonatomic, strong) NSDictionary *nowPlayingTrack;
+@property (strong, nonatomic) NSMutableDictionary* screenSize;
+@property (strong, nonatomic) UIImageView *albumCover;
+@property (strong, nonatomic) NSMutableArray *albumCovers;
+@property (strong, nonatomic) wboPlayerView* playerGui;
+@property (strong, nonatomic) UIActivityIndicatorView* loading;
+@property NSInteger nowPlayingTrackIndex;
+@property BOOL signedIn;
+
+@property (strong, nonatomic) PlayerViewController* playerView;
+@property (strong, nonatomic) NSString* footerText;
+@property (strong, nonatomic) UIImage* footerAlbum;
+@property (strong, nonatomic) NowPlayingFooter* footer;
 
 @end
 
 @implementation AccountViewController
 
+-(AppDelegate*) app
+{
+    return (AppDelegate*) [[UIApplication sharedApplication] delegate];
+}
+
+-(NSMutableArray*)tracks
+{
+    if (!_tracks) {
+        _tracks = [[NSMutableArray alloc] init];
+    }
+    return _tracks;
+}
+
+-(NSMutableArray*)albumCovers
+{
+    if (!_albumCovers) {
+        _albumCovers = [[NSMutableArray alloc] init];
+    }
+    return _albumCovers;
+}
+
+-(NSMutableDictionary*)screenSize
+{
+    if (!_screenSize) {
+        _screenSize = [[NSMutableDictionary alloc] init];
+    }
+    return _screenSize;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.screenSize = [[NSUserDefaults standardUserDefaults] objectForKey:@"screen"];
+    
+    self.userAccount = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
+    
+    self.nowPlayingTrackIndex = -1;
+    
     // Do any additional setup after loading the view.
     NSDictionary *screen = [[NSUserDefaults standardUserDefaults] objectForKey:@"screen"];
-    self.view.backgroundColor = [UIColor colorWithRed:0x48/255.0 green:0x98/255.0 blue:0xBD/255.0 alpha:1.0];
-    
-    // user account
-    self.userAccount = [DataManager getUserInfo:[[NSUserDefaults standardUserDefaults] objectForKey:@"email"]];
-    NSLog(@"account: %@", self.userAccount);
-    
-    // EMAIL LABEL
-    UILabel* emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.1*[screen[@"height"] floatValue]+50, [screen[@"width"] floatValue], 40.0)];
-    [emailLabel setText:[[NSUserDefaults standardUserDefaults] objectForKey:@"email"]];
-    emailLabel.textAlignment = NSTextAlignmentCenter;
-    emailLabel.textColor = [UIColor whiteColor];
-    emailLabel.font = [UIFont fontWithName:@"Poiret One" size:24.0];
-    [self.view addSubview:emailLabel];
-    
-    // CANCEL BUTTON
-    UIButton* cancelButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    cancelButton.frame = CGRectMake([screen[@"width"] floatValue]/2 - 50.0, 0.9*[screen[@"height"] floatValue]-50.0, 100.0, 40.0);
-    [cancelButton addTarget:self
-                     action:@selector(cancel)
-           forControlEvents:UIControlEventTouchUpInside];
-    [cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
-    [cancelButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    cancelButton.backgroundColor = [UIColor clearColor];
-    cancelButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:14.0];
-    [self.view addSubview:cancelButton];
-    
+    UIView* fakeNavBar = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, [screen[@"width"] floatValue], 64.0)];
+    fakeNavBar.backgroundColor = cSlateNavy;
+    [self.view addSubview:fakeNavBar];
+    //NAV TITLE
+//    UIImageView* logoImageView = [[UIImageView alloc] initWithFrame:CGRectMake([self.screenSize[@"width"] floatValue]/2 - 72.5, 12.0, 145.0, 40.0)];
+//    logoImageView.image = [UIImage imageNamed:@"logoSmall.png"];
+    UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake([self.screenSize[@"width"] floatValue]/2 - 72.5, 18.0, 145.0, 40.0)];
+    titleLabel.text = @"Account";
+    titleLabel.font = [UIFont fontWithName:@"Poiret One" size:24.0];
+    titleLabel.textColor = cWhite;
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    [fakeNavBar addSubview:titleLabel];
+    //BACK BUTTON
+    UIButton *backButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    backButton.frame = CGRectMake(12.0, 28.0, 50.0, 21.0);
+    [backButton setTintColor:[UIColor whiteColor]];
+    [backButton setTitle:@"Back" forState:UIControlStateNormal];
+    [backButton addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
+    backButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:18];
+    [fakeNavBar addSubview:backButton];
     // LOGOUT BUTTON
-    UIButton* logoutButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    logoutButton.frame = CGRectMake([screen[@"width"] floatValue]/2 - 50.0, 0.8*[screen[@"height"] floatValue]-50.0, 100.0, 40.0);
-    [logoutButton addTarget:self
-                     action:@selector(logout)
-           forControlEvents:UIControlEventTouchUpInside];
+    UIButton *logoutButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    logoutButton.frame = CGRectMake([self.screenSize[@"width"] floatValue] - 62.0, 28.0, 50.0, 21.0);
+    [logoutButton setTintColor:[UIColor whiteColor]];
     [logoutButton setTitle:@"Logout" forState:UIControlStateNormal];
-    [logoutButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    logoutButton.backgroundColor = [UIColor colorWithRed:0xE8/255.0 green:0x64/255.0 blue:0x64/255.0 alpha:1.0];
-    logoutButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:18.0];
-    [[logoutButton layer] setBorderWidth:1.0f];
-    [[logoutButton layer] setBorderColor:[UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0].CGColor];
-    [self.view addSubview:logoutButton];
+    [logoutButton addTarget:self action:@selector(logout) forControlEvents:UIControlEventTouchUpInside];
+    logoutButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:18];
+    [fakeNavBar addSubview:logoutButton];
     
-    // POINTS LABEL
-    UILabel* pointsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.2*[screen[@"height"] floatValue]+50, [screen[@"width"] floatValue], 40.0)];
-    [pointsLabel setText:[NSString stringWithFormat:@"Points: %@", self.userAccount[@"points"]]];
-    pointsLabel.textAlignment = NSTextAlignmentCenter;
-    pointsLabel.textColor = [UIColor whiteColor];
-    pointsLabel.font = [UIFont fontWithName:@"Poiret One" size:24.0];
-    [self.view addSubview:pointsLabel];
     
-    //DROPS LABEL
-    UILabel* dropsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.3*[screen[@"height"] floatValue]+50, [screen[@"width"] floatValue], 40.0)];
-    [dropsLabel setText:[NSString stringWithFormat:@"Total Drops: %@", self.userAccount[@"total_drops"]]];
-    dropsLabel.textAlignment = NSTextAlignmentCenter;
-    dropsLabel.textColor = [UIColor whiteColor];
-    dropsLabel.font = [UIFont fontWithName:@"Poiret One" size:24.0];
-    [self.view addSubview:dropsLabel];
+    // TABLEVIEW
+    self.tableView = [[UITableView alloc] init];
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    self.tableView.frame = CGRectMake(0.0, 64.0, [self.screenSize[@"width"] doubleValue], [self.screenSize[@"height"] doubleValue]);
+    self.tableView.backgroundColor = cSlateNavy;
+    self.view.backgroundColor = cSlateNavy;
+    [self.tableView registerClass:[songCell class] forCellReuseIdentifier:@"cell"];
+    [self.view addSubview:self.tableView];
     
-    //RESET LOCATION BUTTON
-    UIButton* resetLocationButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    resetLocationButton.frame = CGRectMake(0.0, [screen[@"height"] floatValue] - 50, [screen[@"width"] floatValue], 50.0);
-    [resetLocationButton addTarget:self
-                     action:@selector(resetLocation)
-           forControlEvents:UIControlEventTouchUpInside];
-    [resetLocationButton setTitle:@"Reset Location" forState:UIControlStateNormal];
-    [resetLocationButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    resetLocationButton.backgroundColor = [UIColor colorWithRed:0xE8/255.0 green:0x64/255.0 blue:0x64/255.0 alpha:1.0];
-    resetLocationButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:18.0];
-    [[resetLocationButton layer] setBorderWidth:1.0f];
-    [[resetLocationButton layer] setBorderColor:[UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0].CGColor];
-    [self.view addSubview:resetLocationButton];
+    [self loadSongs];
+}
+
+-(void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    // check for signed in
+    [self.tableView reloadData];
+    
+    if ([self app].footer) {
+        self.tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y, self.tableView.frame.size.width, [self.screenSize[@"height"] floatValue]-60.0);
+        [self app].footer.delegate = self;
+        [self.view addSubview:[self app].footer];
+        [self.view bringSubviewToFront:[self app].footer];
+    }
+    
+    else if ([self app].player.duration > 0) {
+        self.tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y, self.tableView.frame.size.width, self.tableView.frame.size.height-60.0);
+        [self app].footer = [[NowPlayingFooter alloc] initWithSongName:self.footerText andAlbumCover:self.footerAlbum];
+        [self app].footer.delegate = self;
+        [self.view addSubview:[self app].footer];
+        [self.view bringSubviewToFront:[self app].footer];
+        
+        NSLog(@"%@",self.navigationController.viewControllers);
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -98,77 +149,256 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void) loadSongs {
+    
+    // reset arrays
+    [self.tracks removeAllObjects];
+    [self.albumCovers removeAllObjects];
+    
+    NSDictionary* songs = [DataManager getDropsForUser: self.userAccount[@"_id"]];
+    
+    for (NSDictionary* song in songs) {
+        if (song && (BOOL)song[@"streamable"] == true) {
+            [self.tracks addObject: song];
+            
+            // YOOO
+            UIImage* albumCoverImage = [UIImage imageNamed:@"NowPlaying.png"];
+            if (![song[@"artwork_url"] isEqual:[NSNull null]] && [song[@"artwork_url"] length] > 0){
+                NSString* url = [song[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
+                albumCoverImage = [UIImage imageWithData:
+                                   [NSData dataWithContentsOfURL:
+                                    [NSURL URLWithString: url]]];
+            }
+            
+            [self.albumCovers addObject:albumCoverImage];
+        }
+    }
+    
+    [self.loading stopAnimating];
+    [self.tableView reloadData];
 }
-*/
 
-- (void) cancel
+- (void) back
 {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void) logout
 {
-    [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"email"];
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
-
--(void) resetLocation
-{
-    self.locationManager = [[CLLocationManager alloc] init];
-    self.locationManager.delegate = self;
-    self.locationManager.distanceFilter = kCLLocationAccuracyThreeKilometers;
-    self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     
-    if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
-        [self.locationManager requestWhenInUseAuthorization];
-        [self.locationManager startUpdatingLocation];
-    }
+    UIViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"loginScreen"];
+    
+    [self presentViewController:viewController animated:YES completion:^{
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"user"];
+    }];
+
     
 }
 
--(void) locationManager: (CLLocationManager *)manager didUpdateToLocation: (CLLocation *) newLocation
-           fromLocation: (CLLocation *) oldLocation {
-    CLLocation *location = newLocation;
-    // Configure the new event with information from the location
-    CLLocationCoordinate2D coordinate = [location coordinate];
+
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
-    float longitude = coordinate.longitude;
-    float latitude = coordinate.latitude;
-    
-    int lat = (int) latitude;
-    int lon = (int) longitude;
-    
-    NSString *latS = [NSString stringWithFormat:@"%i", lat];
-    NSString *lonS = [NSString stringWithFormat:@"%i", lon];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:latS forKey:@"latitude"];
-    [[NSUserDefaults standardUserDefaults] setObject:lonS forKey:@"longitude"];
-    [self.locationManager stopUpdatingLocation];
+    if ([segue.destinationViewController isKindOfClass:[PlayerViewController class]] && sender != nil) {
+        PlayerViewController* dest = segue.destinationViewController;
+        BOOL newsong = true;
+        if (dest.song == self.tracks[(long)self.nowPlayingTrackIndex]) {
+            newsong = false;
+        }
         
-}
-
--(void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
-{
-    switch (status) {
-        case kCLAuthorizationStatusNotDetermined:
-        case kCLAuthorizationStatusRestricted:
-        case kCLAuthorizationStatusDenied:
-        {
-            // do some error handling
-        }
-            break;
-        default:{
-            [self.locationManager startUpdatingLocation];
-        }
-            break;
+        [dest.tracks removeAllObjects];
+        dest.song = self.tracks[(long)self.nowPlayingTrackIndex];
+        dest.tracks = self.tracks;
+        dest.nowPlayingTrackIndex = self.nowPlayingTrackIndex;
+        dest.albumCovers = self.albumCovers;
+        dest.delegate = self;
+        [dest playSong];
+        
+        // BACK BUTTON
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Songs" style:UIBarButtonItemStylePlain target:nil action:nil];
+        
+        NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [UIFont fontWithName:@"Poiret One" size:18.0], NSFontAttributeName,
+                                    cWhite, NSForegroundColorAttributeName,
+                                    nil];
+        [[UIBarButtonItem appearance] setTitleTextAttributes:
+         [NSDictionary dictionaryWithObjectsAndKeys:
+          cWhite, NSForegroundColorAttributeName,
+          [UIFont fontWithName:@"Poiret One" size:18.0], NSFontAttributeName,
+          nil] forState:UIControlStateNormal];
+        self.navigationController.navigationBar.tintColor = cWhite;
+        //        [self.navigationItem.backBarButtonItem setTitleTextAttributes:attributes forState:UIControlStateNormal];
     }
 }
+
+
+#pragma mark - tableview delegate
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    songCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
+    
+    NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
+    //    NSLog(@"Track: %@", track);
+    [cell setData:track andType:@"none"];
+    
+    //to change background color of selected cell
+    if (indexPath.row == self.nowPlayingTrackIndex) {
+        cell.contentView.backgroundColor = cDarkGray;
+    }
+    else {
+        cell.contentView.backgroundColor = cSlateNavy;
+    }
+    
+    
+    cell.delegate = self;
+    return cell;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.nowPlayingTrackIndex >= 0) {
+        NSIndexPath* lastSong = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
+        [self deselectRow:self.tableView didDeselectRowAtIndexPath:lastSong];
+        
+    }
+    NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
+    NSLog(@"track: %@", track[@"name"]);
+    //    [self.timer invalidate];
+    
+    //loader
+    double x = [self.screenSize[@"width"] doubleValue]/2;
+    self.loading.center = CGPointMake(x, 100.0);
+    [self.albumCover addSubview:self.loading];
+    [self.albumCover bringSubviewToFront:self.loading];
+    [self.loading startAnimating];
+    
+    // PLAY SONG
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.contentView.backgroundColor = cDarkGray;
+    self.nowPlayingTrackIndex = indexPath.row;
+    NSLog(@"index path: %ld", self.nowPlayingTrackIndex);
+    
+    //    [self playSong:track];
+    [self performSegueWithIdentifier:@"accountToPlayerSegue" sender:self];
+    
+    if ([[self app].player isPlaying]) {
+        [[self app].player stop];
+    }
+}
+
+-(void)selectRow:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    self.nowPlayingTrack = [self.tracks objectAtIndex:indexPath.row];
+    //    [self.timer invalidate];
+    
+    //loader
+    double x = [self.screenSize[@"width"] doubleValue]/2;
+    self.loading.center = CGPointMake(x, 100.0);
+    [self.loading startAnimating];
+    
+    // PLAY SONG
+    songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.contentView.backgroundColor = cDarkGray;
+}
+
+-(void)tableView:(UITableView *)tableView didHighlightRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.contentView.backgroundColor = cDarkGray;
+}
+
+-(void)tableView:(UITableView *)tableView didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.contentView.backgroundColor = cSlateNavy;
+}
+
+-(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // STYLE
+    songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.selected = NO;
+}
+
+-(void)deselectRow:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // STYLE
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.contentView.backgroundColor = cSlateNavy;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 100;
+}
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [self.tracks count];
+}
+
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+// DELEGATE METHODS
+
+- (void) playButtonPressed
+{
+    NSLog(@"Play");
+    
+    [self.player play];
+}
+
+-(void) pauseButtonPressed
+{
+    NSLog(@"Pause");
+    [self.player pause];
+}
+
+- (void) navigateInSong:(float)newTime
+{
+    [self.player setCurrentTime:newTime];
+    
+    // MPMediaPlayer Duration update
+    NSMutableDictionary *playInfo = [NSMutableDictionary dictionaryWithDictionary:[MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo];
+    NSNumber *position = [NSNumber numberWithFloat:self.player.currentTime];
+    [playInfo setObject:position forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = playInfo;
+}
+
+#pragma mark - now playing footer delegate
+- (void) footerPressed
+{
+    [self presentViewController:[self app].footer.playerVC animated:YES completion:nil];
+}
+
+#pragma mark - player delegate
+-(void) setSongInfo:(NSDictionary *)info
+{
+    self.footerAlbum = info[@"album"];
+    self.footerText = info[@"song"];
+    [[self app].footer updateInfo:info];
+}
+
+-(void) keepVC:(id)player
+{
+    self.playerView = player;
+    [self app].footer.playerVC = player;
+}
+
+-(void)songChanged:(NSDictionary *)info
+{
+    [self setSongInfo:info];
+    NSIndexPath *lastSongCellPath = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
+    [self deselectRow:self.tableView didDeselectRowAtIndexPath:lastSongCellPath];
+    
+    NSIndexPath *thisSongCellPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex+1) inSection:0];
+    [self selectRow:self.tableView didSelectRowAtIndexPath:thisSongCellPath];
+    
+    self.nowPlayingTrackIndex += 1;
+}
+
 
 @end

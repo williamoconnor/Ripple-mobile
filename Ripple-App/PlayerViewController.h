@@ -16,6 +16,7 @@
 -(void) setSongInfo:(NSDictionary*)info;
 -(void) songChanged:(NSDictionary*)info;
 -(void) keepVC:(id)player;
+- (BOOL) drop:(NSString*)type andTrack:(NSDictionary*)track;
 
 @end
 
@@ -31,5 +32,9 @@
 -(void) playSong;
 - (NSMutableDictionary*) getSongInfo;
 @property (nonatomic) id <PlayerDelegate> delegate;
+@property (strong, nonatomic)NSString* dropType;
+@property BOOL dropped;
+
+- (BOOL) drop:(NSString*)type andTrack:(NSDictionary*)track;
 
 @end

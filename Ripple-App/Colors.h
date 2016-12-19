@@ -19,4 +19,9 @@
 #define cSlateNavyNav [UIColor colorWithRed:23.0/255.0 green:30.0/255.0 blue:44.0/255.0 alpha:1.0]
 #define cWhite [UIColor colorWithRed:255.0/255.0 green:255.0/255.0 blue:255.0/255.0 alpha:1.0]
 
+#define cPrimaryPink [UIColor colorWithRed:245.0/255.0 green:98.0/255.0 blue:98.0/255.0 alpha:1.0]
+#define cLighterPrimaryPink [UIColor colorWithRed:245.0/255.0 green:98.0/255.0 blue:98.0/255.0 alpha:0.9]
+#define cPrimaryNavy [UIColor colorWithRed:8.0/255.0 green:47.0/255.0 blue:73.0/255.0 alpha:1.0]
+#define cPrimaryLightBlue [UIColor colorWithRed:84.0/255.0 green:199.0/242.0 blue:252.0/255.0 alpha:1.0]
+
 #endif

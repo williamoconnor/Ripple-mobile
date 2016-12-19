@@ -10,6 +10,9 @@
 #import "DataManager.h"
 #import "Colors.h"
 #import "AppDelegate.h"
+#import "SignInViewController.h"
+#import "Rankings.h"
+#import "LoadingScreen.h"
 
 @interface AccountViewController ()
 
@@ -77,45 +80,29 @@
     
     // Do any additional setup after loading the view.
     NSDictionary *screen = [[NSUserDefaults standardUserDefaults] objectForKey:@"screen"];
-    UIView* fakeNavBar = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, [screen[@"width"] floatValue], 64.0)];
-    fakeNavBar.backgroundColor = cSlateNavy;
-    [self.view addSubview:fakeNavBar];
-    //NAV TITLE
-//    UIImageView* logoImageView = [[UIImageView alloc] initWithFrame:CGRectMake([self.screenSize[@"width"] floatValue]/2 - 72.5, 12.0, 145.0, 40.0)];
-//    logoImageView.image = [UIImage imageNamed:@"logoSmall.png"];
-    UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake([self.screenSize[@"width"] floatValue]/2 - 72.5, 18.0, 145.0, 40.0)];
-    titleLabel.text = @"Account";
-    titleLabel.font = [UIFont fontWithName:@"Poiret One" size:24.0];
-    titleLabel.textColor = cWhite;
-    titleLabel.textAlignment = NSTextAlignmentCenter;
-    [fakeNavBar addSubview:titleLabel];
-    //BACK BUTTON
-    UIButton *backButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    backButton.frame = CGRectMake(12.0, 28.0, 50.0, 21.0);
-    [backButton setTintColor:[UIColor whiteColor]];
-    [backButton setTitle:@"Back" forState:UIControlStateNormal];
-    [backButton addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
-    backButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:18];
-    [fakeNavBar addSubview:backButton];
-    // LOGOUT BUTTON
-    UIButton *logoutButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    logoutButton.frame = CGRectMake([self.screenSize[@"width"] floatValue] - 62.0, 28.0, 50.0, 21.0);
-    [logoutButton setTintColor:[UIColor whiteColor]];
-    [logoutButton setTitle:@"Logout" forState:UIControlStateNormal];
-    [logoutButton addTarget:self action:@selector(logout) forControlEvents:UIControlEventTouchUpInside];
-    logoutButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:18];
-    [fakeNavBar addSubview:logoutButton];
     
+    // STATUS HEADER
+    self.statusHeader = [[accountStatusHeader alloc] initWithWidth:[screen[@"width"] floatValue] andRank:[self.userAccount[@"rank"] intValue] andPoints:[self.userAccount[@"points"] floatValue]];
+    self.statusHeader.delegate = self;
+    self.statusHeader.email = self.userAccount[@"email"];
+    [self.view addSubview:self.statusHeader];
+    
+    // EMPTY CONTENT
+    float empytSpace = [screen[@"height"] floatValue] - (self.statusHeader.frame.origin.y + self.statusHeader.frame.size.height);
+    float empytSpaceY = (self.statusHeader.frame.origin.y + self.statusHeader.frame.size.height);
+    self.emptyContentView = [[UIImageView alloc] initWithFrame:CGRectMake(([screen[@"width"] floatValue]-300)/2, empytSpaceY+(empytSpace-300)/2, 300, 300)];
+    self.emptyContentView.image = [UIImage imageNamed:@"empty-account.png"];
     
     // TABLEVIEW
     self.tableView = [[UITableView alloc] init];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.frame = CGRectMake(0.0, 64.0, [self.screenSize[@"width"] doubleValue], [self.screenSize[@"height"] doubleValue]);
-    self.tableView.backgroundColor = cSlateNavy;
-    self.view.backgroundColor = cSlateNavy;
+    self.tableView.frame = CGRectMake(0.0, (self.statusHeader.frame.origin.y + self.statusHeader.frame.size.height), [self.screenSize[@"width"] doubleValue], [self.screenSize[@"height"] doubleValue] - (self.statusHeader.frame.origin.y + self.statusHeader.frame.size.height));
+    self.tableView.backgroundColor = cWhite;
+    self.view.backgroundColor = cWhite;
     [self.tableView registerClass:[songCell class] forCellReuseIdentifier:@"cell"];
-    [self.view addSubview:self.tableView];
+    self.tableView.rowHeight = 100.0;
+    [self.tableView setSeparatorColor:[Rankings getRankingToUIColor:[self.userAccount[@"rank"] intValue]]];
     
     [self loadSongs];
 }
@@ -127,20 +114,19 @@
     [self.tableView reloadData];
     
     if ([self app].footer) {
-        self.tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y, self.tableView.frame.size.width, [self.screenSize[@"height"] floatValue]-60.0);
         [self app].footer.delegate = self;
         [self.view addSubview:[self app].footer];
         [self.view bringSubviewToFront:[self app].footer];
+        [[self app].footer showUnderView:self.tableView atY:[self.screenSize[@"height"] doubleValue] - 60];
     }
     
-    else if ([self app].player.duration > 0) {
-        self.tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y, self.tableView.frame.size.width, self.tableView.frame.size.height-60.0);
+    else if ([self app].player.duration > 0) { // implied no footer
         [self app].footer = [[NowPlayingFooter alloc] initWithSongName:self.footerText andAlbumCover:self.footerAlbum];
         [self app].footer.delegate = self;
         [self.view addSubview:[self app].footer];
         [self.view bringSubviewToFront:[self app].footer];
+        [[self app].footer showUnderView: self.tableView atY:[self.screenSize[@"height"] doubleValue] - 60];
         
-        NSLog(@"%@",self.navigationController.viewControllers);
     }
 }
 
@@ -150,7 +136,12 @@
 }
 
 - (void) loadSongs {
-    
+    [LoadingScreen showGeneralLoadingScreen];
+    [self performSelector:@selector(retrieveSongs) withObject:nil afterDelay:0.01];
+}
+
+-(void)retrieveSongs
+{
     // reset arrays
     [self.tracks removeAllObjects];
     [self.albumCovers removeAllObjects];
@@ -162,7 +153,7 @@
             [self.tracks addObject: song];
             
             // YOOO
-            UIImage* albumCoverImage = [UIImage imageNamed:@"NowPlaying.png"];
+            UIImage* albumCoverImage = [UIImage imageNamed:@"no-album-cover.png"];
             if (![song[@"artwork_url"] isEqual:[NSNull null]] && [song[@"artwork_url"] length] > 0){
                 NSString* url = [song[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
                 albumCoverImage = [UIImage imageWithData:
@@ -174,8 +165,15 @@
         }
     }
     
-    [self.loading stopAnimating];
-    [self.tableView reloadData];
+    [LoadingScreen hideGeneralLoadingScreen];
+    
+    if ([self.tracks count] == 0) {
+        [self showEmptyContent];
+    }
+    else {
+        [self showTableView];
+        [self.tableView reloadData];
+    }
 }
 
 - (void) back
@@ -185,12 +183,16 @@
 
 - (void) logout
 {
+    [[self app].player stop];
+    
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     
-    UIViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"loginScreen"];
+    
+    SignInViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"loginScreen"];
     
     [self presentViewController:viewController animated:YES completion:^{
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"user"];
+        [viewController playerStartPlaying];
     }];
 
     
@@ -221,13 +223,13 @@
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Songs" style:UIBarButtonItemStylePlain target:nil action:nil];
         
         NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    [UIFont fontWithName:@"Poiret One" size:18.0], NSFontAttributeName,
+                                    [UIFont fontWithName:@"Avenir Next" size:17.0], NSFontAttributeName,
                                     cWhite, NSForegroundColorAttributeName,
                                     nil];
         [[UIBarButtonItem appearance] setTitleTextAttributes:
          [NSDictionary dictionaryWithObjectsAndKeys:
           cWhite, NSForegroundColorAttributeName,
-          [UIFont fontWithName:@"Poiret One" size:18.0], NSFontAttributeName,
+          [UIFont fontWithName:@"Avenir Next" size:17.0], NSFontAttributeName,
           nil] forState:UIControlStateNormal];
         self.navigationController.navigationBar.tintColor = cWhite;
         //        [self.navigationItem.backBarButtonItem setTitleTextAttributes:attributes forState:UIControlStateNormal];
@@ -238,23 +240,25 @@
 #pragma mark - tableview delegate
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
     songCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
-    //    NSLog(@"Track: %@", track);
     [cell setData:track andType:@"none"];
+    cell.albumCover.image = self.albumCovers[indexPath.row];
+
+    cell.contentView.backgroundColor = cWhite;
     
     //to change background color of selected cell
     if (indexPath.row == self.nowPlayingTrackIndex) {
-        cell.contentView.backgroundColor = cDarkGray;
+        cell.titleLabel.textColor = cPrimaryPink;
+        cell.artistLabel.textColor = cPrimaryPink;
     }
     else {
-        cell.contentView.backgroundColor = cSlateNavy;
+        cell.titleLabel.textColor = cPrimaryNavy;
+        cell.titleLabel.textColor = cPrimaryNavy;
     }
     
-    
-    cell.delegate = self;
     return cell;
 }
 
@@ -262,7 +266,6 @@
     if (self.nowPlayingTrackIndex >= 0) {
         NSIndexPath* lastSong = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
         [self deselectRow:self.tableView didDeselectRowAtIndexPath:lastSong];
-        
     }
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
     NSLog(@"track: %@", track[@"name"]);
@@ -276,8 +279,9 @@
     [self.loading startAnimating];
     
     // PLAY SONG
-    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cDarkGray;
+    songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.titleLabel.textColor = cPrimaryPink;
+    cell.artistLabel.textColor = cPrimaryPink;
     self.nowPlayingTrackIndex = indexPath.row;
     NSLog(@"index path: %ld", self.nowPlayingTrackIndex);
     
@@ -301,19 +305,21 @@
     
     // PLAY SONG
     songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cDarkGray;
-}
+    cell.titleLabel.textColor = cPrimaryPink;
+    cell.artistLabel.textColor = cPrimaryPink;}
 
 -(void)tableView:(UITableView *)tableView didHighlightRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cDarkGray;
+    songCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.titleLabel.textColor = cPrimaryPink;
+    cell.artistLabel.textColor = cPrimaryPink;
 }
 
 -(void)tableView:(UITableView *)tableView didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cSlateNavy;
+    songCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.titleLabel.textColor = cPrimaryNavy;
+    cell.artistLabel.textColor = cPrimaryNavy;
 }
 
 -(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -326,8 +332,9 @@
 -(void)deselectRow:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // STYLE
-    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cSlateNavy;
+    songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.titleLabel.textColor = cPrimaryNavy;
+    cell.artistLabel.textColor = cPrimaryNavy;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -340,6 +347,20 @@
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
+}
+
+- (void)showTableView
+{
+    if (self.emptyContentView) {
+        [self.emptyContentView removeFromSuperview];
+        [self.view addSubview:self.tableView];
+        self.emptyContentView = nil;
+    }
+}
+
+-(void)showEmptyContent
+{
+    [self.view addSubview:self.emptyContentView];
 }
 
 // DELEGATE METHODS
@@ -384,7 +405,7 @@
 
 -(void) keepVC:(id)player
 {
-    self.playerView = player;
+    // self.playerView = player;
     [self app].footer.playerVC = player;
 }
 

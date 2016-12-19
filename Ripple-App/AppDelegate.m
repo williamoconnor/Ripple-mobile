@@ -34,6 +34,8 @@
     
     NSString* identifier = @"homeScreen";
     
+//    NSDictionary* user = [[NSDictionary alloc] init];
+//    [[NSUserDefaults standardUserDefaults] setObject:user forKey:@"user"];
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"user"]) {
         identifier = @"homeScreen";
     }

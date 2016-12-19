@@ -15,6 +15,7 @@
 - (void) backwardPressed;
 - (void) forwardPressed;
 - (void) navigateInSong:(float) newTime;
+- (BOOL) drop:(NSString*)type andTrack:(NSDictionary*)track;
 
 @end
 
@@ -22,19 +23,28 @@
 
 //@property (strong, nonatomic) UIView* playerBackground;
 @property (strong, nonatomic) UILabel* nowPlayingSongNameLabel;
+@property (strong, nonatomic) UILabel* nowPlayingArtistNameLabel;
 @property (weak, nonatomic) id <wboPlayerDelegate> delegate;
 @property (strong, nonatomic) UISlider *trackProgressSlider;
 @property (strong, nonatomic) UIButton *playButton;
 @property (strong, nonatomic) UIButton *pauseButton;
 @property (strong, nonatomic) UIButton *forwardButton;
 @property (strong, nonatomic) UIButton *backwardButton;
+@property (strong, nonatomic) UIButton *dropButton;
+@property (strong, nonatomic) UIImageView *droppedIcon;
 @property (strong, nonatomic) UILabel *frontTimeLabel;
 @property (strong, nonatomic) UILabel *backTimeLabel;
+
+@property (strong, nonatomic) NSDictionary* track;
+@property (strong, nonatomic) NSString* dropType;
+@property BOOL dropped;
 
 - (void) resetProgress;
 - (void) setSongDuration: (float)progress andDuration: (float)duration;
 - (void) togglePlayButton;
 - (void) disableEnableButtons:(BOOL)enable;
+-(void)setCheckmark;
+-(void)createDropButton;
 
 
 @end

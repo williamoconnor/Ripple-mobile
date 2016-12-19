@@ -11,8 +11,12 @@
 #import "PlayerViewController.h"
 #import "NowPlayingFooter.h"
 #import "songCell.h"
+#import "accountStatusHeader.h"
 
-@interface AccountViewController : UIViewController <CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, rippleSongCellDelegate, NowPlayingFooterDelegate, PlayerDelegate>
+@interface AccountViewController : UIViewController <CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, rippleSongCellDelegate, NowPlayingFooterDelegate, PlayerDelegate, statusHeaderDelegate>
+
+@property (strong, nonatomic)accountStatusHeader* statusHeader;
+@property (strong, nonatomic)UIImageView* emptyContentView;
 
 - (void) pauseButtonPressed;
 - (void) playButtonPressed;

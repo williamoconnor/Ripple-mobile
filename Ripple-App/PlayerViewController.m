@@ -12,6 +12,7 @@
 #import "SCUI.h"
 #import "AppDelegate.h"
 #import "Colors.h"
+#import "LoadingScreen.h"
 
 @interface PlayerViewController ()
 
@@ -48,30 +49,46 @@
     
     //FAKE NAV BAR
     UIView* fakeNavBar = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, [width floatValue], 64.0)];
-    fakeNavBar.backgroundColor = cSlateNavy;
+    fakeNavBar.backgroundColor = cPrimaryPink;
     [self.view addSubview:fakeNavBar];
     
     //BACK BUTTON
     self.backButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    self.backButton.frame = CGRectMake(12.0, 28.0, 50.0, 21.0);
+    self.backButton.frame = CGRectMake(12.0, 32.0, 50.0, 21.0);
     [self.backButton setTintColor:[UIColor whiteColor]];
     [self.backButton setTitle:@"Back" forState:UIControlStateNormal];
     [self.backButton addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
-    self.backButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:18];
+    self.backButton.titleLabel.font = [UIFont fontWithName:@"Avenir Next" size:17];
     [fakeNavBar addSubview:self.backButton];
     
     //NAV TITLE
-    UIImageView* logoImageView = [[UIImageView alloc] initWithFrame:CGRectMake([width floatValue]/2 - 72.5, 18.0, 145.0, 40.0)];
-    logoImageView.image = [UIImage imageNamed:@"logoSmall.png"];
-    [fakeNavBar addSubview:logoImageView];
+    UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake([width floatValue]/2 - 72.5, 22.0, 145.0, 40.0)];
+    NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [UIFont fontWithName:@"Avenir" size:32.0], NSFontAttributeName,
+                                cWhite, NSForegroundColorAttributeName,
+                                nil];
+    NSMutableAttributedString* navTitle = [[NSMutableAttributedString alloc] initWithString:@"ripple" attributes:attributes];
+    [navTitle addAttribute:NSKernAttributeName
+                     value:@(4.9)
+                     range:NSMakeRange(0, 5)];
+    titleLabel.attributedText = navTitle;
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    [fakeNavBar addSubview:titleLabel];
     
     //ALBUM COVER
     self.albumCover = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 64.0, [width floatValue], [width floatValue])];
     [self.view addSubview:self.albumCover];
     [self loadAlbumCover];
     
-    //GUI - dont forget to make a small thing to get back here on the list view
-    self.playerGui = [[wboPlayerView alloc] initWithFrame:CGRectMake(0.0, [height floatValue]-200, [width floatValue], 200)];
+    if (![self.song[@"previous_dropper_ids"] containsObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"user"][@"_id"]] ) {
+        UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTapAlbum)];
+        doubleTap.numberOfTapsRequired = 2;
+        self.albumCover.userInteractionEnabled = YES;
+        [self.albumCover addGestureRecognizer:doubleTap];
+    }
+    
+    //GUI
+    self.playerGui = [[wboPlayerView alloc] initWithFrame:CGRectMake(0.0, (64 + [width floatValue]), [width floatValue], [height floatValue]-(64 + [width floatValue]))];
     self.playerGui.delegate = self;
     [self.view addSubview:self.playerGui];
     [self.playerGui disableEnableButtons:NO];
@@ -85,16 +102,24 @@
     [self.view bringSubviewToFront:self.loading];
     
 // NAV BAR
-    self.navigationItem.title = @"Ripple";
-    [self.navigationController.navigationBar setTitleTextAttributes:
-     [NSDictionary dictionaryWithObjectsAndKeys:
-      [UIColor whiteColor], NSForegroundColorAttributeName,
-      [UIFont fontWithName:@"Cookie" size:44],
-      NSFontAttributeName, nil]];
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0x48/255.0 green:0x98/255.0 blue:0xBD/255.0 alpha:1.0];
-    
+//    self.navigationController.navigationBar.barTintColor = cPrimaryPink;
+//    NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+//                                [UIFont fontWithName:@"Avenir" size:36.0], NSFontAttributeName,
+//                                cWhite, NSForegroundColorAttributeName,
+//                                nil];
+//    NSMutableAttributedString* navTitle = [[NSMutableAttributedString alloc] initWithString:@"ripple" attributes:attributes];
+//    [navTitle addAttribute:NSKernAttributeName
+//                     value:@(4.9)
+//                     range:NSMakeRange(0, 5)];
+//    UILabel* navTitleLabel = [[UILabel alloc] init];
+//    navTitleLabel.attributedText = navTitle;
+//    [navTitleLabel sizeToFit];
+//    self.navigationItem.titleView = navTitleLabel;
 //    NSLog(@"here da song %@", self.song);
     self.playerGui.nowPlayingSongNameLabel.text = self.song[@"name"];
+    self.playerGui.nowPlayingArtistNameLabel.text = self.song[@"artist"];
+    self.playerGui.dropType = self.dropType;
+    self.playerGui.track = self.song;
     //[self playSong];
     
 }
@@ -111,6 +136,10 @@
     if (![self app].player.duration > 0) {
         [self.playerGui disableEnableButtons:NO];
     }
+    
+    if (self.dropped == YES && self.playerGui.dropped == NO) {
+        [self.playerGui createDropButton];
+    }
 }
 
 - (void) loadAlbumCover
@@ -122,6 +151,10 @@
                            [NSData dataWithContentsOfURL:
                             [NSURL URLWithString: url]]];
     }
+    else {
+        albumCoverImage = [UIImage imageNamed:@"no-album-cover.png"];
+    }
+    self.albumCover.contentMode = UIViewContentModeScaleAspectFit;
     self.albumCover.image = albumCoverImage;
 }
 
@@ -216,9 +249,10 @@
     }];
     [task resume];
     
-    // PREPARE NEXT SONG
-    
     self.playerGui.nowPlayingSongNameLabel.text = self.song[@"name"];
+    self.playerGui.nowPlayingArtistNameLabel.text = self.song[@"artist"];
+    self.playerGui.dropType = self.dropType;
+    self.playerGui.track = self.song;
     self.albumCover.image = self.albumCovers[self.nowPlayingTrackIndex];
 }
 
@@ -227,7 +261,6 @@
     
     [self.playerGui disableEnableButtons:NO];
     // select next cell
-//    NSLog(@"nextTrack: %@", self.tracks[self.nowPlayingTrackIndex+1][@"name"]);
     self.song = self.tracks[self.nowPlayingTrackIndex+1];
     self.nowPlayingTrackIndex += 1;
     NSMutableDictionary* songInfo = [[NSMutableDictionary alloc] init];
@@ -235,6 +268,16 @@
     songInfo[@"album"] = self.albumCovers[self.nowPlayingTrackIndex];
     [self.delegate songChanged:songInfo];
     [self playSong];
+    
+    // update the position in the list
+    
+    // play the song
+    
+    // pass information to delegate (Feed or Search)
+    
+    // update footer
+    
+    
 }
 
 -(void)playPreviousSong
@@ -403,6 +446,29 @@
         }
         [self.playerGui resetProgress];
     }
+}
+
+#pragma mark - drop
+- (BOOL) drop:(NSString*)type andTrack:(NSDictionary*)track
+{
+    BOOL success = [self.delegate drop:type andTrack:track];
+    self.dropped = success;
+    return success;
+}
+
+- (void) doubleTapAlbum
+{
+    [LoadingScreen showDroppingScreen];
+    double delayInSeconds = 0.01;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        BOOL success = [self.delegate drop:self.dropType andTrack:self.song];
+        self.dropped = success;
+        if (success == YES) {
+            [self.playerGui setCheckmark];
+        }
+    });
+
 }
 
 @end

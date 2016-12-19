@@ -19,11 +19,14 @@
 
 @property (strong, nonatomic) UIImageView* albumView;
 @property (strong, nonatomic) UIButton* songLabel;
-- (id) initWithSongName:(NSString*)song andAlbumCover:(UIImage*)albumCover;
 @property (nonatomic) id <NowPlayingFooterDelegate> delegate;
 @property (strong, nonatomic) PlayerViewController* playerVC;
 @property (strong, nonatomic) NSDictionary* song;
+@property float height;
 
+-(void) showUnderView:(UIView*)view atY:(float)y;
+-(void) hideUnderView:(UIView*)view;
 -(void) updateInfo:(NSDictionary*)info;
+- (id) initWithSongName:(NSString*)song andAlbumCover:(UIImage*)albumCover;
 
 @end

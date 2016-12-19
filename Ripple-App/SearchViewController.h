@@ -27,4 +27,6 @@
 @property (strong, nonatomic) NSMutableArray* songIdsInFeed;
 @property (nonatomic) id <searchProtocol> homeDelegate;
 
+@property (strong, nonatomic)UIImageView* emptyContentView;
+
 @end

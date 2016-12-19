@@ -11,7 +11,7 @@
 
 @protocol rippleSongCellDelegate <NSObject>
 
-- (void) drop:(NSString*)type andTrack:(NSDictionary*)track;
+- (BOOL) drop:(NSString*)type andTrack:(NSDictionary*)track;
 
 @end
 
@@ -25,6 +25,7 @@
 @property (weak, nonatomic) id <rippleSongCellDelegate> delegate;
 @property (strong, nonatomic) UIButton* dropButton;
 @property (strong, nonatomic) NSString* type;
+@property (strong, nonatomic) NSNumber* dropperRank;
 
 
 -(void) setData: (NSDictionary*)track andType:(NSString*)type;

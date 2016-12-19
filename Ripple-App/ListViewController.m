@@ -14,6 +14,7 @@
 #import "NowPlayingFooter.h"
 #import "Colors.h"
 #import "SearchViewController.h"
+#import "LoadingScreen.h"
 
 @interface ListViewController ()
 
@@ -111,14 +112,20 @@
     self.tableView = [[UITableView alloc] init];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.frame = CGRectMake(0.0, 0.0, [self.screenSize[@"width"] doubleValue], [self.screenSize[@"height"] doubleValue]);
-    self.tableView.backgroundColor = cSlateNavy;
-    self.view.backgroundColor = cDarkGray;
+    self.tableView.frame = CGRectMake(0.0, 0.0, [self.screenSize[@"width"] doubleValue], [self.screenSize[@"height"] doubleValue] - 60);
+    self.tableView.backgroundColor = cWhite;
+    self.tableView.rowHeight = 100.0f;
+    [self.tableView setSeparatorColor:cPrimaryNavy];
+    self.view.backgroundColor = cWhite;
     [self.tableView registerClass:[songCell class] forCellReuseIdentifier:@"cell"];
     UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
     [refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
     [self.tableView addSubview:refreshControl];
-    [self.view addSubview:self.tableView];
+    //[self.view addSubview:self.tableView];
+    
+    // EMPTY CONTENT
+    self.emptyContentView = [[UIImageView alloc] initWithFrame:CGRectMake(([width floatValue]-300)/2, 60, 300, 300)];
+    self.emptyContentView.image = [UIImage imageNamed:@"empty-feed.png"];
     
     //      ACTIVITY INDICATOR
     self.loading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -128,22 +135,28 @@
     [self.tableView addSubview:self.loading];
     [self.tableView bringSubviewToFront:self.loading];
     
-    [self.loading startAnimating];
-    
     // NAV BAR
 //    UIImage* logoImage = [UIImage imageNamed:@"logoSmall.png"];
 //    self.navigationItem.titleView = [[UIImageView alloc] initWithImage:logoImage];
-    self.navigationController.navigationBar.barTintColor = cSlateNavyNav;
-    self.navigationController.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                                                   [UIFont fontWithName:@"Poiret One" size:24.0], NSFontAttributeName,
-                                                                   cWhite, NSForegroundColorAttributeName,
-                                                                   nil];
-    self.navigationItem.title = @"Feed";
+    self.navigationController.navigationBar.barTintColor = cPrimaryPink;
+    NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [UIFont fontWithName:@"Avenir" size:32.0], NSFontAttributeName,
+                                cWhite, NSForegroundColorAttributeName,
+                                nil];
+    NSMutableAttributedString* navTitle = [[NSMutableAttributedString alloc] initWithString:@"ripple" attributes:attributes];
+    [navTitle addAttribute:NSKernAttributeName
+                             value:@(4.9)
+                             range:NSMakeRange(0, 5)];
+    UILabel* navTitleLabel = [[UILabel alloc] init];
+    navTitleLabel.attributedText = navTitle;
+    [navTitleLabel sizeToFit];
+    self.navigationItem.titleView = navTitleLabel;
+    self.navigationController.navigationBar.translucent = NO;
     
     // NAV BAR ACCOUNT BUTTON
     UIBarButtonItem *accountButton = [[UIBarButtonItem alloc] initWithTitle:@"Account" style:UIBarButtonItemStylePlain target:self action:@selector(accountButtonPressed)];
     [accountButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                        [UIFont fontWithName:@"Poiret One" size:18.0], NSFontAttributeName,
+                                        [UIFont fontWithName:@"Avenir Next" size:17.0], NSFontAttributeName,
                                         cWhite, NSForegroundColorAttributeName,
                                         nil] 
                               forState:UIControlStateNormal];
@@ -152,7 +165,7 @@
     // NAV BAR SEARCH BUTTON
     UIBarButtonItem *searchButton = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStylePlain target:self action:@selector(searchButtonPressed)];
     [searchButton setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                           [UIFont fontWithName:@"Poiret One" size:18.0], NSFontAttributeName,
+                                           [UIFont fontWithName:@"Avenir Next" size:17.0], NSFontAttributeName,
                                            cWhite, NSForegroundColorAttributeName,
                                            nil]
                                  forState:UIControlStateNormal];
@@ -166,10 +179,11 @@
     }
     else {
         NSLog(@"Location already set");
-        [self loadSongs];
+        [self setUpLocation];
     }
     
     [self.player prepareToPlay];
+
     
 }
 
@@ -179,21 +193,12 @@
     // check for signed in
     [self.tableView reloadData];
     
-//    if ([self app].footer) {
-//        self.tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y, self.tableView.frame.size.width, [self.screenSize[@"height"] floatValue]-60.0);
-//        [self app].footer.delegate = self;
-//        [self.view addSubview:[self app].footer];
-//        [self.view bringSubviewToFront:[self app].footer];
-//    }
-    
-    if ([self app].player.data) {
-        self.tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y, self.tableView.frame.size.width, [self.screenSize[@"height"] floatValue] - (64 + 60));
-        [self app].footer = [[NowPlayingFooter alloc] initWithSongName:self.footerText andAlbumCover:self.footerAlbum];
+    if ([self app].footer) {
         [self app].footer.delegate = self;
         [self.view addSubview:[self app].footer];
         [self.view bringSubviewToFront:[self app].footer];
-        
-        NSLog(@"%@",self.navigationController.viewControllers);
+        [self.tableView setFrame:CGRectMake(0.0, 0.0, [self.screenSize[@"width"] doubleValue], [self.screenSize[@"height"] doubleValue] - 60)];
+        [[self app].footer showUnderView:self.tableView atY:0.0];
     }
 }
 
@@ -213,6 +218,8 @@
 
 -(void) locationManager: (CLLocationManager *)manager didUpdateToLocation: (CLLocation *) newLocation
            fromLocation: (CLLocation *) oldLocation {
+    [self.locationManager stopUpdatingLocation];
+    self.locationManager = nil;
     CLLocation *location = newLocation;
     // Configure the new event with information from the location
     CLLocationCoordinate2D coordinate = [location coordinate];
@@ -228,7 +235,6 @@
     
     [[NSUserDefaults standardUserDefaults] setObject:latS forKey:@"latitude"];
     [[NSUserDefaults standardUserDefaults] setObject:lonS forKey:@"longitude"];
-    [self.locationManager stopUpdatingLocation];
     
     [self loadSongs];
     
@@ -252,6 +258,12 @@
 }
 
 - (void) loadSongs {
+    [LoadingScreen showGeneralLoadingScreen];
+    [self performSelector:@selector(retrieveSongs) withObject:nil afterDelay:0.01];
+}
+
+-(void)retrieveSongs
+{
     NSMutableDictionary *location = [[NSMutableDictionary alloc] init];
     location[@"latitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"latitude"];
     location[@"longitude"] = [[NSUserDefaults standardUserDefaults] objectForKey:@"longitude"];
@@ -260,13 +272,6 @@
     [self.tracks removeAllObjects];
     [self.albumCovers removeAllObjects];
     
-    // HARDCODE LOCATION
-    NSNumber *tempNumber = [[NSNumber alloc] initWithDouble:32.846];
-    location[@"latitude"] = location[@"latitude"];
-    NSNumber *tempNumber2 = [[NSNumber alloc] initWithDouble:-96.7837];
-    location[@"longitude"] = location[@"longitude"];
-    [[NSUserDefaults standardUserDefaults] setObject:location forKey:@"location"];
-    
     NSDictionary* songs = [DataManager getDrops:location];
     NSLog(@"Got the song IDs");
     
@@ -274,14 +279,14 @@
         if (song && (BOOL)song[@"streamable"] == true) {
             [self.tracks addObject: song];
             [self.songIds addObject: song[@"soundcloud_track_id"]];
-    
+            
             // YOOO
-            UIImage* albumCoverImage = [UIImage imageNamed:@"NowPlaying.png"];
+            UIImage* albumCoverImage = [UIImage imageNamed:@"no-album-cover.png"];
             if (![song[@"artwork_url"] isEqual:[NSNull null]] && [song[@"artwork_url"] length] > 0){
                 NSString* url = [song[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
                 albumCoverImage = [UIImage imageWithData:
-                                            [NSData dataWithContentsOfURL:
-                                             [NSURL URLWithString: url]]];
+                                   [NSData dataWithContentsOfURL:
+                                    [NSURL URLWithString: url]]];
             }
             
             [self.albumCovers addObject:albumCoverImage];
@@ -289,8 +294,15 @@
     }
     NSLog(@"Got the actual songs");
     
-    [self.loading stopAnimating];
-    [self.tableView reloadData];
+    if ([self.tracks count] == 0) {
+        [self showEmptyContent];
+        [LoadingScreen hideGeneralLoadingScreen];
+    }
+    else {
+        [self showTableView];
+        [self.tableView reloadData];
+        [LoadingScreen hideGeneralLoadingScreen];
+    }
 }
 
 - (void) locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
@@ -322,17 +334,28 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     songCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
 //    NSLog(@"Track: %@", track);
     [cell setData:track andType:@"redrop"];
+    cell.albumCover.image = self.albumCovers[indexPath.row];
+    if (![track[@"previous_dropper_ids"] containsObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"user"][@"_id"]] ) {
+        [cell createDropButton];
+    }
+    else {
+        [cell hideDropButton];
+    }
+    cell.contentView.backgroundColor = cWhite;
     
     //to change background color of selected cell
     if (indexPath.row == self.nowPlayingTrackIndex) {
-        cell.contentView.backgroundColor = cDarkGray;
+        cell.titleLabel.textColor = cPrimaryPink;
+        cell.artistLabel.textColor = cPrimaryPink;
     }
     else {
-        cell.contentView.backgroundColor = cSlateNavy;
+        cell.titleLabel.textColor = cPrimaryNavy;
+        cell.titleLabel.textColor = cPrimaryNavy;
     }
     
     cell.delegate = self;
@@ -343,38 +366,17 @@
     if (self.nowPlayingTrackIndex >= 0) {
         NSIndexPath* lastSong = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
         [self deselectRow:self.tableView didDeselectRowAtIndexPath:lastSong];
-        
     }
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
-    NSLog(@"track: %@", track[@"name"]);
-//    [self.timer invalidate];
-    
-    //loader
-    double x = [self.screenSize[@"width"] doubleValue]/2;
-    self.loading.center = CGPointMake(x, 100.0);
-    [self.albumCover addSubview:self.loading];
-    [self.albumCover bringSubviewToFront:self.loading];
-    [self.loading startAnimating];
-    
-//    if (self.tableView.frame.origin.y == 264.0) {
-//        self.albumCover.hidden = NO;
-//        self.playerGui.hidden = NO;
-//        self.playerGui.playButton.hidden = YES;
-//        self.playerGui.pauseButton.hidden = NO;
-//    }
-//    else {
-//        NSLog(@"%f", self.tableView.frame.origin.y);
-//    }
-    
     
     // PLAY SONG
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cDarkGray;
+    cell.contentView.backgroundColor = cWhite;
     self.nowPlayingTrackIndex = indexPath.row;
     NSLog(@"index path: %ld", self.nowPlayingTrackIndex);
     
 //    [self playSong:track];
-    [self performSegueWithIdentifier:@"playerSegue" sender:self];
+    [self performSegueWithIdentifier:@"playerSegue" sender:cell];
     
     if ([[self app].player isPlaying]) {
         [[self app].player stop];
@@ -389,24 +391,27 @@
     //loader
     double x = [self.screenSize[@"width"] doubleValue]/2;
     self.loading.center = CGPointMake(x, 100.0);
-    [self.loading startAnimating];
+//    [self.loading startAnimating];
     
     // PLAY SONG
     songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cDarkGray;
+    cell.titleLabel.textColor = cPrimaryPink;
+    cell.artistLabel.textColor = cPrimaryPink;
 }
 
 
 -(void)tableView:(UITableView *)tableView didHighlightRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cDarkGray;
+    songCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.titleLabel.textColor = cPrimaryPink;
+    cell.artistLabel.textColor = cPrimaryPink;
 }
 
 -(void)tableView:(UITableView *)tableView didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cSlateNavy;
+    songCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.titleLabel.textColor = cPrimaryNavy;
+    cell.artistLabel.textColor = cPrimaryNavy;
 }
 
 -(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -419,8 +424,10 @@
 -(void)deselectRow:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // STYLE
-    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cSlateNavy;
+    songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.contentView.backgroundColor = cWhite;
+    cell.titleLabel.textColor = cPrimaryNavy;
+    cell.artistLabel.textColor = cPrimaryNavy;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -455,6 +462,20 @@
     oldCell.contentView.backgroundColor = cDarkGray;
     
     [refreshControl endRefreshing];
+}
+
+- (void)showTableView
+{
+    if (self.emptyContentView) {
+        [self.emptyContentView removeFromSuperview];
+        [self.view addSubview:self.tableView];
+        self.emptyContentView = nil;
+    }
+}
+
+-(void)showEmptyContent
+{
+    [self.view addSubview:self.emptyContentView];
 }
 
 // DELEGATE METHODS
@@ -492,7 +513,7 @@
 }
 
 #pragma mark - Ripple Song Cell Delegate
-- (void) drop:(NSString*) type andTrack:(NSDictionary*)track
+- (BOOL) drop:(NSString*) type andTrack:(NSDictionary*)track
 {
     NSDictionary* location = [[NSUserDefaults standardUserDefaults] objectForKey:@"location"];
     
@@ -501,12 +522,13 @@
     
     NSMutableDictionary* drop = [[NSMutableDictionary alloc] init];
     
-    if ([type isEqualToString:@"redrop"]) { // should always be redrop here
+    /*if ([type isEqualToString:@"redrop"]) { // should always be redrop here
         
         drop[@"lastDropId"] = track[@"_id"];
-        [track[@"previous_dropper_ids"] addObject:self.user[@"_id"]];
-        drop[@"previousDropperIds"] = track[@"previous_dropper_ids"];
-    }
+        NSMutableArray* pdi = [track[@"previous_dropper_ids"] mutableCopy];
+        [pdi addObject:self.user[@"_id"]];
+        drop[@"previousDropperIds"] = pdi;
+    }*/
     
     drop[@"soundcloudTrackId"] = track[@"soundcloud_track_id"];
     drop[@"trackName"] = track[@"name"];
@@ -519,19 +541,21 @@
     drop[@"longitude"] = location[@"longitude"];
     
     NSDictionary* result = [DataManager dropSong:drop];
-    if (result[@"_id"]){
-        [self.loading startAnimating];
+    [LoadingScreen hideDroppingScreen];
+    if (result[@"drop"][@"_id"]){
+//        [self.loading startAnimating];
         [self loadSongs];
         [self.tableView reloadData];
-        
-        // FIGURE THIS OUT
-        
-        [self.loading stopAnimating];
-        NSLog(@"it works");
+        if (track[@"soundcloud_track_id"] == [self app].footer.playerVC.song[@"soundcloud_track_id"]) {
+            [self app].footer.playerVC.dropped = YES;
+        }
+
+        return YES;
     }
     else {
         UIAlertView* failure = [[UIAlertView alloc] initWithTitle:@"Drop Unsuccessful" message:result[@"reason"] delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
         [failure show];
+        return NO;
     }
 }
 
@@ -551,19 +575,20 @@
         dest.nowPlayingTrackIndex = self.nowPlayingTrackIndex;
         dest.albumCovers = self.albumCovers;
         dest.delegate = self;
+        dest.dropType = ((songCell*)(sender)).type;
         [dest playSong];
         
         // BACK BUTTON
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Songs" style:UIBarButtonItemStylePlain target:nil action:nil];
         
         NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                       [UIFont fontWithName:@"Poiret One" size:18.0], NSFontAttributeName,
+                       [UIFont fontWithName:@"Avenir Next" size:17.0], NSFontAttributeName,
                        cWhite, NSForegroundColorAttributeName,
                                     nil];
         [[UIBarButtonItem appearance] setTitleTextAttributes:
          [NSDictionary dictionaryWithObjectsAndKeys:
           cWhite, NSForegroundColorAttributeName,
-          [UIFont fontWithName:@"Poiret One" size:18.0], NSFontAttributeName,
+          [UIFont fontWithName:@"Avenir Next" size:17.0], NSFontAttributeName,
           nil] forState:UIControlStateNormal];
         self.navigationController.navigationBar.tintColor = cWhite;
 //        [self.navigationItem.backBarButtonItem setTitleTextAttributes:attributes forState:UIControlStateNormal];
@@ -580,7 +605,8 @@
 #pragma mark - now playing footer delegate
 - (void) footerPressed
 {
-    [self presentViewController:[self app].footer.playerVC animated:YES completion:nil];
+    PlayerViewController* vc = [self app].footer.playerVC;
+    [self presentViewController:vc animated:YES completion:nil];
 }
 
 #pragma mark - player delegate
@@ -593,8 +619,23 @@
 
 -(void) keepVC:(id)player
 {
-    self.playerView = player;
-    [self app].footer.playerVC = player;
+    // self.playerView = player;
+    [[self app].footer setPlayerVC:player];
+    
+    if ([self app].footer) {
+        [self app].footer.delegate = self;
+        [self.view addSubview:[self app].footer];
+        [self.view bringSubviewToFront:[self app].footer];
+        [[self app].footer showUnderView:self.tableView atY:0];
+    }
+    else if ([self app].player.duration > 0) { // implied no footer
+        [self app].footer = [[NowPlayingFooter alloc] initWithSongName:self.footerText andAlbumCover:self.footerAlbum];
+        [self app].footer.delegate = self;
+        [[self app].footer setPlayerVC:player];
+        [self.view addSubview:[self app].footer];
+        [self.view bringSubviewToFront:[self app].footer];
+        [[self app].footer showUnderView: self.tableView atY:0];
+    }
 }
 
 -(void)songChanged:(NSDictionary *)info
@@ -615,5 +656,37 @@
 {
     [self loadSongs];
 }
+
+#pragma mark - loading screen
+
+-(void) showLoadingDropsScreen
+{
+    /*
+    self.loadingScreen.alpha = 0;
+    UIWindow *currentWindow = [UIApplication sharedApplication].keyWindow;
+    [currentWindow addSubview:self.loadingScreen];
+    
+    [UIView animateWithDuration:0.2 animations:^{
+        self.loadingScreen.alpha = 1;
+    } completion:^(BOOL finished) {
+        // [self.navigationController setNavigationBarHidden:YES];
+    }];
+     */
+    [LoadingScreen showLoadingDropsScreen];
+}
+
+-(void)hideLoadingDropsScreen
+{
+    /*
+    [self.navigationController setNavigationBarHidden:NO];
+    [UIView animateWithDuration:0.2 animations:^{
+        self.loadingScreen.alpha = 0;
+    } completion:^(BOOL finished) {
+        [self.loadingScreen removeFromSuperview];
+    }];
+     */
+    [LoadingScreen hideLoadingDropsScreen];
+}
+
 
 @end

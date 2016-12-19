@@ -7,8 +7,8 @@
 //
 
 // Switch root URLs here
-#define kRootURL @"http://localhost:3000"
-// #define kRootURL @"http://ripplemusicapp.herokuapp.com"
+//#define kRootURL @"http://localhost:3000"
+#define kRootURL @"http://ripplemusicapp.herokuapp.com"
 #define kGetDrops @"/api/drops"
 #define kCreateDrop @"/api/drops/create"
 #define kReDrop @"/api/drops/create"

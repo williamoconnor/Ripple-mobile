@@ -10,6 +10,7 @@
 #import "DataManager.h"
 #import "Colors.h"
 #import "AppDelegate.h"
+#import "LoadingScreen.h"
 #import <SCRequest.h>
 
 @interface SearchViewController ()
@@ -80,24 +81,30 @@
     // Do any additional setup after loading the view.
     NSDictionary *screen = [[NSUserDefaults standardUserDefaults] objectForKey:@"screen"];
     UIView* fakeNavBar = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, [screen[@"width"] floatValue], 64.0)];
-    fakeNavBar.backgroundColor = cSlateNavy;
+    fakeNavBar.backgroundColor = cPrimaryPink;
     [self.view addSubview:fakeNavBar];
     //NAV TITLE
 //    UIImageView* logoImageView = [[UIImageView alloc] initWithFrame:CGRectMake([self.screenSize[@"width"] floatValue]/2 - 72.5, 12.0, 145.0, 40.0)];
 //    logoImageView.image = [UIImage imageNamed:@"logoSmall.png"];
     UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake([self.screenSize[@"width"] floatValue]/2 - 72.5, 18.0, 145.0, 40.0)];
-    titleLabel.text = @"Search";
-    titleLabel.font = [UIFont fontWithName:@"Poiret One" size:24.0];
+    NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [UIFont fontWithName:@"Avenir" size:28.0], NSFontAttributeName,
+                                cWhite, NSForegroundColorAttributeName,
+                                nil];
+    NSMutableAttributedString* navTitle = [[NSMutableAttributedString alloc] initWithString:@"search" attributes:attributes];
+    [navTitle addAttribute:NSKernAttributeName
+                     value:@(2.0)
+                     range:NSMakeRange(0, 5)];
+    titleLabel.attributedText = navTitle;
     titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.textColor = cWhite;
     [fakeNavBar addSubview:titleLabel];
     //BACK BUTTON
     UIButton *backButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    backButton.frame = CGRectMake(12.0, 28.0, 50.0, 21.0);
+    backButton.frame = CGRectMake(12.0, 32.0, 50.0, 21.0);
     [backButton setTintColor:[UIColor whiteColor]];
     [backButton setTitle:@"Back" forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
-    backButton.titleLabel.font = [UIFont fontWithName:@"Poiret One" size:18];
+    backButton.titleLabel.font = [UIFont fontWithName:@"Avenir Next" size:17];
     [fakeNavBar addSubview:backButton];
     
     // SEARCH BAR
@@ -118,11 +125,17 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.frame = CGRectMake(0.0, 108.0, [self.screenSize[@"width"] doubleValue], [self.screenSize[@"height"] doubleValue] - 108.0);
-    self.tableView.backgroundColor = cSlateNavy;
-    self.view.backgroundColor = cSlateNavy;
+    self.tableView.backgroundColor = cWhite;
+    self.view.backgroundColor = cWhite;
     [self.tableView registerClass:[songCell class] forCellReuseIdentifier:@"cell"];
-    [self.view addSubview:self.tableView];
+    self.tableView.rowHeight = 100.0;
+    [self.tableView setSeparatorColor:cPrimaryNavy];
+    //[self.view addSubview:self.tableView];
     
+    // EMPTY CONTENT
+    self.emptyContentView = [[UIImageView alloc] initWithFrame:CGRectMake(([screen[@"width"] floatValue]-300)/2, 128, 300, 300)];
+    self.emptyContentView.image = [UIImage imageNamed:@"empty-search"];
+    [self.view addSubview:self.emptyContentView];
 }
 
 -(void) viewDidAppear:(BOOL)animated
@@ -132,18 +145,18 @@
     [self.tableView reloadData];
     
     if ([self app].footer) {
-        self.tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y, self.tableView.frame.size.width, [self.screenSize[@"height"] floatValue]-60.0);
         [self app].footer.delegate = self;
         [self.view addSubview:[self app].footer];
         [self.view bringSubviewToFront:[self app].footer];
+        [[self app].footer showUnderView:self.tableView  atY:[self.screenSize[@"height"] floatValue] - [self app].footer.height];
     }
     
     else if ([self app].player.duration > 0) {
-        self.tableView.frame = CGRectMake(self.tableView.frame.origin.x, self.tableView.frame.origin.y, self.tableView.frame.size.width, self.tableView.frame.size.height-60.0);
         [self app].footer = [[NowPlayingFooter alloc] initWithSongName:self.footerText andAlbumCover:self.footerAlbum];
         [self app].footer.delegate = self;
         [self.view addSubview:[self app].footer];
         [self.view bringSubviewToFront:[self app].footer];
+        [[self app].footer showUnderView: self.tableView atY:[self.screenSize[@"height"] floatValue] - [self app].footer.height];
     }
 }
 
@@ -165,7 +178,7 @@
             [self.tracks addObject: song];
             
             // YOOO
-            UIImage* albumCoverImage = [UIImage imageNamed:@"NowPlaying.png"];
+            UIImage* albumCoverImage = [UIImage imageNamed:@"no-album-cover.png"];
             if (![song[@"artwork_url"] isEqual:[NSNull null]] && [song[@"artwork_url"] length] > 0){
                 NSString* url = [song[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
                 albumCoverImage = [UIImage imageWithData:
@@ -200,7 +213,7 @@
             [self.tracks addObject: [self formatSearchTrack:song]];
             
             // YOOO
-            UIImage* albumCoverImage = [UIImage imageNamed:@"NowPlaying.png"];
+            UIImage* albumCoverImage = [UIImage imageNamed:@"no-album-cover.png"];
             if (![song[@"artwork_url"] isEqual:[NSNull null]] && [song[@"artwork_url"] length] > 0){
                 NSString* url = [song[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
                 albumCoverImage = [UIImage imageWithData:
@@ -213,7 +226,14 @@
     }
     
     [self.loading stopAnimating];
-    [self.tableView reloadData];
+
+    if ([self.tracks count] == 0) {
+        [self showEmptyContent];
+    }
+    else {
+        [self showTableView];
+        [self.tableView reloadData];
+    }
 }
 
 - (NSDictionary*) formatSearchTrack: (NSDictionary*)track
@@ -222,6 +242,9 @@
     newTrack[@"name"] = track[@"title"];
     if (track[@"label_name"] && ![track[@"label_name"] isEqual:[NSNull null]] ) {
         newTrack[@"artist"] = track[@"label_name"];
+    }
+    else if ([[track[@"user"] allKeys] count] > 0) {
+        newTrack[@"artist"] = track[@"user"][@"username"];
     }
     else {
         newTrack[@"artist"] = @"";
@@ -233,8 +256,10 @@
 }
 
 #pragma mark - Ripple Song Cell Delegate
-- (void) drop:(NSString*) type andTrack:(NSDictionary*)track
+- (BOOL) drop:(NSString*) type andTrack:(NSDictionary*)track
 {
+    NSLog(@"%@", [NSString stringWithFormat:@"%@", [self app].footer.playerVC.song]);
+    NSLog(@"%@", [NSString stringWithFormat:@"%@", track]);
     NSDictionary* location = [[NSUserDefaults standardUserDefaults] objectForKey:@"location"];
     
     NSIndexPath* path = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
@@ -251,7 +276,12 @@
     
     drop[@"soundcloudTrackId"] = track[@"soundcloud_track_id"];
     drop[@"trackName"] = track[@"name"];
-    drop[@"artist"] = track[@"artist"];
+    if ([track[@"artist"] length] > 0) {
+        drop[@"artist"] = track[@"artist"];
+    }
+    else if ([[track[@"user"] allKeys] count] > 0) {
+        drop[@"artist"] = track[@"user"][@"username"];
+    }
     drop[@"userId"] = self.user[@"_id"];
     drop[@"streamUrl"] = track[@"stream_url"];
     drop[@"artworkUrl"] = track[@"artwork_url"];
@@ -260,21 +290,38 @@
     drop[@"longitude"] = location[@"longitude"];
     
     NSDictionary* result = [DataManager dropSong:drop];
+    [LoadingScreen hideDroppingScreen];
     if (result[@"_id"]){
         NSLog(@"it works");
         [self dropped];
+        if (track[@"id"] == [self app].footer.playerVC.song[@"id"]) {
+            [self app].footer.playerVC.dropped = YES;
+        }
+        return YES;
     }
     else {
         UIAlertView* failure = [[UIAlertView alloc] initWithTitle:@"Drop Unsuccessful" message:result[@"reason"] delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
         [failure show];
+        return NO;
     }
 }
 
 -(void) dropped
 {
-    [self dismissViewControllerAnimated:YES completion:^{
+    if (![UIApplication sharedApplication].keyWindow.rootViewController.presentedViewController.presentedViewController) {
+        [self dismissViewControllerAnimated:YES completion:^{
+            [self.homeDelegate returnHome];
+        }];
+    }
+    else {
+        [self updateDroppedCell];
         [self.homeDelegate returnHome];
-    }];
+    }
+}
+
+-(void)updateDroppedCell
+{
+    
 }
 
 #pragma mark - tableview delegate
@@ -286,16 +333,21 @@
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
     //    NSLog(@"Track: %@", track);
     [cell setData:track andType:@"drop"];
+    cell.albumCover.image = self.albumCovers[indexPath.row];
+    [cell createDropButton];
     
     //to change background color of selected cell
     if (indexPath.row == self.nowPlayingTrackIndex) {
-        cell.contentView.backgroundColor = cDarkGray;
+        cell.titleLabel.textColor = cPrimaryPink;
+        cell.artistLabel.textColor = cPrimaryPink;
     }
     else {
-        cell.contentView.backgroundColor = cSlateNavy;
+        cell.titleLabel.textColor = cPrimaryNavy;
+        cell.artistLabel.textColor = cPrimaryNavy;
     }
     
     
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.delegate = self;
     return cell;
 }
@@ -318,8 +370,6 @@
     [self.loading startAnimating];
     
     // PLAY SONG
-    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cDarkGray;
     self.nowPlayingTrackIndex = indexPath.row;
     NSLog(@"index path: %ld", self.nowPlayingTrackIndex);
     
@@ -342,14 +392,16 @@
     [self.loading startAnimating];
     
     // PLAY SONG
-    songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cDarkGray;
+     songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.titleLabel.textColor = cPrimaryPink;
+    cell.artistLabel.textColor = cPrimaryPink;
 }
 
 -(void)tableView:(UITableView *)tableView didHighlightRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cDarkGray;
+    songCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.titleLabel.textColor = cPrimaryPink;
+    cell.artistLabel.textColor = cPrimaryPink;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -358,8 +410,9 @@
 
 -(void)tableView:(UITableView *)tableView didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cSlateNavy;
+    songCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.titleLabel.textColor = cPrimaryNavy;
+    cell.artistLabel.textColor = cPrimaryNavy;
 }
 
 -(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -372,8 +425,9 @@
 -(void)deselectRow:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // STYLE
-    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.contentView.backgroundColor = cSlateNavy;
+    songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.titleLabel.textColor = cPrimaryNavy;
+    cell.artistLabel.textColor = cPrimaryNavy;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -382,6 +436,20 @@
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
+}
+
+- (void)showTableView
+{
+    if (self.emptyContentView) {
+        [self.emptyContentView removeFromSuperview];
+        [self.view addSubview:self.tableView];
+        self.emptyContentView = nil;
+    }
+}
+
+-(void)showEmptyContent
+{
+    [self.view addSubview:self.emptyContentView];
 }
 
 // DELEGATE METHODS
@@ -426,19 +494,20 @@
         dest.nowPlayingTrackIndex = self.nowPlayingTrackIndex;
         dest.albumCovers = self.albumCovers;
         dest.delegate = self;
+        dest.dropType = @"drop";
         [dest playSong];
         
         // BACK BUTTON
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Songs" style:UIBarButtonItemStylePlain target:nil action:nil];
         
         NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    [UIFont fontWithName:@"Poiret One" size:18.0], NSFontAttributeName,
+                                    [UIFont fontWithName:@"Avenir Next" size:17.0], NSFontAttributeName,
                                     cWhite, NSForegroundColorAttributeName,
                                     nil];
         [[UIBarButtonItem appearance] setTitleTextAttributes:
          [NSDictionary dictionaryWithObjectsAndKeys:
           cWhite, NSForegroundColorAttributeName,
-          [UIFont fontWithName:@"Poiret One" size:18.0], NSFontAttributeName,
+          [UIFont fontWithName:@"Avenir Next" size:17.0], NSFontAttributeName,
           nil] forState:UIControlStateNormal];
         self.navigationController.navigationBar.tintColor = cWhite;
         //        [self.navigationItem.backBarButtonItem setTitleTextAttributes:attributes forState:UIControlStateNormal];
@@ -462,7 +531,8 @@
 -(void) keepVC:(id)player
 {
     self.playerView = player;
-    [self app].footer.playerVC = player;
+    //[self app].footer.playerVC = player;
+    [[self app].footer setPlayerVC:player];
 }
 
 -(void)songChanged:(NSDictionary *)info
@@ -481,9 +551,15 @@
 
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
-    // reset arrays
+    [LoadingScreen showGeneralLoadingScreen];
+    [self performSelector:@selector(searchSoundCloud) withObject:nil afterDelay:0.01];
+}
+
+-(void)searchSoundCloud
+{
     [self.tracks removeAllObjects];
     [self.albumCovers removeAllObjects];
+    self.nowPlayingTrackIndex = -1;
     
     NSString* queryString = self.searchBar.text;
     NSDictionary* songs = [DataManager searchSoundcloud:[queryString stringByReplacingOccurrencesOfString:@" " withString:@"%20"]];
@@ -493,7 +569,7 @@
             [self.tracks addObject: [self formatSearchTrack:song]];
             
             // YOOO
-            UIImage* albumCoverImage = [UIImage imageNamed:@"NowPlaying.png"];
+            UIImage* albumCoverImage = [UIImage imageNamed:@"no-album-cover.png"];
             if (![song[@"artwork_url"] isEqual:[NSNull null]] && [song[@"artwork_url"] length] > 0){
                 NSString* url = [song[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
                 albumCoverImage = [UIImage imageWithData:
@@ -506,9 +582,15 @@
     }
     
     [self.searchBar resignFirstResponder];
-    [self.loading stopAnimating];
-    [self.tableView reloadData];
+    [LoadingScreen hideGeneralLoadingScreen];
     
+    if ([self.tracks count] == 0) {
+        [self showEmptyContent];
+    }
+    else {
+        [self showTableView];
+        [self.tableView reloadData];
+    }
 }
 
 @end

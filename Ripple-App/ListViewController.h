@@ -22,8 +22,6 @@ extern NSMutableDictionary* screenSize;
 
 @property (strong, nonatomic)UIImageView* emptyContentView;
 
-- (void) pauseButtonPressed;
-- (void) playButtonPressed;
 
 @end
 

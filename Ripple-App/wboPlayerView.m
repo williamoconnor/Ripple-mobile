@@ -187,7 +187,7 @@
     return timeString;
 }
 
-- (void) setSongDuration:(float)progress andDuration:(float)duration
+- (void) setSongProgress:(float)progress andDuration:(float)duration
 {
     NSString* frontTime = [self convertSecondsToTimeString:progress];
     NSString* backTime = [self convertSecondsToTimeString:(duration-progress)];
@@ -216,19 +216,23 @@
     [self.trackProgressSlider setValue:0.0];
 }
 
--(void) disableEnableButtons:(BOOL)enable
+-(void) enableButtons:(BOOL)enable
 {
-    UIViewTintAdjustmentMode mode = UIViewTintAdjustmentModeDimmed;
-    if (enable == NO) {
-        mode = UIViewTintAdjustmentModeNormal;
+    float alpha = 0.2;
+    if (enable == YES) {
+        alpha = 1;
     }
-    [self.pauseButton setTintAdjustmentMode:mode];
-    [self.pauseButton setEnabled:enable];
-    [self.forwardButton setTintAdjustmentMode:mode];
-    [self.forwardButton setEnabled:enable];
-    [self.backwardButton setTintAdjustmentMode:mode];
-    [self.backwardButton setEnabled:enable];
+    self.pauseButton.alpha = alpha;
+    self.pauseButton.userInteractionEnabled = enable;
+    // [self.pauseButton setEnabled:enable];
+    self.forwardButton.alpha = alpha;
+    self.forwardButton.userInteractionEnabled = enable;
+    // [self.forwardButton setEnabled:enable];
+    self.backwardButton.alpha = alpha;
+    self.backwardButton.userInteractionEnabled = enable;
+    // [self.backwardButton setEnabled:enable];
     [self.trackProgressSlider setEnabled:enable];
+
 }
 
 -(void)setTrack:(NSDictionary *)track
@@ -248,6 +252,7 @@
 -(void)setCheckmark
 {
     self.dropped = YES;
+    [self.droppedIcon removeFromSuperview];
     [self.dropButton removeFromSuperview];
     self.droppedIcon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@"checkmark-%@.png", [Rankings getRankingToColorString:[self.track[@"rank"] intValue]]]]];
     self.droppedIcon.frame = CGRectMake(([self.screen[@"width"]doubleValue]/2)+116.0, 35.0, 30.0, 30.0);
@@ -257,6 +262,7 @@
 -(void)createDropButton
 {
     self.dropped = NO;
+    [self.dropButton removeFromSuperview];
     [self.droppedIcon removeFromSuperview];
     self.dropButton = [UIButton buttonWithType:UIButtonTypeCustom];
     self.dropButton.frame = CGRectMake(([self.screen[@"width"]doubleValue]/2)+104.0, 31.0, 44.0, 44.0);

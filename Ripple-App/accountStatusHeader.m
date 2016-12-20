@@ -24,23 +24,7 @@
     CGRect frame = CGRectMake(0.0, 0.0, width, 240);
     self = [super initWithFrame:frame];
     
-    if (self) {
-        //NAV TITLE
-        /*
-        UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake([self.screenSize[@"width"] floatValue]/2 - 72.5, 18.0, 145.0, 40.0)];
-        NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    [UIFont fontWithName:@"Avenir" size:28.0], NSFontAttributeName,
-                                    cWhite, NSForegroundColorAttributeName,
-                                    nil];
-        NSMutableAttributedString* navTitle = [[NSMutableAttributedString alloc] initWithString:@"account" attributes:attributes];
-        [navTitle addAttribute:NSKernAttributeName
-                         value:@(2.0)
-                         range:NSMakeRange(0, 6)];
-        titleLabel.attributedText = navTitle;
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        [statusHeader addSubview:titleLabel];
-        */
-        
+    if (self) {        
         self.backgroundColor = cWhite;
         
         //BACK BUTTON

@@ -20,10 +20,6 @@
 
 @interface SearchViewController : UIViewController <CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, rippleSongCellDelegate, NowPlayingFooterDelegate, PlayerDelegate, UISearchBarDelegate>
 
-
-- (void) pauseButtonPressed;
-- (void) playButtonPressed;
-
 @property (strong, nonatomic) NSMutableArray* songIdsInFeed;
 @property (nonatomic) id <searchProtocol> homeDelegate;
 

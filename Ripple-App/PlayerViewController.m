@@ -39,13 +39,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+}
+
+-(void)initUI
+{
+    self.view.backgroundColor = cPrimaryNavy;
+    // metrics
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width;
     CGFloat screenHeight = screenRect.size.height;
     NSNumber *height = [[NSNumber alloc] initWithDouble:screenHeight];
     NSNumber *width = [[NSNumber alloc] initWithDouble:screenWidth];
-    
-    self.view.backgroundColor = cSlateNavy;
     
     //FAKE NAV BAR
     UIView* fakeNavBar = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, [width floatValue], 64.0)];
@@ -77,51 +81,94 @@
     
     //ALBUM COVER
     self.albumCover = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 64.0, [width floatValue], [width floatValue])];
+    self.albumCover.contentMode = UIViewContentModeScaleAspectFit;
+    UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTapAlbum)];
+    doubleTap.numberOfTapsRequired = 2;
+    self.albumCover.userInteractionEnabled = YES;
+    [self.albumCover addGestureRecognizer:doubleTap];
     [self.view addSubview:self.albumCover];
-    [self loadAlbumCover];
-    
-    if (![self.song[@"previous_dropper_ids"] containsObject:[[NSUserDefaults standardUserDefaults] objectForKey:@"user"][@"_id"]] ) {
-        UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTapAlbum)];
-        doubleTap.numberOfTapsRequired = 2;
-        self.albumCover.userInteractionEnabled = YES;
-        [self.albumCover addGestureRecognizer:doubleTap];
-    }
     
     //GUI
     self.playerGui = [[wboPlayerView alloc] initWithFrame:CGRectMake(0.0, (64 + [width floatValue]), [width floatValue], [height floatValue]-(64 + [width floatValue]))];
     self.playerGui.delegate = self;
     [self.view addSubview:self.playerGui];
-    [self.playerGui disableEnableButtons:NO];
+}
+
+-(void)initData
+{
+    self.dropped = NO;
+    self.nowPlayingTrackIndex = -1;
+}
+
+-(void)updateDelegate
+{
+    [self.delegate updateTrackIndex:(int)self.nowPlayingTrackIndex];
+}
+
+-(void)updatePlayerGui
+{
+    NSDictionary* song = self.tracks[self.nowPlayingTrackIndex];
+    UIImage* albumCover = self.albumCovers[self.nowPlayingTrackIndex];
     
-// ACTIVITY INDICATOR
-    self.loading = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    double x = [width doubleValue]/2;
-    self.loading.center = CGPointMake(x, 160.0);
-    self.loading.hidesWhenStopped = YES;
-    [self.view addSubview:self.loading];
-    [self.view bringSubviewToFront:self.loading];
+    // PLAYER GUI
+    self.playerGui.nowPlayingSongNameLabel.text = song[@"name"];
+    self.playerGui.nowPlayingArtistNameLabel.text = song[@"artist"];
+    self.playerGui.dropType = song[@"dropType"];
+    self.playerGui.track = song;
     
-// NAV BAR
-//    self.navigationController.navigationBar.barTintColor = cPrimaryPink;
-//    NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-//                                [UIFont fontWithName:@"Avenir" size:36.0], NSFontAttributeName,
-//                                cWhite, NSForegroundColorAttributeName,
-//                                nil];
-//    NSMutableAttributedString* navTitle = [[NSMutableAttributedString alloc] initWithString:@"ripple" attributes:attributes];
-//    [navTitle addAttribute:NSKernAttributeName
-//                     value:@(4.9)
-//                     range:NSMakeRange(0, 5)];
-//    UILabel* navTitleLabel = [[UILabel alloc] init];
-//    navTitleLabel.attributedText = navTitle;
-//    [navTitleLabel sizeToFit];
-//    self.navigationItem.titleView = navTitleLabel;
-//    NSLog(@"here da song %@", self.song);
-    self.playerGui.nowPlayingSongNameLabel.text = self.song[@"name"];
-    self.playerGui.nowPlayingArtistNameLabel.text = self.song[@"artist"];
-    self.playerGui.dropType = self.dropType;
-    self.playerGui.track = self.song;
-    //[self playSong];
+    // ALBUM COVER
+    self.albumCover.image = albumCover;
     
+    // LOCKED SCREEN INFO
+    MPMediaItemArtwork* albumArt = [[MPMediaItemArtwork alloc] initWithImage:albumCover];
+    NSString* artist = @"";
+    if (![song[@"artist"] isEqual:[NSNull null]] && [song[@"artist"] length] > 0){
+        artist = song[@"artist"];
+    }
+    else {
+        artist = @"";
+    }
+    NSNumber* duration = [NSNumber numberWithFloat:[self app].player.duration];
+    NSDictionary *info = @{ MPMediaItemPropertyArtist: artist,
+                            MPMediaItemPropertyAlbumTitle: @"",
+                            MPMediaItemPropertyTitle: song[@"name"],
+                            MPMediaItemPropertyPlaybackDuration: duration,
+                            MPMediaItemPropertyArtwork: albumArt
+                            };
+    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = info;
+    
+}
+
+-(void)updateFooter
+{
+    NSDictionary* song = self.tracks[self.nowPlayingTrackIndex];
+    UIImage* albumCover = self.albumCovers[self.nowPlayingTrackIndex];
+    NSDictionary* info = [[NSDictionary alloc] initWithObjectsAndKeys:song[@"name"], @"song", albumCover, @"album", nil];
+    if(![self app].footer){
+        [self app].footer = [[NowPlayingFooter alloc] initWithSongName:info[@"song"] andAlbumCover:albumCover];
+    }
+    else {
+        [[self app].footer updateInfo:info];
+    }
+    [self app].footer.playerVC = self;
+}
+
+-(void)playSongAtIndex:(int)index inTracks:tracks withAlbumCovers:(NSArray*)albumCovers
+{
+    [[self app].player stop];
+    
+    // UPDATE THE DATA
+    self.nowPlayingTrackIndex = index;
+    self.tracks = [tracks mutableCopy];
+    self.albumCovers = [albumCovers mutableCopy];
+    
+    // PLAY THE SONG
+    [self playSong];
+    
+    // UPDATE DISPLAY
+    [self updateFooter];
+    [self updateDelegate];
+    [self updatePlayerGui];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -132,36 +179,25 @@
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    //disable buttons
-    if (![self app].player.duration > 0) {
-        [self.playerGui disableEnableButtons:NO];
-    }
     
     if (self.dropped == YES && self.playerGui.dropped == NO) {
         [self.playerGui createDropButton];
     }
 }
 
-- (void) loadAlbumCover
+-(void)setDelegate:(id<PlayerDelegate>)delegate
 {
-    UIImage *albumCoverImage = [[UIImage alloc] init];
-    if (![self.song[@"artwork_url"] isEqual:[NSNull null]] && [self.song[@"artwork_url"] length] > 0){
-        NSString* url = [self.song[@"artwork_url"] stringByReplacingOccurrencesOfString:@"large"                                                        withString:@"crop"];
-        albumCoverImage = [UIImage imageWithData:
-                           [NSData dataWithContentsOfURL:
-                            [NSURL URLWithString: url]]];
+    if (self.delegate) {
+        [self.delegate updateTrackIndex:-1];
     }
-    else {
-        albumCoverImage = [UIImage imageNamed:@"no-album-cover.png"];
-    }
-    self.albumCover.contentMode = UIViewContentModeScaleAspectFit;
-    self.albumCover.image = albumCoverImage;
+    _delegate = delegate;
 }
 
 -(void) playSong
 {
+    NSDictionary* song = self.tracks[self.nowPlayingTrackIndex];
     
-    NSURL *trackURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://api.soundcloud.com/tracks/%@/stream?client_id=%@", self.song[@"soundcloud_track_id"], kClientId]];
+    NSURL *trackURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://api.soundcloud.com/tracks/%@/stream?client_id=%@", song[@"soundcloud_track_id"], kClientId]];
     NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:trackURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         NSLog(@"RESP: %@", response);
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
@@ -173,125 +209,72 @@
             if (error) {
                 NSLog(@"error: %@", error);
             }
-            
-            
-            //        while (data.length < 100) {
-            //            data = [NSData dataWithContentsOfURL:trackURL];
-            //        }
 
-            [self app].player = nil;
-            [self app].player = [[AVAudioPlayer alloc] initWithData:data error:nil];
+            // set up player session
+            [self initPlayerSessionWithData:data];
             
-            
-            //get your app's audioSession singleton object
-            AVAudioSession* session = [AVAudioSession sharedInstance];
-            
-            //error handling
-            BOOL success;
-            NSError* session_error;
-            
-            //set the audioSession category.
-            //Needs to be Record or PlayAndRecord to use audioRouteOverride:
-            
-            success = [session setCategory:AVAudioSessionCategoryPlayback
-                                     error:&session_error];
-            
-            if (!success)  NSLog(@"AVAudioSession error setting category:%@",session_error);
-            
-            //set the audioSession override
-            //        success = [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker
-            //                                             error:&error];
-            // if (!success)  NSLog(@"AVAudioSession error overrideOutputAudioPort:%@",session_error);
-            
-            //activate the audio session
-            success = [session setActive:YES error:&session_error];
-            if (!success) NSLog(@"AVAudioSession error activating: %@",session_error);
-            else NSLog(@"audioSession active");
-            [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-            
-            //        NSLog(@"url: %@", trackURL);
+            // play the song
             [[self app].player play];
-            
-            // TRACK PROGRESS
-            UIImage *albumArtImg = self.albumCovers[self.nowPlayingTrackIndex];
-            MPMediaItemArtwork* albumArt = [[MPMediaItemArtwork alloc] initWithImage:albumArtImg];
-            [self startTimer];
-            
-            self.playerGui.trackProgressSlider.maximumValue = [self app].player.duration;
-            self.playerGui.trackProgressSlider.minimumValue = 0;
-            NSMutableDictionary* songInfo = [[NSMutableDictionary alloc] init];
-            songInfo[@"song"] = self.song[@"name"];
-            songInfo[@"album"] = albumArtImg;
-            [self.delegate setSongInfo:songInfo];
-            
-            // MEDIA PLAYER
-            
-            NSLog(@"Artist: %@", self.song);
-            NSString* artist = @"";
-            if (![self.song[@"artist"] isEqual:[NSNull null]] && [self.song[@"artist"] length] > 0){
-                artist = self.song[@"artist"];
-            }
-            else {
-                artist = @"";
-            }
-            NSNumber* duration = [NSNumber numberWithFloat:[self app].player.duration];
-            
-            NSDictionary *info = @{ MPMediaItemPropertyArtist: artist,
-                                    MPMediaItemPropertyAlbumTitle: @"",
-                                    MPMediaItemPropertyTitle: self.song[@"name"],
-                                    MPMediaItemPropertyPlaybackDuration: duration,
-                                    MPMediaItemPropertyArtwork: albumArt
-                                    };
-            
-            [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = info;
+            [self playerDidStart];
         }
         
     }];
     [task resume];
     
-    self.playerGui.nowPlayingSongNameLabel.text = self.song[@"name"];
-    self.playerGui.nowPlayingArtistNameLabel.text = self.song[@"artist"];
-    self.playerGui.dropType = self.dropType;
-    self.playerGui.track = self.song;
-    self.albumCover.image = self.albumCovers[self.nowPlayingTrackIndex];
+}
+
+-(void)playerDidStart
+{
+    // TRACK PROGRESS
+    NSLog(@"%@", [NSString stringWithFormat:@"%f", [self app].player.duration]);
+    self.playerGui.trackProgressSlider.maximumValue = [self app].player.duration;
+    self.playerGui.trackProgressSlider.minimumValue = 0;
+    
+    [self startTimer];
+}
+
+-(void)initPlayerSessionWithData:(NSData*)data
+{
+    [self app].player = nil;
+    [self app].player = [[AVAudioPlayer alloc] initWithData:data error:nil];
+    
+    //get your app's audioSession singleton object
+    AVAudioSession* session = [AVAudioSession sharedInstance];
+    
+    //error handling
+    BOOL success;
+    NSError* session_error;
+    
+    //set the audioSession category.
+    //Needs to be Record or PlayAndRecord to use audioRouteOverride:
+    
+    success = [session setCategory:AVAudioSessionCategoryPlayback
+                             error:&session_error];
+    
+    if (!success)  NSLog(@"AVAudioSession error setting category:%@",session_error);
+    
+    
+    //activate the audio session
+    success = [session setActive:YES error:&session_error];
+    if (!success) NSLog(@"AVAudioSession error activating: %@",session_error);
+    else NSLog(@"audioSession active");
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+
 }
 
 - (void) playNextSong
 {
-    
-    [self.playerGui disableEnableButtons:NO];
-    // select next cell
-    self.song = self.tracks[self.nowPlayingTrackIndex+1];
-    self.nowPlayingTrackIndex += 1;
-    NSMutableDictionary* songInfo = [[NSMutableDictionary alloc] init];
-    songInfo[@"song"] = self.song[@"name"];
-    songInfo[@"album"] = self.albumCovers[self.nowPlayingTrackIndex];
-    [self.delegate songChanged:songInfo];
-    [self playSong];
-    
-    // update the position in the list
-    
-    // play the song
-    
-    // pass information to delegate (Feed or Search)
-    
-    // update footer
-    
-    
+    if (self.nowPlayingTrackIndex + 1 < self.tracks.count) {
+        [self playSongAtIndex:(int)self.nowPlayingTrackIndex+1 inTracks:self.tracks withAlbumCovers:self.albumCovers];
+    }
+    else {
+        [self playSongAtIndex:0 inTracks:self.tracks withAlbumCovers:self.albumCovers];
+    }
 }
 
 -(void)playPreviousSong
 {
-    [self.playerGui disableEnableButtons:NO];
-    // select next cell
-    self.song = self.tracks[self.nowPlayingTrackIndex-1];
-    self.nowPlayingTrackIndex -= 1;
-    NSMutableDictionary* songInfo = [[NSMutableDictionary alloc] init];
-    songInfo[@"song"] = self.song[@"name"];
-    songInfo[@"album"] = self.albumCovers[self.nowPlayingTrackIndex];
-    [self.delegate songChanged:songInfo];
-    [self playSong];
-    
+    [self playSongAtIndex:(int)self.nowPlayingTrackIndex-1 inTracks:self.tracks withAlbumCovers:self.albumCovers];
 }
 
 /*
@@ -304,19 +287,11 @@
 }
 */
 
-- (NSMutableDictionary*) getSongInfo
-{
-    NSMutableDictionary* info = [[NSMutableDictionary alloc] init];
-    info[@"song"] = self.song;
-    info[@"album"] = self.albumCover.image;
-    
-    return info;
-}
 
 - (void) back
 {
     [self dismissViewControllerAnimated:YES completion:^{
-        [self.delegate keepVC:self];
+        [self.delegate showFooter];
     }];
 }
 
@@ -338,14 +313,12 @@
 -(void) forwardPressed
 {
     [self pauseButtonPressed];
-    [self.playerGui disableEnableButtons:NO];
     [self playNextSong];
 }
 
 -(void) backwardPressed
 {
     [self pauseButtonPressed];
-    [self.playerGui disableEnableButtons:NO];
     if (self.nowPlayingTrackIndex > 0) {
         if ([self app].player.currentTime > 3) {
             [self playSong];
@@ -427,23 +400,16 @@
 
 - (void) countup
 {
-    if ([self app].player.isPlaying == YES) {
-        [self.playerGui disableEnableButtons:YES];
-    }
     [self.playerGui.trackProgressSlider setValue:[self app].player.currentTime animated:YES];
-    [self.playerGui setSongDuration:self.playerGui.trackProgressSlider.value andDuration:[self app].player.duration];
-    [self.loading stopAnimating];
+    [self.playerGui setSongProgress:self.playerGui.trackProgressSlider.value andDuration:[self app].player.duration];
+
     
-    if ([self app].player.currentTime > [self app].player.duration-1) {
+    if ([self app].player.duration > 0 && ([self app].player.currentTime > [self app].player.duration-1)) {
         [[self app].player prepareToPlay];
         [self.timer invalidate];
-        if (self.nowPlayingTrackIndex < self.tracks.count - 1) {
-            [self playNextSong];
-        }
-        else {
-            //            UITableViewCell* thisSongCell = [self.tableView cellForRowAtIndexPath:thisSongCellPath];
-            //            thisSongCell.contentView.backgroundColor = [UIColor colorWithRed:0x1F/255.0 green:0x32/255.0 blue:0x4D/255.0 alpha:1.0];
-        }
+        NSLog(@"%@", [NSString stringWithFormat:@"%f", [self app].player.currentTime]);
+        NSLog(@"%@", [NSString stringWithFormat:@"%f", [self app].player.duration-1]);
+        [self playNextSong];
         [self.playerGui resetProgress];
     }
 }
@@ -458,16 +424,20 @@
 
 - (void) doubleTapAlbum
 {
-    [LoadingScreen showDroppingScreen];
-    double delayInSeconds = 0.01;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        BOOL success = [self.delegate drop:self.dropType andTrack:self.song];
-        self.dropped = success;
-        if (success == YES) {
-            [self.playerGui setCheckmark];
-        }
-    });
+    NSDictionary* song = self.tracks[self.nowPlayingTrackIndex];
+    
+    if (self.dropped == NO) {
+        [LoadingScreen showDroppingScreen];
+        double delayInSeconds = 0.01;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            BOOL success = [self.delegate drop:song[@"dropType"] andTrack:song];
+            self.dropped = success;
+            if (success == YES) {
+                [self.playerGui setCheckmark];
+            }
+        });
+    }
 
 }
 

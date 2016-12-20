@@ -72,13 +72,24 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [self initData];
+    [self initUI];
+}
+
+-(void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    // check for signed in
+    [self.tableView reloadData];
+    
+    if ([self app].player.duration > 0) {
+        [self showFooter];
+    }
+}
+
+-(void)initUI
+{
     self.screenSize = [[NSUserDefaults standardUserDefaults] objectForKey:@"screen"];
-    
-    self.userAccount = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
-    
-    self.nowPlayingTrackIndex = -1;
-    
-    // Do any additional setup after loading the view.
     NSDictionary *screen = [[NSUserDefaults standardUserDefaults] objectForKey:@"screen"];
     
     // STATUS HEADER
@@ -103,31 +114,15 @@
     [self.tableView registerClass:[songCell class] forCellReuseIdentifier:@"cell"];
     self.tableView.rowHeight = 100.0;
     [self.tableView setSeparatorColor:[Rankings getRankingToUIColor:[self.userAccount[@"rank"] intValue]]];
-    
-    [self loadSongs];
 }
 
--(void) viewDidAppear:(BOOL)animated
+-(void)initData
 {
-    [super viewDidAppear:animated];
-    // check for signed in
-    [self.tableView reloadData];
+    self.userAccount = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
     
-    if ([self app].footer) {
-        [self app].footer.delegate = self;
-        [self.view addSubview:[self app].footer];
-        [self.view bringSubviewToFront:[self app].footer];
-        [[self app].footer showUnderView:self.tableView atY:[self.screenSize[@"height"] doubleValue] - 60];
-    }
+    self.nowPlayingTrackIndex = -1;
     
-    else if ([self app].player.duration > 0) { // implied no footer
-        [self app].footer = [[NowPlayingFooter alloc] initWithSongName:self.footerText andAlbumCover:self.footerAlbum];
-        [self app].footer.delegate = self;
-        [self.view addSubview:[self app].footer];
-        [self.view bringSubviewToFront:[self app].footer];
-        [[self app].footer showUnderView: self.tableView atY:[self.screenSize[@"height"] doubleValue] - 60];
-        
-    }
+    [self loadSongs];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -150,7 +145,9 @@
     
     for (NSDictionary* song in songs) {
         if (song && (BOOL)song[@"streamable"] == true) {
-            [self.tracks addObject: song];
+            NSMutableDictionary* mSong = [song mutableCopy];
+            mSong[@"dropType"] = @"none";
+            [self.tracks addObject: mSong];
             
             // YOOO
             UIImage* albumCoverImage = [UIImage imageNamed:@"no-album-cover.png"];
@@ -206,33 +203,10 @@
     
     if ([segue.destinationViewController isKindOfClass:[PlayerViewController class]] && sender != nil) {
         PlayerViewController* dest = segue.destinationViewController;
-        BOOL newsong = true;
-        if (dest.song == self.tracks[(long)self.nowPlayingTrackIndex]) {
-            newsong = false;
-        }
-        
-        [dest.tracks removeAllObjects];
-        dest.song = self.tracks[(long)self.nowPlayingTrackIndex];
-        dest.tracks = self.tracks;
-        dest.nowPlayingTrackIndex = self.nowPlayingTrackIndex;
-        dest.albumCovers = self.albumCovers;
         dest.delegate = self;
-        [dest playSong];
-        
-        // BACK BUTTON
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Songs" style:UIBarButtonItemStylePlain target:nil action:nil];
-        
-        NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    [UIFont fontWithName:@"Avenir Next" size:17.0], NSFontAttributeName,
-                                    cWhite, NSForegroundColorAttributeName,
-                                    nil];
-        [[UIBarButtonItem appearance] setTitleTextAttributes:
-         [NSDictionary dictionaryWithObjectsAndKeys:
-          cWhite, NSForegroundColorAttributeName,
-          [UIFont fontWithName:@"Avenir Next" size:17.0], NSFontAttributeName,
-          nil] forState:UIControlStateNormal];
-        self.navigationController.navigationBar.tintColor = cWhite;
-        //        [self.navigationItem.backBarButtonItem setTitleTextAttributes:attributes forState:UIControlStateNormal];
+        [dest initUI];
+        [dest initData];
+        [dest playSongAtIndex:(int)((NSIndexPath*)(sender)).row inTracks:self.tracks withAlbumCovers:self.albumCovers];
     }
 }
 
@@ -244,7 +218,7 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
-    [cell setData:track andType:@"none"];
+    [cell setData:track andType:track[@"dropType"]];
     cell.albumCover.image = self.albumCovers[indexPath.row];
 
     cell.contentView.backgroundColor = cWhite;
@@ -263,47 +237,12 @@
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (self.nowPlayingTrackIndex >= 0) {
-        NSIndexPath* lastSong = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
-        [self deselectRow:self.tableView didDeselectRowAtIndexPath:lastSong];
-    }
-    NSDictionary *track = [self.tracks objectAtIndex:indexPath.row];
-    NSLog(@"track: %@", track[@"name"]);
-    //    [self.timer invalidate];
+    [self performSegueWithIdentifier:@"accountToPlayerSegue" sender:indexPath];
     
-    //loader
-    double x = [self.screenSize[@"width"] doubleValue]/2;
-    self.loading.center = CGPointMake(x, 100.0);
-    [self.albumCover addSubview:self.loading];
-    [self.albumCover bringSubviewToFront:self.loading];
-    [self.loading startAnimating];
-    
-    // PLAY SONG
-    songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.titleLabel.textColor = cPrimaryPink;
-    cell.artistLabel.textColor = cPrimaryPink;
-    self.nowPlayingTrackIndex = indexPath.row;
-    NSLog(@"index path: %ld", self.nowPlayingTrackIndex);
-    
-    //    [self playSong:track];
-    [self performSegueWithIdentifier:@"accountToPlayerSegue" sender:self];
-    
-    if ([[self app].player isPlaying]) {
-        [[self app].player stop];
-    }
 }
 
--(void)selectRow:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    self.nowPlayingTrack = [self.tracks objectAtIndex:indexPath.row];
-    //    [self.timer invalidate];
-    
-    //loader
-    double x = [self.screenSize[@"width"] doubleValue]/2;
-    self.loading.center = CGPointMake(x, 100.0);
-    [self.loading startAnimating];
-    
-    // PLAY SONG
+-(void)selectRow:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
     songCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.titleLabel.textColor = cPrimaryPink;
     cell.artistLabel.textColor = cPrimaryPink;}
@@ -363,32 +302,6 @@
     [self.view addSubview:self.emptyContentView];
 }
 
-// DELEGATE METHODS
-
-- (void) playButtonPressed
-{
-    NSLog(@"Play");
-    
-    [self.player play];
-}
-
--(void) pauseButtonPressed
-{
-    NSLog(@"Pause");
-    [self.player pause];
-}
-
-- (void) navigateInSong:(float)newTime
-{
-    [self.player setCurrentTime:newTime];
-    
-    // MPMediaPlayer Duration update
-    NSMutableDictionary *playInfo = [NSMutableDictionary dictionaryWithDictionary:[MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo];
-    NSNumber *position = [NSNumber numberWithFloat:self.player.currentTime];
-    [playInfo setObject:position forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
-    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = playInfo;
-}
-
 #pragma mark - now playing footer delegate
 - (void) footerPressed
 {
@@ -396,30 +309,26 @@
 }
 
 #pragma mark - player delegate
--(void) setSongInfo:(NSDictionary *)info
+
+-(void) showFooter
 {
-    self.footerAlbum = info[@"album"];
-    self.footerText = info[@"song"];
-    [[self app].footer updateInfo:info];
+    [self app].footer.delegate = self;
+    [self.view addSubview:[self app].footer];
+    [self.view bringSubviewToFront:[self app].footer];
+    [[self app].footer showUnderView: self.tableView atY:[self.screenSize[@"height"] doubleValue] - 60];
 }
 
--(void) keepVC:(id)player
+-(BOOL)drop:(NSString *)type andTrack:(NSDictionary *)track
 {
-    // self.playerView = player;
-    [self app].footer.playerVC = player;
+    return NO; // can't drop own songs
 }
 
--(void)songChanged:(NSDictionary *)info
+-(void)updateTrackIndex:(int)index
 {
-    [self setSongInfo:info];
-    NSIndexPath *lastSongCellPath = [NSIndexPath indexPathForRow:self.nowPlayingTrackIndex inSection:0];
-    [self deselectRow:self.tableView didDeselectRowAtIndexPath:lastSongCellPath];
-    
-    NSIndexPath *thisSongCellPath = [NSIndexPath indexPathForRow:(self.nowPlayingTrackIndex+1) inSection:0];
-    [self selectRow:self.tableView didSelectRowAtIndexPath:thisSongCellPath];
-    
-    self.nowPlayingTrackIndex += 1;
+    self.nowPlayingTrackIndex = index;
 }
+
+
 
 
 @end

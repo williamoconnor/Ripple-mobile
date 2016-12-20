@@ -18,7 +18,4 @@
 @property (strong, nonatomic)accountStatusHeader* statusHeader;
 @property (strong, nonatomic)UIImageView* emptyContentView;
 
-- (void) pauseButtonPressed;
-- (void) playButtonPressed;
-
 @end

@@ -13,9 +13,8 @@
 
 @protocol PlayerDelegate <NSObject>
 
--(void) setSongInfo:(NSDictionary*)info;
--(void) songChanged:(NSDictionary*)info;
--(void) keepVC:(id)player;
+-(void) showFooter;
+-(void) updateTrackIndex:(int)index;
 - (BOOL) drop:(NSString*)type andTrack:(NSDictionary*)track;
 
 @end
@@ -23,18 +22,21 @@
 @interface PlayerViewController : UIViewController <wboPlayerDelegate, AVAudioPlayerDelegate>
 
 @property (strong, nonatomic) wboPlayerView* playerGui;
-@property (strong, nonatomic) NSDictionary* song;
+@property (nonatomic) id <PlayerDelegate> delegate;
+
 @property (strong, nonatomic) NSMutableArray *tracks;
-@property NSInteger nowPlayingTrackIndex;
 @property (strong, nonatomic) NSMutableArray *albumCovers;
+@property NSInteger nowPlayingTrackIndex;
+
 @property (nonatomic, strong) AVAudioPlayer *player;
 @property NSTimer *timer;
--(void) playSong;
-- (NSMutableDictionary*) getSongInfo;
-@property (nonatomic) id <PlayerDelegate> delegate;
-@property (strong, nonatomic)NSString* dropType;
-@property BOOL dropped;
 
+-(void)playSongAtIndex:(int)index inTracks:tracks withAlbumCovers:(NSArray*)albumCovers;
+-(void)initUI;
+-(void)initData;
+
+// managing drop
+@property BOOL dropped;
 - (BOOL) drop:(NSString*)type andTrack:(NSDictionary*)track;
 
 @end

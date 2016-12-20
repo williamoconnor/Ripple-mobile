@@ -40,9 +40,9 @@
 @property BOOL dropped;
 
 - (void) resetProgress;
-- (void) setSongDuration: (float)progress andDuration: (float)duration;
+- (void) setSongProgress: (float)progress andDuration: (float)duration;
 - (void) togglePlayButton;
-- (void) disableEnableButtons:(BOOL)enable;
+- (void) enableButtons:(BOOL)enable;
 -(void)setCheckmark;
 -(void)createDropButton;
 

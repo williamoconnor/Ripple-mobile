@@ -181,7 +181,7 @@
     [super viewDidAppear:animated];
     
     if (self.dropped == YES && self.playerGui.dropped == NO) {
-        [self.playerGui createDropButton];
+        [self.playerGui setCheckmark];
     }
 }
 
@@ -237,6 +237,7 @@
 {
     [self app].player = nil;
     [self app].player = [[AVAudioPlayer alloc] initWithData:data error:nil];
+    [self app].player.delegate = self;
     
     //get your app's audioSession singleton object
     AVAudioSession* session = [AVAudioSession sharedInstance];
@@ -291,7 +292,7 @@
 - (void) back
 {
     [self dismissViewControllerAnimated:YES completion:^{
-        [self.delegate showFooter];
+        //[self.delegate showFooter];
     }];
 }
 
@@ -402,16 +403,16 @@
 {
     [self.playerGui.trackProgressSlider setValue:[self app].player.currentTime animated:YES];
     [self.playerGui setSongProgress:self.playerGui.trackProgressSlider.value andDuration:[self app].player.duration];
+}
 
-    
-    if ([self app].player.duration > 0 && ([self app].player.currentTime > [self app].player.duration-1)) {
-        [[self app].player prepareToPlay];
-        [self.timer invalidate];
-        NSLog(@"%@", [NSString stringWithFormat:@"%f", [self app].player.currentTime]);
-        NSLog(@"%@", [NSString stringWithFormat:@"%f", [self app].player.duration-1]);
-        [self playNextSong];
-        [self.playerGui resetProgress];
-    }
+-(void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
+{
+    [[self app].player prepareToPlay];
+    [self.timer invalidate];
+    NSLog(@"%@", [NSString stringWithFormat:@"%f", [self app].player.currentTime]);
+    NSLog(@"%@", [NSString stringWithFormat:@"%f", [self app].player.duration-1]);
+    [self playNextSong];
+    [self.playerGui resetProgress];
 }
 
 #pragma mark - drop

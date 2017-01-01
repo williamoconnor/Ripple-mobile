@@ -40,7 +40,7 @@
         [self addSubview: self.nowPlayingSongNameLabel];
         
         // ARTIST NAME
-        self.nowPlayingArtistNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(20.0, 50, [self.screen[@"width"] doubleValue]-95.0, 30.0)];
+        self.nowPlayingArtistNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(20.0, 45, [self.screen[@"width"] doubleValue]-95.0, 30.0)];
         self.nowPlayingArtistNameLabel.numberOfLines = 1;
         self.nowPlayingArtistNameLabel.textColor = cPrimaryPink;
         self.nowPlayingArtistNameLabel.font = [UIFont fontWithName:@"Avenir Next" size:15];
@@ -65,14 +65,14 @@
         // FORWARD BUTTON
         self.forwardButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [self.forwardButton addTarget:self action:@selector(forwardButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-        self.forwardButton.frame = CGRectMake(([self.screen[@"width"]doubleValue]/2)+90.0, 90, 69.0, 69.0);
+        self.forwardButton.frame = CGRectMake(([self.screen[@"width"]doubleValue]/2)+80.0, 90, 69.0, 69.0);
         [self.forwardButton setBackgroundImage:[UIImage imageNamed:@"Next.png"] forState:UIControlStateNormal];
         [self addSubview:self.forwardButton];
         
         // BACKWARD BUTTON
         self.backwardButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [self.backwardButton addTarget:self action:@selector(backwardButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-        self.backwardButton.frame = CGRectMake(([self.screen[@"width"]doubleValue]/2)-155, 90, 69.0, 69.0);
+        self.backwardButton.frame = CGRectMake(([self.screen[@"width"]doubleValue]/2)-145, 90, 69.0, 69.0);
         [self.backwardButton setBackgroundImage:[UIImage imageNamed:@"Previous.png"] forState:UIControlStateNormal];
         [self addSubview:self.backwardButton];
         
@@ -95,7 +95,7 @@
         [self addSubview:self.trackProgressSlider];
         
         // TIME INDICATOR - Front
-        self.frontTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 8.0, 37.5, 20.0)];
+        self.frontTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 8.0, 37.5, 20.0)];
         self.frontTimeLabel.font = [UIFont fontWithName:@"Avenir Next" size:10];
         self.frontTimeLabel.textAlignment = NSTextAlignmentCenter;
         self.frontTimeLabel.textColor = cPrimaryLightBlue;
@@ -104,7 +104,7 @@
         [self bringSubviewToFront:self.frontTimeLabel];
         
         // TIME INDICATOR - End
-        self.backTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake([self.screen[@"width"] floatValue] - 40, 8.0, 37.5, 20.0)];
+        self.backTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake([self.screen[@"width"] floatValue] - 50, 8.0, 47.5, 20.0)];
         self.backTimeLabel.font = [UIFont fontWithName:@"Avenir Next" size:10];
         self.backTimeLabel.textAlignment = NSTextAlignmentCenter;
         self.backTimeLabel.textColor = cPrimaryLightBlue;

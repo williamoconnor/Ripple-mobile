@@ -27,7 +27,7 @@
         
         //do shit
         self.frame = CGRectMake(0.0, [height floatValue], [width floatValue], 60.0);
-        self.backgroundColor = cLighterPrimaryPink;
+        self.backgroundColor = cPrimaryPink;
         self.songLabel = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         self.songLabel.frame = CGRectMake(60.0, 0.0, [width floatValue] - 60.0, 60.0);
         [self.songLabel setTitle:song forState:UIControlStateNormal];
@@ -62,7 +62,6 @@
 -(void) showUnderView:(UIView*)view atY:(float)y {
     float height = [[Screen screenDimensions][@"height"] floatValue];
     float width = [[Screen screenDimensions][@"width"] floatValue];
-    [self setFrame:CGRectMake(0, height, width, self.height)];
     float footerY = y;
     
     // calculate footer frame
@@ -85,16 +84,25 @@
         // newViewFrame.size.height = view.frame.size.height - self.height;
     }
     
-    [UIView animateWithDuration:0.4 animations:^{
+    if (newViewFrame.size.height != view.frame.size.height) { // abort if the view hasnt changed - it is open
+        [self setFrame:CGRectMake(0, height, width, self.height)];
+        [UIView animateWithDuration:0.4 animations:^{
+            
+            [self setFrame:newFrame];
+            [self.songLabel addTarget:self action:@selector(footerPressed) forControlEvents:UIControlEventTouchUpInside];
+        } completion:^(BOOL finished) {
+            NSLog(@"hola");
+            [self.songLabel addTarget:self action:@selector(footerPressed) forControlEvents:UIControlEventTouchUpInside];
+            
+            [view setFrame:newViewFrame];
+        }];
+    }
+    
+}
 
-        [self setFrame:newFrame];
-        [self.songLabel addTarget:self action:@selector(footerPressed) forControlEvents:UIControlEventTouchUpInside];
-    } completion:^(BOOL finished) {
-        NSLog(@"hola");
-        [self.songLabel addTarget:self action:@selector(footerPressed) forControlEvents:UIControlEventTouchUpInside];
-        
-        [view setFrame:newViewFrame];
-    }];
+-(void)checkOpenOnView:(UIView*)view
+{
+    
 }
 
 -(void) hideUnderView:(UIView*)view {
@@ -107,6 +115,7 @@
         newViewFrame.size.height = view.frame.size.height + self.height;
         [view setFrame:newViewFrame];
     }];
+    self.open = NO;
 }
 
 /*

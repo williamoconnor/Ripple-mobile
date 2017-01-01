@@ -215,7 +215,7 @@
     
     NSString *latS = [NSString stringWithFormat:@"%f", latitude];
     NSString *lonS = [NSString stringWithFormat:@"%f", longitude];
-    NSDictionary* locationDict = [NSDictionary dictionaryWithObjectsAndKeys:latS, @"latitude", lonS, @"longitude", nil];
+    NSDictionary* locationDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat: latitude], @"latitude", [NSNumber numberWithFloat: longitude], @"longitude", nil];
     
     [[NSUserDefaults standardUserDefaults] setObject:locationDict forKey:@"location"];
     
@@ -348,7 +348,13 @@
 // UI UPDATES ARE DONE FROM THE DELEGATE METHODS OF THE PLAYER VIEW, SO THAT ALL UPDATES TO THE UI STATE OF THE APP BASED ON THE PLAYER STATE COME FROM ONE PLACE - THE PLAYERVIEWCONTROLLER
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self performSegueWithIdentifier:@"playerSegue" sender:indexPath];
+    PlayerViewController* pvc = [self app].footer.playerVC;
+    if (self.tracks[indexPath.row][@"soundcloud_track_id"] == pvc.tracks[pvc.nowPlayingTrackIndex][@"soundcloud_track_id"]) {
+        [self footerPressed];
+    }
+    else {
+        [self performSegueWithIdentifier:@"playerSegue" sender:indexPath];
+    }
 }
 
 -(void)selectRow:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

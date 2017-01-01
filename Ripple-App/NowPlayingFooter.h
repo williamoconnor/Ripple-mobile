@@ -23,6 +23,7 @@
 @property (strong, nonatomic) PlayerViewController* playerVC;
 @property (strong, nonatomic) NSDictionary* song;
 @property float height;
+@property BOOL open;
 
 -(void) showUnderView:(UIView*)view atY:(float)y;
 -(void) hideUnderView:(UIView*)view;

@@ -80,6 +80,11 @@
 {
     [super viewDidAppear:animated];
     // check for signed in
+    
+    if ([self app].footer.playerVC.nowPlayingTrackList != 1) {
+        self.nowPlayingTrackIndex = -1;
+    }
+    
     [self.tableView reloadData];
     
     if ([self app].player.duration > 0) {
@@ -204,6 +209,7 @@
     if ([segue.destinationViewController isKindOfClass:[PlayerViewController class]] && sender != nil) {
         PlayerViewController* dest = segue.destinationViewController;
         dest.delegate = self;
+        dest.nowPlayingTrackList = 1;
         [dest initUI];
         [dest initData];
         [dest playSongAtIndex:(int)((NSIndexPath*)(sender)).row inTracks:self.tracks withAlbumCovers:self.albumCovers];

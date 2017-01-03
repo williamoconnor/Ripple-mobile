@@ -14,7 +14,7 @@
 
 @protocol searchProtocol <NSObject>
 
--(void) returnHome;
+-(void) returnHome:(NSDictionary*)drop;
 
 @end
 

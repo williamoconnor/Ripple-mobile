@@ -27,11 +27,14 @@
 @property (strong, nonatomic) NSMutableArray *tracks;
 @property (strong, nonatomic) NSMutableArray *albumCovers;
 @property NSInteger nowPlayingTrackIndex;
+@property NSInteger nowPlayingTrackList;
+@property (strong, nonatomic)NSMutableDictionary* mediaInfo;
 
 @property (nonatomic, strong) AVAudioPlayer *player;
 @property NSTimer *timer;
 
--(void)playSongAtIndex:(int)index inTracks:tracks withAlbumCovers:(NSArray*)albumCovers;
+-(void)playSongAtIndex:(int)index inTracks:(NSArray*)tracks withAlbumCovers:(NSArray*)albumCovers;
+-(void)updateSongs:(NSArray*)tracks andAlbumCovers:(NSArray*)albumCovers andIndex:(int)index;
 -(void)initUI;
 -(void)initData;
 

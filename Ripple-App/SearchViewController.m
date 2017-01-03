@@ -142,6 +142,11 @@
 {
     [super viewDidAppear:animated];
     // check for signed in
+    
+    if ([self app].footer.playerVC.nowPlayingTrackList != 3) {
+        self.nowPlayingTrackIndex = -1;
+    }
+    
     [self.tableView reloadData];
     
     if ([self app].player.duration > 0) {
@@ -196,7 +201,7 @@
     NSDictionary* result = [DataManager dropSong:drop];
     [LoadingScreen hideDroppingScreen];
     if (result[@"_id"]){
-        [self dropped];
+        [self dropped:result];
         PlayerViewController* vc = [self app].footer.playerVC;
         if (track[@"id"] == vc.tracks[vc.nowPlayingTrackIndex][@"id"]) {
             [self app].footer.playerVC.dropped = YES;
@@ -210,16 +215,16 @@
     }
 }
 
--(void) dropped
+-(void) dropped:(NSDictionary*)drop
 {
-    if ([UIApplication sharedApplication].keyWindow.rootViewController.presentedViewController.presentedViewController == (id)[NSNull null]) {
+    if (![UIApplication sharedApplication].keyWindow.rootViewController.presentedViewController.presentedViewController) {
         [self dismissViewControllerAnimated:YES completion:^{ // in search view
-            [self.homeDelegate returnHome];
+            [self.homeDelegate returnHome:drop];
         }];
     }
     else { // in player view
         [self updateDroppedCell];
-        [self.homeDelegate returnHome];
+        [self.homeDelegate returnHome:drop];
     }
 }
 
@@ -340,6 +345,7 @@
     if ([segue.destinationViewController isKindOfClass:[PlayerViewController class]] && sender != nil) {
         PlayerViewController* dest = segue.destinationViewController;
         dest.delegate = self;
+        dest.nowPlayingTrackList = 3;
         [dest initUI];
         [dest initData];
         [dest playSongAtIndex:(int)((NSIndexPath*)(sender)).row inTracks:self.tracks withAlbumCovers:self.albumCovers];

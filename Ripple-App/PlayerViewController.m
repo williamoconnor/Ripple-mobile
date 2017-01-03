@@ -119,24 +119,6 @@
     // ALBUM COVER
     self.albumCover.image = albumCover;
     
-    // LOCKED SCREEN INFO
-    MPMediaItemArtwork* albumArt = [[MPMediaItemArtwork alloc] initWithImage:albumCover];
-    NSString* artist = @"";
-    if (![song[@"artist"] isEqual:[NSNull null]] && [song[@"artist"] length] > 0){
-        artist = song[@"artist"];
-    }
-    else {
-        artist = @"";
-    }
-    NSNumber* duration = [NSNumber numberWithFloat:[self app].player.duration];
-    NSDictionary *info = @{ MPMediaItemPropertyArtist: artist,
-                            MPMediaItemPropertyAlbumTitle: @"",
-                            MPMediaItemPropertyTitle: song[@"name"],
-                            MPMediaItemPropertyPlaybackDuration: duration,
-                            MPMediaItemPropertyArtwork: albumArt
-                            };
-    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = info;
-    
 }
 
 -(void)updateFooter
@@ -169,6 +151,16 @@
     [self updateFooter];
     [self updateDelegate];
     [self updatePlayerGui];
+}
+
+-(void)updateSongs:(NSArray*)tracks andAlbumCovers:(NSArray*)albumCovers andIndex:(int)index
+{
+    // UPDATE THE DATA
+    self.nowPlayingTrackIndex = index;
+    self.tracks = [tracks mutableCopy];
+    self.albumCovers = [albumCovers mutableCopy];
+
+    [self updateDelegate];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -229,8 +221,37 @@
     NSLog(@"%@", [NSString stringWithFormat:@"%f", [self app].player.duration]);
     self.playerGui.trackProgressSlider.maximumValue = [self app].player.duration;
     self.playerGui.trackProgressSlider.minimumValue = 0;
+    self.mediaInfo[@"MPMediaItemPropertyPlaybackDuration"] = [NSNumber numberWithDouble: [self app].player.duration];
+    
+    [self setLockedScreenData];
     
     [self startTimer];
+}
+
+-(void)setLockedScreenData
+{
+    NSDictionary* song = self.tracks[self.nowPlayingTrackIndex];
+    UIImage* albumCover = self.albumCovers[self.nowPlayingTrackIndex];
+    
+    // LOCKED SCREEN INFO
+    MPMediaItemArtwork* albumArt = [[MPMediaItemArtwork alloc] initWithImage:albumCover];
+    NSString* artist = @"";
+    if (![song[@"artist"] isEqual:[NSNull null]] && [song[@"artist"] length] > 0){
+        artist = song[@"artist"];
+    }
+    else {
+        artist = @"";
+    }
+    NSNumber* duration = [NSNumber numberWithFloat:[self app].player.duration];
+    NSMutableDictionary* mediaInfo = [[NSMutableDictionary alloc] initWithDictionary: @{ MPMediaItemPropertyArtist: artist,
+                                                                         MPMediaItemPropertyAlbumTitle: @"",
+                                                                         MPMediaItemPropertyTitle: song[@"name"],
+                                                                         MPMediaItemPropertyPlaybackDuration: duration,
+                                                                         MPMediaItemPropertyArtwork: albumArt,
+                                                                         MPNowPlayingInfoPropertyPlaybackRate: @(1.0)
+                                                                         }];
+    
+    [[MPNowPlayingInfoCenter defaultCenter] setNowPlayingInfo: mediaInfo];
 }
 
 -(void)initPlayerSessionWithData:(NSData*)data
@@ -309,6 +330,7 @@
 {
     NSLog(@"Pause");
     [[self app].player pause];
+    //[self app].player = nil;
 }
 
 -(void) forwardPressed

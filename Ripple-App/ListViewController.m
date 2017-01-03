@@ -176,6 +176,11 @@
 {
     [super viewDidAppear:animated];
     // check for signed in
+    
+    if ([self app].footer.playerVC.nowPlayingTrackList != 2) {
+        self.nowPlayingTrackIndex = -1;
+    }
+    
     [self.tableView reloadData];
     
     if ([self app].player.duration > 0) {
@@ -252,13 +257,21 @@
 }
 
 - (void) loadSongs {
-    [LoadingScreen showGeneralLoadingScreen];
+    NSLog(@"%@", [NSString stringWithFormat:@"%@", self.presentedViewController]);
+    if (![self presentedViewController]) { // not in the player view
+        [LoadingScreen showGeneralLoadingScreen];
+    }
     [self performSelector:@selector(retrieveSongs) withObject:nil afterDelay:0.01];
 }
 
 -(void)retrieveSongs
 {
     NSMutableDictionary *location = [[[NSUserDefaults standardUserDefaults] objectForKey:@"location"] mutableCopy];
+    NSString* soundCloudId = @"thisisnotapplicableduh";
+    if (self.nowPlayingTrackIndex > 0) {
+        soundCloudId = self.tracks[self.nowPlayingTrackIndex][@"soundcloud_track_id"];
+    }
+    int newIndex = -1;
         
     // reset arrays
     [self.tracks removeAllObjects];
@@ -266,6 +279,7 @@
     
     NSDictionary* songs = [DataManager getDrops:location];
     
+    int count = 0;
     for (NSDictionary* song in songs) {
         if (song && (BOOL)song[@"streamable"] == true) {
             NSMutableDictionary* mutSong = [song mutableCopy];
@@ -276,7 +290,12 @@
                 mutSong[@"dropType"] = @"none";
             }
             
+            if ([song[@"soundcloud_track_id"] isEqualToString:soundCloudId]) {
+                newIndex = count;
+            }
+            
             [self.tracks addObject: mutSong];
+            count += 1;
             [self.songIds addObject: song[@"soundcloud_track_id"]];
             
             // YOOO
@@ -298,6 +317,10 @@
     }
     else {
         [self showTableView];
+        // update player data; it will update this data
+        if ([self app].footer.playerVC.tracks.count > 0) {
+            [[self app].footer.playerVC updateSongs:self.tracks andAlbumCovers:self.albumCovers andIndex:newIndex];
+        }
         [self.tableView reloadData];
         [LoadingScreen hideGeneralLoadingScreen];
     }
@@ -337,7 +360,7 @@
     }
     else {
         cell.titleLabel.textColor = cPrimaryNavy;
-        cell.titleLabel.textColor = cPrimaryNavy;
+        cell.artistLabel.textColor = cPrimaryNavy;
     }
     
     cell.delegate = self;
@@ -509,6 +532,7 @@
     if ([segue.destinationViewController isKindOfClass:[PlayerViewController class]] && sender != nil) {
         PlayerViewController* dest = segue.destinationViewController;
         dest.delegate = self;
+        dest.nowPlayingTrackList = 2;
         [dest initUI];
         [dest initData];
         [dest playSongAtIndex:(int)((NSIndexPath*)(sender)).row inTracks:self.tracks withAlbumCovers:self.albumCovers];
@@ -564,7 +588,7 @@
 
 #pragma mark - searchProtocol
 
--(void) returnHome
+-(void) returnHome:(NSDictionary*)drop
 {
     [self loadSongs];
 }

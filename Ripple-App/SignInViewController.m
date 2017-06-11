@@ -86,10 +86,17 @@
     [self.view addSubview:self.loginView];
     [self.view addSubview:self.registerView];
     
-    self.logoContainer = [[UIImageView alloc] initWithFrame:CGRectMake(([width floatValue]/2) - 106, 100, 213, 66)];
+    self.logoContainer = [[UIImageView alloc] initWithFrame:CGRectMake(([width floatValue]/2) - 106, 80, 213, 66)];
     self.logoContainer.image = [UIImage imageNamed:@"logo-text-only.png"];
     self.logoContainer.contentMode = UIViewContentModeScaleAspectFit;
     [self.view addSubview:self.logoContainer];
+    
+//    self.betaLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.logoContainer.frame.origin.x, self.logoContainer.frame.origin.y + self.logoContainer.frame.size.height, self.logoContainer.frame.size.width, 24)];
+//    self.betaLabel.text = @"beta";
+//    self.betaLabel.font = [UIFont fontWithName:@"Avenir Next" size:20.0];
+//    self.betaLabel.textColor = [UIColor whiteColor];
+//    self.betaLabel.textAlignment = NSTextAlignmentCenter;
+//    [self.view addSubview:self.betaLabel];
     
     self.loginButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     self.loginButton.frame = CGRectMake(0, [height floatValue] - 56, [width floatValue]/2, 56);
@@ -252,9 +259,11 @@
 {
     if (hidden == true) {
         self.logoContainer.alpha = 0.0;
+//        self.betaLabel.alpha = 0.0;
     }
     else {
         self.logoContainer.alpha = 1.0;
+//        self.betaLabel.alpha = 1.0;
     }
 }
 

@@ -13,7 +13,8 @@
 
 + (NSDictionary *)getDrops:(NSMutableDictionary*)data
 {
-    NSDictionary* result = [REST_API getPath:[[kRootURL stringByAppendingString:kGetDrops] stringByAppendingString:[NSString stringWithFormat: @"?latitude=%@&longitude=%@", data[@"latitude"], data[@"longitude"]]]];
+    NSString* path = [[kRootURL stringByAppendingString:kGetDrops] stringByAppendingString:[NSString stringWithFormat: @"?latitude=%@&longitude=%@", data[@"latitude"], data[@"longitude"]]];
+    NSDictionary* result = [REST_API getPath:path];
     return result;
 }
 

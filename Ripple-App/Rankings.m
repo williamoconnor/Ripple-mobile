@@ -45,7 +45,7 @@
 +(float)getPointsToProgress:(float)points
 {
     // keep formula consistent with node project /server/controllers/rankings.js
-    float progress = ((int)points % 10) / 10;
+    float progress = ((float)((int)points % 10)) / 10;
     
     return progress;
 }

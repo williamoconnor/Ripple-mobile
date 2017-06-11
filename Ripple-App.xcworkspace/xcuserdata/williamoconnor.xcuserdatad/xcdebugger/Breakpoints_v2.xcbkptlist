@@ -26,12 +26,12 @@
                   moduleName = "Ripple-App"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/williamoconnor/Desktop/Ripple-App/Ripple-App/NowPlayingFooter.m"
-                  timestampString = "505099023.985521"
+                  timestampString = "516497871.646286"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "109"
                   endingLineNumber = "109"
-                  offsetFromSymbolStart = "88">
+                  offsetFromSymbolStart = "71">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -41,12 +41,12 @@
                   moduleName = "Ripple-App"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/williamoconnor/Desktop/Ripple-App/Ripple-App/NowPlayingFooter.m"
-                  timestampString = "505099023.987061"
+                  timestampString = "516497871.648999"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "110"
-                  endingLineNumber = "110"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "109"
+                  endingLineNumber = "109"
+                  offsetFromSymbolStart = "15">
                </Location>
             </Locations>
          </BreakpointContent>

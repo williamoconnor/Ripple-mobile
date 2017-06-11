@@ -16,6 +16,7 @@
 @property (strong, nonatomic) LoginView* loginView;
 @property (strong, nonatomic) RegisterView* registerView;
 
+//@property (strong, nonatomic) UILabel* betaLabel;
 @property (strong, nonatomic) UIButton* loginButton;
 @property (strong, nonatomic) UIButton* registerButton;
 @property (strong, nonatomic) UIImageView* logoContainer;

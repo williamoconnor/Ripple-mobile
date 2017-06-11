@@ -106,7 +106,29 @@
     credentials[@"password"] = self.passwordTextField.text;
     credentials[@"confirmPassword"] = self.confirmPasswordTextField.text;
     
-    [self.delegate registerUser:credentials];
+    if ([self validateCredentials]) {
+        [self.delegate registerUser:credentials];
+    }
+}
+
+-(BOOL)validateCredentials
+{
+    if (self.emailTextField.text.length == 0 || self.passwordTextField.text.length == 0 || self.confirmPasswordTextField.text.length == 0) {
+        UIAlertView* failed = [[UIAlertView alloc] initWithTitle:@"Registration Failed" message:@"Please fill out all fields." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
+        [failed show];
+        return false;
+    }
+    if (![self.confirmPasswordTextField.text isEqualToString:self.passwordTextField.text]) {
+        UIAlertView* failed = [[UIAlertView alloc] initWithTitle:@"Registration Failed" message:@"Passwords do not match." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
+        [failed show];
+        return false;
+    }
+    if (self.passwordTextField.text.length < 8) {
+        UIAlertView* failed = [[UIAlertView alloc] initWithTitle:@"Registration Failed" message:@"Password must be at least 8 characters." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil, nil];
+        [failed show];
+        return false;
+    }
+    return true;
 }
 
 -(void) loginButtonPressed

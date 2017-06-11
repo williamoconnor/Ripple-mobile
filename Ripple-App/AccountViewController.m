@@ -98,6 +98,7 @@
     NSDictionary *screen = [[NSUserDefaults standardUserDefaults] objectForKey:@"screen"];
     
     // STATUS HEADER
+    NSLog(@"%@", [NSString stringWithFormat:@"%@", self.userAccount]);
     self.statusHeader = [[accountStatusHeader alloc] initWithWidth:[screen[@"width"] floatValue] andRank:[self.userAccount[@"rank"] intValue] andPoints:[self.userAccount[@"points"] floatValue]];
     self.statusHeader.delegate = self;
     self.statusHeader.email = self.userAccount[@"email"];
@@ -124,6 +125,7 @@
 -(void)initData
 {
     self.userAccount = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
+    NSLog(@"%@", [NSString stringWithFormat:@"%@", self.userAccount]);
     
     self.nowPlayingTrackIndex = -1;
     
